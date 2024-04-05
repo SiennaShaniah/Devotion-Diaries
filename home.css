@@ -126,6 +126,20 @@
     color: #274e13;
 }
 
+/* ABOUT US SECTION */
+#aboutus {
+    background-color: linear-gradient(-45deg, #6aa84f, #274e13);;
+  }
+  
+  .card {
+    background-color: #93c47d;
+  }
+
+  .card {
+    height: 25rem;
+    opacity: 0.8;
+  }
+  
 
 
 

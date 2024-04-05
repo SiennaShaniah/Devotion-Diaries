@@ -69,12 +69,87 @@
   </section>
 
 
-  <!-- redirect the user to login page -->
-  <script>
-    function login() {
-      window.location.href = "loginReg.php";
-    }
-  </script>
+  <!-- START about us -->
+  <section class="aboutus" id="aboutus">
+
+    <div class="container">
+      <div class="text-center">
+        <br>
+        <h1>Learn more about us!</h1>
+        <p>Welcome to Devotion Diaries, your online sanctuary for spiritual reflection and growth. At Devotion Diaries, we believe in the power of personal devotion and the transformative impact it can have on one's life. Our platform is designed to provide a sacred space for individuals to express their thoughts, connect with their spirituality, and cultivate a deeper sense of purpose.</p>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-12 col-lg-4">
+        <div class="card border-0">
+          <div class="card-body text-center py-5">
+            <h4 class="card-title">Our Mission</h4>
+            <p class="lead card-subtitle">At the heart of Devotion Diaries is a mission to inspire and empower individuals on their spiritual journey. We aim to create a supportive community where users can freely share their devotion, insights, and experiences, fostering a sense of unity and understanding among diverse spiritual practices.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-12 col-lg-4">
+        <div class="card border-0">
+          <div class="card-body text-center py-5">
+            <h4 class="card-title">What we are</h4>
+            <p class="lead card-subtitle">Devotion Diaries was founded by a group of passionate individuals who share a common vision for creating a positive impact in the world through the exploration of devotion. Our team is composed of seasoned developers, designers, and spiritual enthusiasts, united by the belief that technology can be a powerful tool for fostering spiritual growth.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-12 col-lg-4">
+        <div class="card border-0">
+          <div class="card-body text-center py-5">
+            <h4 class="card-title">Goals</h4>
+            <p class="lead card-subtitle">Our platform inspires spiritual growth and fosters a positive, inclusive community for daily devotion practices. We encourage consistent routines, mindful reflection, and celebrate diverse spiritual practices. Providing accessible resources and a user-friendly experience, our goal is to enable personal progress and a sense of accomplishment on individual spiritual journeys.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+<!-- START overview -->
+<section class="overView" id="overview">
+    <div id="overview" class="overview">
+      <div class="slidershow-container">
+        <div class="slidershow middle">
+          <div class="slides">
+            <input type="radio" name="r" id="r1" checked>
+            <input type="radio" name="r" id="r2">
+            <input type="radio" name="r" id="r3">
+            <input type="radio" name="r" id="r4">
+            <input type="radio" name="r" id="r5">
+            <div class="slide s1">
+              <img src="Images/dashboard.png" alt="">
+            </div>
+            <div class="slide">
+              <img src="Images/profile.png" alt="">
+            </div>
+            <div class="slide">
+              <img src="Images/dailyPrompt.png" alt="">
+            </div>
+            <div class="slide">
+              <img src="Images/newEntry.png" alt="">
+            </div>
+            <div class="slide">
+              <img src="Images/view.png" alt="">
+            </div>
+          </div>
+
+          <div class="navigationBTN">
+            <label for="r1" class="bar"></label>
+            <label for="r2" class="bar"></label>
+            <label for="r3" class="bar"></label>
+            <label for="r4" class="bar"></label>
+            <label for="r5" class="bar"></label>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
 
 <!-- Bootstrap JS -->
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>

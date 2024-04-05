@@ -100,7 +100,7 @@
             </div>
         </div>
     </div>
-    <script src="app.js"></script>
+    <script src="loginReg.js"></script>
 
 
 
