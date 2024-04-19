@@ -57,9 +57,7 @@ img{
     object-fit: cover;
 }
 
-#profadmin{
 
-}
 
 /* main */
 
@@ -130,7 +128,7 @@ a.active{
 
 
 
-/* main--container */
+/* main--container dashboard */
 
 .main--container{
     position: absolute;
@@ -584,14 +582,14 @@ th{
 }
 
 #songbtn {
-    width: 120px; /* Adjust width as needed */
-    height: 40px; /* Adjust height as needed */
+    width: 120px; 
+    height: 40px;
     border: none;
-    border-radius: 20px; /* Adjust border radius as needed */
+    border-radius: 20px;
     background: #74B72E;
     color: #fff;
     font-weight: 300;
-    font-size: 1rem; /* Adjust font size as needed */
+    font-size: 1rem; 
     cursor: pointer;
     transition: background 0.3s;
 }
@@ -618,42 +616,14 @@ th{
     border-radius: 15px;
 }
 
-.button-group {
+.button-group1 {
     margin-top: 20px;
     display: flex;
     justify-content: center;
 }
 
-/* Styles for the table */
-.table {
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    overflow: hidden;
-    margin-top: 20px;
-}
-
-.table table {
-    width: 100%;
-    border-collapse: collapse;
-}
-
-.table th, .table td {
-    padding: 10px;
-    text-align: left;
-    border-bottom: 1px solid #ddd;
-}
-
-.table th {
-    background-color: #f2f2f2;
-}
-
-/* Styles for buttons */
-.button-group {
-    margin-top: 20px;
-}
-
-.button-group button {
-    width: 120px; 
+.button1 {
+    width: 120px;
     height: 40px; 
     border: none;
     border-radius: 20px; 
@@ -661,12 +631,11 @@ th{
     color: #fff;
     font-weight: 300;
     font-size: 1rem; 
-    margin-right: 5px;
     cursor: pointer;
     transition: background 0.3s;
 }
 
-.button-group button:hover {
+.button1:hover {
     background: #274e13;
 }
 
