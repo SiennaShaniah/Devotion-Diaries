@@ -1,0 +1,357 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Poppins', sans-serif;
+}
+
+/* header */
+
+.header{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 70px;
+    padding: 0 20px;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.1);
+    z-index: 999;
+    background: #98bf64;
+    color: #274e13;
+}
+
+.logo{
+    display: flex;
+    align-items: center;
+}
+
+.logo i{
+    font-size: 1.5rem;
+    margin-right: 15px;
+}
+
+.logo h2{
+    font-family: 'Poppins', sans-serif;
+}
+
+.logo span{
+    color: #38761d;
+    font-family: 'Poppins', sans-serif;
+}
+
+.noteName {
+    position: relative;
+    display: flex;
+    align-items: center;
+  }
+  
+  .noteName .note {
+    margin-right: 20px;
+    font-family: 'Poppins', sans-serif;
+    font-weight: 500;
+    color: #fff;
+  }
+
+  .addEntryButton {
+    position: relative;
+    width: 150px;
+    height: 40px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    border: 1px solid #38761d;
+    background-color: #326b1a;
+    border-radius: 10px;
+  }
+  
+  .addEntryButton, .button__icon, .button__text {
+    transition: all 0.3s;
+  }
+  
+  .addEntryButton .button__text {
+    transform: translateX(30px);
+    color: #fff;
+    font-weight: 600;
+  }
+  
+  .addEntryButton .button__icon {
+    position: absolute;
+    transform: translateX(109px);
+    height: 100%;
+    width: 39px;
+    background-color: #38761d;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 10px;
+  }
+  
+  .addEntryButton .svg {
+    width: 30px;
+    stroke: #fff;
+  }
+  
+  .addEntryButton:hover {
+    background: #86ad75;
+  }
+  
+  .addEntryButton:hover .button__text {
+    color: transparent;
+  }
+  
+  .addEntryButton:hover .button__icon {
+    width: 148px;
+    transform: translateX(0);
+  }
+  
+  .addEntryButton:active .button__icon {
+    background-color: #38761d;
+  }
+  
+  .addEntryButton:active {
+    border: 1px solid #38761d;
+  }
+  
+
+/* sidebar */
+
+
+
+.main{
+    position: relative;
+    height: calc(100vh - 70px);
+}
+
+.sidebar{
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 300px;
+    padding: 20px;
+    background: #e9edf1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    z-index: 10;
+    transition: .3s;
+    overflow-y: auto;
+}
+
+
+.sidebar--items li , .sidebar--bottom--items li{
+    list-style: none;
+}
+
+a{
+    text-decoration: none;
+}
+
+.sidebar--items a, .sidebar--bottom--items a{
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+    font-size: 1.1rem;
+    padding: 10px;
+    border-radius: 10px;
+    color: #274e13;
+}
+
+.sidebar--items a:hover,
+.sidebar--bottom--items a:hover{
+    background: #38761d;
+    color: #fff;
+}
+
+a.active{
+    background: #38761d;
+    color: #fff;
+}
+
+.icon{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+}
+
+.sidebar .icon{
+    margin-right: 20px;
+    font-size: 1.3rem;
+}
+
+
+/* TABS */
+
+.main--container {
+    position: absolute;
+    top: 0;
+    right: 0;
+    height: 100%;
+    width: calc(100% - 300px);
+    padding: 30px;
+    overflow-y: scroll;
+    overflow-x: hidden;
+    background: #badb97;
+    z-index: 1;
+}
+
+.main--container::before {
+    content: "";
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, #6ba450  10%, transparent 20%),
+      radial-gradient(circle, transparent 10%, #6ba450  20%);
+    background-size: 30px 30px; /* Adjust the size of the pattern */
+    animation: moveBackground 8s linear infinite; /* Adjust the animation duration and timing function */
+}
+
+@keyframes moveBackground {
+    0% {
+      transform: translate(0, 0);
+    }
+    100% {
+      transform: translate(20%, 20%);
+    }
+}
+
+.section--container {
+    width: 100%;
+    height: max-content;
+    padding: 0 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255, 255, 255, 0.4);
+    padding: 1rem;
+    border-radius: 15px;
+    margin-bottom: 10px;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-gap: 20px;
+    position: relative;
+    z-index: 2; 
+}
+
+.section--title{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 10px;
+    color: #38761d;
+    position: relative;
+    background: #ebe9e9;
+    width: 100%;
+    padding: 1rem;
+    border-radius: 15px;
+}
+
+select{
+    border: none;
+    outline: none;
+    padding: 5px 10px;
+    background-color: transparent;
+    font-weight: 500;
+    font-size: 1rem;
+    color: #3d3c3c;
+}
+
+
+
+/* form styling */
+
+#entry1 {
+    width: 100%;
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+.main--container{
+    background-color: #f0f0f0;
+    border-radius: 10px;
+    padding: 20px;
+}
+
+.section--title {
+    margin-bottom: 20px;
+}
+
+.title {
+    color: #333;
+    font-size: 24px;
+}
+
+.section--container {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-gap: 20px;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+}
+
+label {
+    margin-bottom: 5px;
+}
+
+.form-group input[type="text"]{
+    width: 985px;
+    height: 50px;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+
+.form--group input[type="date"] {
+    width: 985px;
+    height: 50px;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+
+.form-group1 textarea {
+    width: 985px;
+    height: 500px;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+
+.button-group {
+    margin-top: 20px; /* Adjust spacing as needed */
+    text-align: center; /* Center the buttons horizontally */
+}
+
+.button-group button {
+    width: 120px;
+    height: 50px;
+    border: none;
+    border-radius: 10px;
+    background: #74B72E;
+    color: #fff;
+    font-weight: 500;
+    font-size: 1.0rem;
+    margin: 0 5px;
+    display: inline-block; 
+    text-align: center;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+.button-group button:hover {
+    background: #274e13;
+}
+
+
+
+

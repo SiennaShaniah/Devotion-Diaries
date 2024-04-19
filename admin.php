@@ -353,40 +353,40 @@
 
         <!-- TRASH HTML -->
         <div id="trash" class="tab" style="display: none;">
-        <div class="main--container">
-            <div class="section--title04">
-                <h3 class="title">Trash</h3>
-            </div>
-            <div class="table">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>ID</th>
-                            <th>Title</th>
-                            <th>Type</th>
-                            <th>Action</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>0</td>
-                            <td>None</td>
-                            <td>None</td>
-                            <td>
-                                <button class="button1">Delete</button>
-                                <button class="button1">Restore</button>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
+            <div class="main--container">
+                <div class="section--title04">
+                    <h3 class="title">Trash</h3>
+                </div>
+                <div class="table">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Title</th>
+                                <th>Type</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>0</td>
+                                <td>None</td>
+                                <td>None</td>
+                                <td>
+                                    <button class="button1">Delete</button>
+                                    <button class="button1">Restore</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
 
-            <div class="button-group">
-                <button type="button" id="deleteAll">Delete All</button>
-                <button type="button" id="restoreAll">Restore All</button>
-            </div>
+                <div class="button-group">
+                    <button type="button" id="deleteAll">Delete All</button>
+                    <button type="button" id="restoreAll">Restore All</button>
+                </div>
 
-        </div>
+            </div>
         </div>
 
 
@@ -404,7 +404,22 @@
 
 
 
-    <script src="admin.js"></script>
+    <script>
+        // FOR THE SIDEBAR
+        let body = document.querySelector(".body")
+
+
+        let menu = document.querySelector(".menu")
+        let sidebar = document.querySelector(".sidebar")
+        let mainContainer = document.querySelector(".main--container")
+
+        menu.onclick = function() {
+            sidebar.classList.toggle("activemenu")
+        }
+        mainContainer.onclick = function() {
+            sidebar.classList.remove("activemenu")
+        }
+    </script>
 
     <!-- tabs -->
     <script>
