@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,24 +9,28 @@
     <link rel="stylesheet" href="logReg.css">
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/5.1.0/css/bootstrap.min.css" rel="stylesheet">
 </head>
-<body>
-<a href="index.php" class="back-button">
-    <i class="fas fa-arrow-left"></i>Home
-</a>
 
-<div class="container">
+<body>
+    <a href="index.php" class="back-button">
+        <i class="fas fa-arrow-left"></i>Home
+    </a>
+
+    <div class="container">
         <div class="signin-signup">
             <form action="" class="sign-in-form">
-            <h3 class="logo">DevotionDiaries</h3>
-            <br>
+                <h3 class="logo">DevotionDiaries</h3>
+                <br>
                 <h2 class="title">Sign in</h2>
                 <div class="input-field">
                     <i class="fas fa-user"></i>
-                    <input type="text" placeholder="Username" name="username" required >
+                    <input type="text" placeholder="Shiloh Ching" name="username" required>
                 </div>
                 <div class="input-field">
                     <i class="fas fa-lock"></i>
-                    <input type="password" placeholder="Password" name="password" required>
+                    <input type="password" placeholder="Password" name="password" id="passwordInput"required>
+                    <span class="toggle-password" onclick="togglePasswordVisibility()">
+                        <i class="fas fa-eye"></i>
+                    </span>
                 </div>
                 <input type="submit" value="Login" class="btn">
                 <p class="social-text">Or Sign in with social platform</p>
@@ -45,22 +50,25 @@
                 </div>
                 <p class="account-text">Don't have an account? <a href="#" id="sign-up-btn2">Sign up</a></p>
             </form>
-            
+
             <form action="" class="sign-up-form">
-            <h3 class="logo">DevotionDiaries</h3>
-            <br>
+                <h3 class="logo">DevotionDiaries</h3>
+                <br>
                 <h2 class="title">Sign up</h2>
                 <div class="input-field">
                     <i class="fas fa-user"></i>
-                    <input type="text" placeholder="Username" name="username" required>
+                    <input type="text" placeholder="Shiloh Ching" name="username" required>
                 </div>
                 <div class="input-field">
                     <i class="fas fa-envelope"></i>
-                    <input type="text" placeholder="Email" name="email" required>
+                    <input type="text" placeholder="shilo@gmail.com" name="email" required>
                 </div>
                 <div class="input-field">
                     <i class="fas fa-lock"></i>
-                    <input type="password" placeholder="Password" name="password" required>
+                    <input type="password" placeholder="Password" name="password" id="passwordinput"required>
+                    <span class="toggle-password" onclick="PasswordVisibility()">
+                        <i class="fas fa-eye"></i>
+                    </span>
                 </div>
                 <input type="submit" value="Sign up" class="btn">
                 <p class="social-text">Or Sign in with social platform</p>
@@ -100,12 +108,65 @@
             </div>
         </div>
     </div>
-    <script src="loginReg.js"></script>
 
+    <script>
+        const sign_in_btn = document.querySelector("#sign-in-btn");
+        const sign_up_btn = document.querySelector("#sign-up-btn");
+        const container = document.querySelector(".container");
+        const sign_in_btn2 = document.querySelector("#sign-in-btn2");
+        const sign_up_btn2 = document.querySelector("#sign-up-btn2");
+        sign_up_btn.addEventListener("click", () => {
+            container.classList.add("sign-up-mode");
+        });
+        sign_in_btn.addEventListener("click", () => {
+            container.classList.remove("sign-up-mode");
+        });
+        sign_up_btn2.addEventListener("click", () => {
+            container.classList.add("sign-up-mode2");
+        });
+        sign_in_btn2.addEventListener("click", () => {
+            container.classList.remove("sign-up-mode2");
+        });
+    </script>
 
+<script>
+    function togglePasswordVisibility() {
+        var passwordInput = document.getElementById("passwordInput");
+        var icon = document.querySelector(".toggle-password i");
 
+        if (passwordInput.type === "password") {
+            passwordInput.type = "text";
+            icon.classList.remove("fa-eye");
+            icon.classList.add("fa-eye-slash");
+        } else {
+            passwordInput.type = "password";
+            icon.classList.remove("fa-eye-slash");
+            icon.classList.add("fa-eye");
+        }
+    }
+</script>
 
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/5.1.0/js/bootstrap.bundle.min.js"></script>
+<script>
+    function PasswordVisibility() {
+        var passwordInput = document.getElementById("passwordinput");
+        var icon = document.querySelector(".toggle-password i");
+
+        if (passwordInput.type === "password") {
+            passwordInput.type = "text";
+            icon.classList.remove("fa-eye");
+            icon.classList.add("fa-eye-slash");
+        } else {
+            passwordInput.type = "password";
+            icon.classList.remove("fa-eye-slash");
+            icon.classList.add("fa-eye");
+        }
+    }
+</script>
+
+   
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/5.1.0/js/bootstrap.bundle.min.js"></script>
 </body>
+
 </html>

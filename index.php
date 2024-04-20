@@ -1,61 +1,63 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Home</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Home</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
   <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
   <link href="home.css" rel="stylesheet">
   <link href="loginReg.php">
 </head>
+
 <body>
 
 
-<nav class="navbar navbar-expand-lg fixed-top">
-  <div class="container">
-    <a class="navbar-brand me-auto" href="#"><img src="icons/logo.png" alt="Logo" width="50" height="50">DevotionDiaries</a>
-    <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasNavbar" aria-labelledby="offcanvasNavbarLabel">
-      <div class="offcanvas-header">
-        <h5 class="offcanvas-title" id="offcanvasNavbarLabel">DevotionDiaries</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+  <nav class="navbar navbar-expand-lg fixed-top">
+    <div class="container">
+      <a class="navbar-brand me-auto" href="#"><img src="icons/logo.png" alt="Logo" width="50" height="50">DevotionDiaries</a>
+      <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasNavbar" aria-labelledby="offcanvasNavbarLabel">
+        <div class="offcanvas-header">
+          <h5 class="offcanvas-title" id="offcanvasNavbarLabel">DevotionDiaries</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+        </div>
+        <div class="offcanvas-body">
+          <ul class="navbar-nav justify-content-center flex-grow-1 pe-3">
+            <li class="nav-item">
+              <a class="nav-link active" aria-current="page" href="#">Home</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link mx-lg-2" href="#aboutus">About Us</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link mx-lg-2" href="#overview">Overview</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link mx-lg-2" href="#prompt">Prompt</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link mx-lg-2" href="#testimonials">Testimonials</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link mx-lg-2" href="#Resources">Resources</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link mx-lg-2" href="#faqs">FAQs</a>
+            </li>
+          </ul>
+        </div>
       </div>
-      <div class="offcanvas-body">
-        <ul class="navbar-nav justify-content-center flex-grow-1 pe-3">
-        <li class="nav-item">
-            <a class="nav-link active" aria-current="page" href="#">Home</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link mx-lg-2" href="#aboutus">About Us</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link mx-lg-2" href="#overview">Overview</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link mx-lg-2" href="#prompt">Prompt</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link mx-lg-2" href="#testimonials">Testimonials</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link mx-lg-2" href="#Resources">Resources</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link mx-lg-2" href="#faqs">FAQs</a>
-          </li>
-        </ul>
-      </div>
+      <a href="#" class="login-button">Login</a>
+      <button class="navbar-toggler pe-0" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbar" aria-controls="offcanvasNavbar" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
     </div>
-    <a href="#" class="login-button" >Login</a>
-    <button class="navbar-toggler pe-0" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbar" aria-controls="offcanvasNavbar" aria-label="Toggle navigation">
-      <span class="navbar-toggler-icon"></span>
-    </button>
-  </div>
-</nav>
-    
-<!--START home Section-->
-<section class="home" id="home">
+  </nav>
+
+  <!--START home Section-->
+  <section class="home" id="home">
     <div class="container">
       <div class="row min-vh-100 align-items-center justify-content-center">
         <div class="content">
@@ -69,19 +71,18 @@
   </section>
 
 
+  <!-- ABOUT US SECTION -->
   <!-- START about us -->
-  <section class="aboutus" id="aboutus">
-
+  <section class="aboutUs" id="aboutus">
     <div class="container">
       <div class="text-center">
-        <br>
         <h1>Learn more about us!</h1>
         <p>Welcome to Devotion Diaries, your online sanctuary for spiritual reflection and growth. At Devotion Diaries, we believe in the power of personal devotion and the transformative impact it can have on one's life. Our platform is designed to provide a sacred space for individuals to express their thoughts, connect with their spirituality, and cultivate a deeper sense of purpose.</p>
       </div>
     </div>
 
     <div class="row">
-      <div class="col-12 col-lg-4">
+      <div class="col-12 col-lg-4" id="aboutuscard">
         <div class="card border-0">
           <div class="card-body text-center py-5">
             <h4 class="card-title">Our Mission</h4>
@@ -90,7 +91,7 @@
         </div>
       </div>
 
-      <div class="col-12 col-lg-4">
+      <div class="col-12 col-lg-4" id="aboutuscard">
         <div class="card border-0">
           <div class="card-body text-center py-5">
             <h4 class="card-title">What we are</h4>
@@ -99,7 +100,7 @@
         </div>
       </div>
 
-      <div class="col-12 col-lg-4">
+      <div class="col-12 col-lg-4" id="aboutuscard">
         <div class="card border-0">
           <div class="card-body text-center py-5">
             <h4 class="card-title">Goals</h4>
@@ -109,50 +110,52 @@
       </div>
     </div>
   </section>
+  <!-- END aboutus -->
 
-
-<!-- START overview -->
-<section class="overView" id="overview">
-    <div id="overview" class="overview">
-      <div class="slidershow-container">
-        <div class="slidershow middle">
-          <div class="slides">
-            <input type="radio" name="r" id="r1" checked>
-            <input type="radio" name="r" id="r2">
-            <input type="radio" name="r" id="r3">
-            <input type="radio" name="r" id="r4">
-            <input type="radio" name="r" id="r5">
-            <div class="slide s1">
-              <img src="Images/dashboard.png" alt="">
+  <!-- overview -->
+  <section class="overview" id="overview">
+    <div class="container">
+      <div class="text-center">
+        <h1>Overview</h1>
+        <p>Devotion Diaries offers users a serene digital retreat for spiritual introspection and development. Through its user-friendly interface and diverse features, the platform fosters personal growth by facilitating heartfelt reflections, fostering connections with one's spirituality, and nurturing a deeper sense of purpose in life.</p>
+      </div>
+      <div class="d-flex justify-content-center">
+        <div id="carouselExampleIndicators" class="carousel slide">
+          <div class="carousel-indicators">
+            <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
+            <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="1" aria-label="Slide 2"></button>
+            <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="2" aria-label="Slide 3"></button>
+          </div>
+          <div class="carousel-inner">
+            <div class="carousel-item active">
+              <img src="Images/overview/01.png" class="d-block w-100" alt="...">
             </div>
-            <div class="slide">
-              <img src="Images/profile.png" alt="">
+            <div class="carousel-item">
+              <img src="Images/overview/02.png" class="d-block w-100" alt="...">
             </div>
-            <div class="slide">
-              <img src="Images/dailyPrompt.png" alt="">
-            </div>
-            <div class="slide">
-              <img src="Images/newEntry.png" alt="">
-            </div>
-            <div class="slide">
-              <img src="Images/view.png" alt="">
+            <div class="carousel-item">
+              <img src="Images/overview/03.png" class="d-block w-100" alt="...">
             </div>
           </div>
-
-          <div class="navigationBTN">
-            <label for="r1" class="bar"></label>
-            <label for="r2" class="bar"></label>
-            <label for="r3" class="bar"></label>
-            <label for="r4" class="bar"></label>
-            <label for="r5" class="bar"></label>
-          </div>
+          <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="prev">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Previous</span>
+          </button>
+          <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="next">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Next</span>
+          </button>
         </div>
       </div>
     </div>
   </section>
 
-<!-- Bootstrap JS -->
-<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js"></script>
+
+
+
+  <!-- Bootstrap JS -->
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js"></script>
 </body>
+
 </html>

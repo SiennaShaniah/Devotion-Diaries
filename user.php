@@ -262,6 +262,9 @@
                         </div>
 
                         <div class="content__description">
+                        <div class="carder">
+                                <p><span>User ID: <br></span>0</p>
+                            </div>
                             <div class="carder">
                                 <p><span>Gender: <br></span>Female</p>
                             </div>
@@ -465,13 +468,13 @@
                         <textarea name="testimony" id="testimony" class="input" rows="5" placeholder="none" required></textarea>
                     </div>
                     <div>
-                        <label for="ratings">Ratings:</label>
+                        <label for="ratings">Application Rating:</label>
                         <select name="ratings" id="ratings" class="input" required>
-                            <option value="1">1</option>
-                            <option value="2">2</option>
-                            <option value="3">3</option>
-                            <option value="4">4</option>
-                            <option value="5">5</option>
+                            <option value="1">[1] Poor: The lowest rating, indicating a very unsatisfactory experience. Significant issues or problems were encountered, and the product or service did not meet expectations. </option>
+                            <option value="2">[2] Fair: A below-average rating, suggesting that there were notable flaws or shortcomings. The experience may have been mediocre, with room for improvement.</option>
+                            <option value="3">[3] Average: An okay rating, indicating a satisfactory but unremarkable experience. The product or service met basic expectations but didn't exceed them.</option>
+                            <option value="4">[4] Good: A positive rating, signifying a solid experience with few issues. The product or service performed well and met expectations with some room for improvement.</option>
+                            <option value="5">[5] Excellent: The highest rating, representing an outstanding experience. The product or service exceeded expectations, with exceptional performance and satisfaction.</option>
                         </select>
                     </div>
                     <div>
