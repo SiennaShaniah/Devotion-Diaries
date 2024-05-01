@@ -1,3 +1,147 @@
+<!-- USERNAME AT THE TOP -->
+<?php
+session_start();
+require_once 'database_connect.php';
+if (isset($_SESSION['username'])) {
+    $username = $_SESSION['username'];
+    $query = "SELECT * FROM users WHERE username = '$username'";
+    $result = $mysqli->query($query);
+
+    if ($result && $result->num_rows > 0) {
+        $user = $result->fetch_assoc();
+?>
+<?php
+    } else {
+        echo "Error: Unable to fetch user's information.";
+    }
+} else {
+    header("Location: loginReg.php");
+    exit;
+}
+?>
+
+<!-- SONG IN DASHBOARD -->
+<?php
+require_once 'database_connect.php';
+$query = "SELECT song_title FROM songs ORDER BY songdate_uploaded DESC LIMIT 1";
+$result = $mysqli->query($query);
+
+if ($result && $result->num_rows > 0) {
+    $song = $result->fetch_assoc();
+    $recent_song_title = $song['song_title'];
+} else {
+    $recent_song_title = "No songs available";
+}
+?>
+
+
+<!-- DAILY WORD IN DASHBOARD -->
+<?php
+require_once 'database_connect.php';
+$query = "SELECT daily_word_title FROM daily_word ORDER BY daily_word_date DESC LIMIT 1";
+$result = $mysqli->query($query);
+
+if ($result && $result->num_rows > 0) {
+    $daily_word = $result->fetch_assoc();
+    $daily_word_title = $daily_word['daily_word_title'];
+} else {
+    $daily_word_title = "No daily word available";
+}
+?>
+
+
+<!-- PROFILE USERNAME AND EMAIL -->
+<?php
+require_once 'database_connect.php';
+if (isset($_SESSION['username'])) {
+    $username = $_SESSION['username'];
+    $query = "SELECT * FROM users WHERE username = '$username'";
+    $result = $mysqli->query($query);
+
+    if ($result && $result->num_rows > 0) {
+        $user = $result->fetch_assoc();
+        $user_username = $user['username'];
+        $user_email = $user['email'];
+?>
+<?php
+    } else {
+        echo "Error: Unable to fetch user's information.";
+    }
+} else {
+    header("Location: loginReg.php");
+    exit;
+}
+?>
+
+<!-- PROFILE USERID -->
+<?php
+require_once 'database_connect.php';
+if (isset($_SESSION['userId'])) {
+    $userId = $_SESSION['userId'];
+?>
+<?php
+} else {
+    echo "User not logged in.";
+}
+?>
+
+
+<!-- FOR PROFILE NOT FINAL -->
+<?php
+require_once 'database_connect.php';
+// Check if the save button is clicked and form is submitted
+if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['saveBtn'])) {
+    // Fetch user ID from session
+    session_start(); // Start session if not already started
+    if (isset($_SESSION['userId'])) {
+        $userId = $_SESSION['userId'];
+
+        // Fetch form data
+        $name = $_POST['nameInput'];
+        $email = $_POST['emailInput'];
+        $gender = $_POST['genderSelect'];
+        $age = $_POST['ageInput'];
+        $address = $_POST['addressInput'];
+        $religion = $_POST['religionInput'];
+        $life_motto = $_POST['moto'];
+        $self_description = $_POST['selfdesc'];
+
+        // Handle profile picture upload
+        $profilePicture = ''; // Placeholder for profile picture file path
+        if (isset($_FILES['profilePictureInput']) && $_FILES['profilePictureInput']['error'] === UPLOAD_ERR_OK) {
+            $uploadDir = 'uploads/'; // Directory to save uploaded files
+            $uploadFile = $uploadDir . basename($_FILES['profilePictureInput']['name']);
+            if (move_uploaded_file($_FILES['profilePictureInput']['tmp_name'], $uploadFile)) {
+                $profilePicture = $uploadFile;
+            } else {
+                echo "Error uploading profile picture.";
+            }
+        }
+
+        // Insert or update user profile information
+        $query = "INSERT INTO user_profile (userId, username, email, gender, age, address, religion, life_motto, self_description, profile_picture)
+                  VALUES ('$userId', '$name', '$email', '$gender', '$age', '$address', '$religion', '$life_motto', '$self_description', '$profilePicture')
+                  ON DUPLICATE KEY UPDATE
+                  username = '$name', email = '$email', gender = '$gender', age = '$age', address = '$address', religion = '$religion',
+                  life_motto = '$life_motto', self_description = '$self_description', profile_picture = '$profilePicture'";
+
+        if ($mysqli->query($query) === TRUE) {
+            echo "Profile information saved successfully.";
+        } else {
+            echo "Error: " . $query . "<br>" . $mysqli->error;
+        }
+    } else {
+        echo "User session not found.";
+    }
+}
+?>
+
+
+<!-- DAILY WORD -->
+
+
+
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -18,9 +162,10 @@
             <h2><span>Devotion</span>Diaries</h2>
         </div>
         <div class="profile">
-            <span class="username">User's Name</span>
+            <span class="username"><?php echo $user['username']; ?></span>
             <img src="Images/signin.svg" alt="User's Image">
         </div>
+
     </section>
 
     <section class="main">
@@ -79,7 +224,7 @@
 
             <ul class="sidebar--bottom--items">
                 <li>
-                    <a href="#index.php">
+                    <a href="index.php">
                         <span class="icon"><i class="ri-logout-box-r-line"></i></span>
                         <div class="sidebar--item">Logout</div>
                     </a>
@@ -113,11 +258,11 @@
                             <br>
                             <div class="card123">
                                 <div class="data">
-                                    <p>Lorem, ipsum dolor.</p>
+                                    <p><?php echo $daily_word_title; ?></p>
                                 </div>
                             </div>
                             <br>
-                            <button type="button" class="find-button">Find Out More</button>
+                            <button type="button" class="find-button" id="firstcard">Find Out More</button>
                         </div>
                     </div>
 
@@ -134,11 +279,11 @@
                             <br>
                             <div class="card123">
                                 <div class="data">
-                                    <p>Lorem, ipsum dolor.</p>
+                                    <p><?php echo $recent_song_title; ?></p>
                                 </div>
                             </div>
                             <br>
-                            <button type="button" class="find-button">Find Out More</button>
+                            <button type="button" class="find-button" id="secondcard">Find Out More</button>
                         </div>
                     </div>
 
@@ -158,16 +303,16 @@
                             <br>
                             <div class="card123">
                                 <div class="data">
-                                    <p>Lorem, ipsum dolor.</p>
+                                    <p>READ NOW!</p>
                                 </div>
                             </div>
                             <br>
-                            <button type="button" class="find-button">Find Out More</button>
+                            <button type="button" class="find-button" id="findOutMoreBtn1">Find Out More</button>
                         </div>
                     </div>
 
                     <!-- Fourth card -->
-                    <div class="card">
+                    <div class=" card">
                         <div class="image04">
                         </div>
                         <div class="content">
@@ -182,11 +327,11 @@
                             <br>
                             <div class="card123">
                                 <div class="data">
-                                    <p>Lorem, ipsum dolor.</p>
+                                    <p>BE INSPIRED!</p>
                                 </div>
                             </div>
                             <br>
-                            <button type="button" class="find-button">Find Out More</button>
+                            <button type="button" class="find-button" id="findOutMoreBtn2">Find Out More</button>
                         </div>
                     </div>
 
@@ -258,12 +403,12 @@
                         <div class="content__actions"><a href="#">
                             </a><a href="#"></a></div>
                         <div class="content__title">
-                            <h1>Samantha Jones</h1><span>sam@gmail.com</span>
+                            <h1><?php echo $user_username; ?></h1><span><?php echo $user_email; ?></span>
                         </div>
 
                         <div class="content__description">
-                        <div class="carder">
-                                <p><span>User ID: <br></span>0</p>
+                            <div class="carder">
+                                <p><span>User ID: <br></span><?php echo $userId; ?></p>
                             </div>
                             <div class="carder">
                                 <p><span>Gender: <br></span>Female</p>
@@ -325,35 +470,44 @@
                     <h3 class="modal-title">Edit Profile</h3>
                 </div>
                 <br>
-                <div class="form-section">
-                    <h4 class="form-title">Profile Picture</h4>
-                    <form id="profilePictureForm">
-                        <input type="file" id="profilePictureInput" accept="image/*">
-                    </form>
-                </div>
-                <div class="form-section">
-                    <h4 class="form-title">Personal Information</h4>
-                    <input type="text" id="nameInput" placeholder="Name">
-                    <input type="text" id="emailInput" placeholder="Email">
-                    <select id="genderSelect" placeholder="Gender">
-                        <option value="Male" id="option">Male</option>
-                        <option value="Female" id="option">Female</option>
-                    </select>
-                    <input type="text" id="ageInput" placeholder="Age">
-                    <input type="text" id="addressInput" placeholder="Address">
-                    <input type="text" id="religionInput" placeholder="Religion">
-                </div>
-                <div class="form-section01">
-                    <h4 class="form-title">Additional Information</h4>
-                    <textarea id="moto" placeholder="Life Moto"></textarea>
-                    <textarea id="selfdesc" placeholder="Self Description"></textarea>
-                </div>
+                <form method="POST" action="">
+                    <!-- Profile Picture Section -->
+                    <div class="form-section">
+                        <h4 class="form-title">Profile Picture</h4>
+                        <input type="file" id="profilePictureInput" name="profilePictureInput" accept="image/*">
+                    </div>
 
-                <button id="saveBtn">Save</button>
-                <button id="cancelbtn">Cancel</button>
-                <button id="resetbtn">Reset</button>
+                    <!-- Personal Information Section -->
+                    <div class="form-section">
+                        <h4 class="form-title">Personal Information</h4>
+                        <input type="text" id="nameInput" name="nameInput" placeholder="Name">
+                        <input type="text" id="emailInput" name="emailInput" placeholder="Email">
+                        <select id="genderSelect" name="genderSelect" placeholder="Gender">
+                            <option value="Male">Male</option>
+                            <option value="Female">Female</option>
+                        </select>
+                        <input type="text" id="ageInput" name="ageInput" placeholder="Age">
+                        <input type="text" id="addressInput" name="addressInput" placeholder="Address">
+                        <input type="text" id="religionInput" name="religionInput" placeholder="Religion">
+                    </div>
+
+                    <!-- Additional Information Section -->
+                    <div class="form-section">
+                        <h4 class="form-title">Additional Information</h4>
+                        <textarea id="moto" name="moto" placeholder="Life Moto"></textarea>
+                        <textarea id="selfdesc" name="selfdesc" placeholder="Self Description"></textarea>
+                    </div>
+
+                    <!-- Buttons -->
+                    <button type="submit" id="saveBtn" name="saveBtn">Save</button>
+                    <button type="button" id="cancelbtn">Cancel</button>
+                    <button type="button" id="resetbtn">Reset</button>
+                </form>
+
+
             </div>
         </div>
+
 
 
 
@@ -368,16 +522,32 @@
                     <div class="card-image103">
                         <img src="Images/dailyword01.png" alt="image">
                     </div>
-                    <div class="date">March 11,2024</div>
-                    <div class="title1">A heading that must span over two lines
-                    </div>
-                    <p class="word">
-                        Lorem ipsum dolor sit amet consectetur adipisicing elit. At quasi quis necessitatibus explicabo veritatis id. Rerum natus laboriosam dolor neque odio, ipsa repellendus rem incidunt asperiores corrupti aut itaque adipisci!
-                        Lorem ipsum dolor, sit amet consectetur adipisicing elit. Sint assumenda tenetur eligendi illum sequi maiores ducimus. Quod maxime repudiandae cupiditate nostrum facilis, molestias saepe quibusdam tempore enim voluptates exercitationem veniam.
-                        Lorem ipsum dolor sit amet consectetur adipisicing elit. Laboriosam quasi, incidunt, in obcaecati repudiandae possimus, repellendus quam fuga ab sit minima ullam magni culpa quas cumque rerum autem? Consequuntur, totam.
-                        Lorem ipsum dolor sit amet consectetur adipisicing elit. Consectetur aut modi, harum laborum expedita sunt? Quaerat recusandae aliquid esse quibusdam placeat eius, velit laborum eum voluptatum tempore id aliquam possimus!
-                        Lorem ipsum dolor sit amet, consectetur adipisicing elit. Eveniet commodi deserunt iure dolore dolores aliquam et a, tempore ipsum sit praesentium in, laudantium nisi laborum doloribus natus officiis suscipit ea?
-                    </p>
+                    <?php
+                    // Include the database connection file
+                    include 'Database_connect.php';
+
+                    // Query to select the most recent daily word
+                    $sql = "SELECT * FROM daily_word ORDER BY daily_word_date DESC LIMIT 1";
+
+                    // Execute the query
+                    $result = $mysqli->query($sql);
+
+                    // Check if there is a result
+                    if ($result->num_rows > 0) {
+                        // Fetch the row
+                        $row = $result->fetch_assoc();
+                    ?>
+                        <div class="date"><?php echo $row['daily_word_date']; ?></div>
+                        <div class="title1"><?php echo $row['daily_word_title']; ?></div>
+                        <p class="word"><?php echo $row['daily_word_text']; ?></p>
+                    <?php
+                    } else {
+                        echo "<p>No daily word found.</p>";
+                    }
+
+                    // Close the connection
+                    $mysqli->close();
+                    ?>
                 </div>
             </div>
         </div>
@@ -499,7 +669,7 @@
                                 <path d="m7.5 9.99998h5"></path>
                             </g>
                         </svg>
-                        <span class="lable" >Add</span>
+                        <span class="lable">Add</span>
                     </button>
                 </div>
 
@@ -677,28 +847,28 @@
                 <div class="section--title">
                     <h3 class="title">Trashbin</h3>
                 </div>
-                
-                    <div class="table">
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>ID</th>
-                                    <th>Notebook Title</th>
-                                    <th>Action</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td>0</td>
-                                    <td>None</td>
-                                    <td>
-                                        <button class="button1">Delete</button>
-                                        <button class="button1">Restore</button>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
+
+                <div class="table">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Notebook Title</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>0</td>
+                                <td>None</td>
+                                <td>
+                                    <button class="button1">Delete</button>
+                                    <button class="button1">Restore</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
     </section>
@@ -848,7 +1018,7 @@
         var notebookmodal = document.getElementById("notemodal");
         var addNoteBtn = document.getElementById("notebutton");
         var notebookSaveBtn = document.getElementById("add-notebook");
-        var notebookCancelBtn  = document.getElementById("cancel-notebook");
+        var notebookCancelBtn = document.getElementById("cancel-notebook");
         var notebookSpan = document.getElementsByClassName("close")[0];
 
         function openNotebookModal() {
@@ -952,6 +1122,38 @@
                     selectedCover.textContent = newCoverAlt;
                     coverModal.style.display = 'none';
                 });
+            });
+        });
+    </script>
+
+
+    <!-- IT WILL GO TO dailyWord TAB -->
+    <script>
+        document.getElementById("firstcard").addEventListener("click", function() {
+            document.getElementById("dailyWord").style.display = "block";
+        });
+    </script>
+    <!-- IT WILL GO TO songs TAB -->
+    <script>
+        document.getElementById("secondcard").addEventListener("click", function() {
+            document.getElementById("christianSongs").style.display = "block";
+        });
+    </script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            var findButton = document.getElementById('findOutMoreBtn1');
+            findButton.addEventListener('click', function() {
+                window.open('https://www.bible.com/', '_blank');
+            });
+        });
+    </script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            var findButton = document.getElementById('findOutMoreBtn2');
+            findButton.addEventListener('click', function() {
+                window.open('https://www.intouch.org/read/daily-devotions', '_blank');
             });
         });
     </script>

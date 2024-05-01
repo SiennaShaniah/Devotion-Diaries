@@ -1,3 +1,87 @@
+<!-- COUNT FOR HOW MANY USERS -->
+<?php
+include('database_connect.php');
+$sql = "SELECT COUNT(*) AS total_users FROM users";
+$result = $mysqli->query($sql);
+if ($result) {
+    $row = $result->fetch_assoc();
+    $total_users = $row['total_users'];
+    $result->close();
+} else {
+    $total_users = 0;
+}
+?>
+
+
+<!-- SUBMITTING DAILY WORD -->
+<?php
+include('database_connect.php');
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    $stmt = $mysqli->prepare("INSERT INTO daily_word (daily_word_date, daily_word_title, daily_word_text) VALUES (?, ?, ?)");
+    $stmt->bind_param("sss", $date, $title, $dailyWordText);
+    $date = $_POST['date'];
+    $title = $_POST['title'];
+    $dailyWordText = $_POST['dailyWordText'];
+    $stmt->execute();
+
+    $stmt->close();
+    $mysqli->close();
+    header("Location: admin.php#dailyWord");
+    exit();
+}
+$mysqli->close();
+?>
+
+
+<!-- DAILY WORD IN DASHBOARD -->
+<?php
+include('database_connect.php');
+$sql = "SELECT daily_word_title FROM daily_word ORDER BY daily_word_id DESC LIMIT 1";
+$result = $mysqli->query($sql);
+
+if ($result->num_rows > 0) {
+    $row = $result->fetch_assoc();
+    $dailyWordTitle = $row['daily_word_title'];
+} else {
+    $dailyWordTitle = "None";
+}
+$mysqli->close();
+?>
+
+
+<?php
+include 'Database_connect.php';
+$sql = "SELECT song_title FROM songs ORDER BY songdate_uploaded DESC LIMIT 1";
+$result = $mysqli->query($sql);
+
+if ($result->num_rows > 0) {
+    // Output data of the latest song
+    $row = $result->fetch_assoc();
+    $latestSongTitle = $row["song_title"];
+} else {
+    $latestSongTitle = "None";
+}
+?>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -63,7 +147,7 @@
             </ul>
             <ul class="sidebar--bottom--items">
                 <li>
-                    <a href="#index.php">
+                    <a href="index.php">
                         <span class="icon"><i class="ri-logout-box-r-line"></i></span>
                         <div class="sidebar--item">Logout</div>
                     </a>
@@ -79,14 +163,14 @@
                     <h3 class="title">Admin Dashboard</h3>
                 </div>
 
-
                 <div class="cards">
                     <div class="card card-1">
                         <div class="card--title">
                             <span class="card--icon icon"><i class="ri-users-line"></i></span>
                             <span>Total number of users</span>
                         </div>
-                        <h3 class="card--value">0</i></h3>
+
+                        <h3 class="card--value"><?php echo $total_users; ?></i></h3>
                     </div>
 
 
@@ -95,8 +179,8 @@
                             <span class="card--icon icon"><i class="ri-calendar-event-line"></i></span>
                             <span>Today's Word</span>
                         </div>
-                        <h3 class="card--value">None</h3>
-                        <button class="card--button">Daily Word</button>
+                        <h3 class="card--value"><?php echo $dailyWordTitle; ?></h3>
+                        <button class="card--button" id="dailyWordButton">Daily Word</button>
                     </div>
 
 
@@ -115,8 +199,8 @@
                             <span class="card--icon icon"><i class="ri-music-line"></i></span>
                             <span>Recent Christian song uploads</span>
                         </div>
-                        <h3 class="card--value">None</i></h3>
-                        <button class="card--button">Songs</button>
+                        <h3 class="card--value"><?php echo $latestSongTitle; ?></i></h3>
+                        <button class="card--button" id="songsbuttonkick">Songs</button>
                     </div>
                 </div>
 
@@ -134,11 +218,24 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr>
-                                <td>0</td>
-                                <td>None</td>
-                                <td>None</td>
-                            </tr>
+                            <?php
+                            include 'database_connect.php';
+                            $sql = "SELECT userId, username, email FROM users";
+
+                            // Execute the query
+                            $result = $mysqli->query($sql);
+                            if ($result->num_rows > 0) {
+                                while ($row = $result->fetch_assoc()) {
+                                    echo "<tr>";
+                                    echo "<td>" . $row["userId"] . "</td>";
+                                    echo "<td>" . $row["username"] . "</td>";
+                                    echo "<td>" . $row["email"] . "</td>";
+                                    echo "</tr>";
+                                }
+                            } else {
+                                echo "<tr><td colspan='3'>No users found</td></tr>";
+                            }
+                            ?>
                         </tbody>
                     </table>
                 </div>
@@ -154,7 +251,7 @@
                 </div>
                 <br>
 
-                <form id="dailyWordForm">
+                <form id="dailyWordForm" method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>">
                     <div class="form-group">
                         <label for="date">Date:</label>
                         <input type="date" id="date" name="date" required>
@@ -169,31 +266,49 @@
                     </div>
                     <div class="button-group">
                         <button type="submit" class="submit-button">Submit</button>
-                        <button type="button" class="cancel-button">Cancel</button>
+                        <button type="button" class="update-button" ">Update</button>
+                        <button type=" button" class="cancel-button">Cancel</button>
                     </div>
                 </form>
+
                 <br>
 
                 <div class="table">
                     <div class="section--title01">
                         <h3 class="title">Daily Word Information</h3>
                     </div>
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>ID</th>
-                                <th>Date</th>
-                                <th>Title</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>0</td>
-                                <td>00-00-0000</td>
-                                <td>None</td>
-                            </tr>
-                        </tbody>
-                    </table>
+                    
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Date</th>
+                                    <th>Title</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- DAILY WORD TABLE -->
+                                <?php
+                                include('database_connect.php');
+                                $sql = "SELECT * FROM daily_word ORDER BY daily_word_id ASC";
+                                $result = $mysqli->query($sql);
+                                if ($result->num_rows > 0) {
+                                    while ($row = $result->fetch_assoc()) {
+                                        echo "<tr>";
+                                        echo "<td>" . $row["daily_word_id"] . "</td>";
+                                        echo "<td>" . $row["daily_word_date"] . "</td>";
+                                        echo "<td>" . $row["daily_word_title"] . "</td>";
+                                        echo "</tr>";
+                                    }
+                                } else {
+                                    echo "<tr><td colspan='3'>No daily word information available</td></tr>";
+                                }
+                                $mysqli->close();
+                                ?>
+                            </tbody>
+                        </table>
+                    
+
                 </div>
                 <!-- Search form and buttons -->
                 <form id="searchForm">
@@ -204,7 +319,6 @@
                     <div class="button-group">
                         <button type="button" class="edit-button">Edit</button>
                         <button type="button" class="delete-button">Delete</button>
-                        <button type="button" class="update-button">Update</button>
                     </div>
                 </form>
             </div>
@@ -255,24 +369,26 @@
                     <div class="section--title01">
                         <h3 class="title">Uploaded Testimonials</h3>
                     </div>
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>ID</th>
-                                <th>Date</th>
-                                <th>Username</th>
-                                <th>Ratings</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>0</td>
-                                <td>00-00-0000</td>
-                                <td>None</td>
-                                <td>0</td>
-                            </tr>
-                        </tbody>
-                    </table>
+                    <div style="overflow-x: auto;">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Date</th>
+                                    <th>Username</th>
+                                    <th>Ratings</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>0</td>
+                                    <td>00-00-0000</td>
+                                    <td>None</td>
+                                    <td>0</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
         </div>
@@ -287,7 +403,7 @@
                 <br>
 
                 <div class="upload--form">
-                    <form action="#" method="POST" enctype="multipart/form-data">
+                    <form action="adminconnect.php" method="POST" enctype="multipart/form-data">
                         <div class="form--group">
                             <label for="songTitle">Song Title:</label>
                             <input type="text" id="songTitle" name="songTitle" required>
@@ -305,7 +421,7 @@
                             <input type="file" id="songPicture" name="songPicture" accept="image/*" required>
                         </div>
                         <div class="form--group">
-                            <label for="songFile">Song MP3:</label>
+                            <label for="songFile">Song File:</label>
                             <input type="file" id="songFile" name="songFile" accept="audio/mpeg" required>
                         </div>
                         <div class="form--group">
@@ -327,14 +443,31 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr>
-                                <td>0</td>
-                                <td>None</td>
-                                <td>00-00-0000</td>
-                            </tr>
+                            <?php
+                            include 'Database_connect.php';
+                            $sql = "SELECT * FROM songs";
+                            $result = $mysqli->query($sql);
+                            if ($result->num_rows > 0) {
+                                while ($row = $result->fetch_assoc()) {
+                                    echo "<tr>";
+                                    echo "<td>" . $row["songs_id"] . "</td>";
+                                    echo "<td>" . $row["song_title"] . "</td>";
+                                    echo "<td>" . $row["songdate_uploaded"] . "</td>";
+                                    echo "</tr>";
+                                }
+                            } else {
+                                echo "<tr>";
+                                echo "<td>0</td>";
+                                echo "<td>None</td>";
+                                echo "<td>00-00-0000</td>";
+                                echo "</tr>";
+                            }
+                            ?>
                         </tbody>
                     </table>
                 </div>
+
+
                 <form id="searchForm">
                     <div class="form-group">
                         <label for="searchId">Search ID:</label>
@@ -371,7 +504,13 @@
                             <tr>
                                 <td>0</td>
                                 <td>None</td>
-                                <td>None</td>
+                                <td>
+                                    <select name="type" id="type">
+                                        <option value="Word">Word</option>
+                                        <option value="Testimony">Testimony</option>
+                                        <option value="Song">Song</option>
+                                    </select>
+                                </td>
                                 <td>
                                     <button class="button1">Delete</button>
                                     <button class="button1">Restore</button>
@@ -392,8 +531,8 @@
 
 
 
-
     </section>
+
 
 
 
@@ -448,7 +587,31 @@
             });
         });
     </script>
-    <!-- bootstrap -->
+
+
+    <!-- IT WILL GO TO DAILY WORD TAB -->
+    <script>
+        document.getElementById("dailyWordButton").addEventListener("click", function() {
+            document.getElementById("dailyWord").style.display = "block";
+        });
+    </script>
+
+    <!-- IT WILL GO TO songs TAB -->
+    <script>
+        document.getElementById("songsbuttonkick").addEventListener("click", function() {
+            document.getElementById("christianSongs").style.display = "block";
+        });
+    </script>
+
+    <!-- CANCEL THE FORMS -->
+    <script>
+        document.querySelector(".cancel-button").addEventListener("click", function() {
+            document.getElementById("dailyWordForm").reset();
+        });
+    </script>
+
+    <!-- GO TO CHRISTIAN SONG TAB -->
+
 
 
 </body>

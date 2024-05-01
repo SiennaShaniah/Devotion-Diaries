@@ -17,41 +17,29 @@
 
     <div class="container">
         <div class="signin-signup">
-            <form action="" class="sign-in-form">
+
+
+            <form action="loginRegConnect.php" class="sign-in-form" method="POST">
                 <h3 class="logo">DevotionDiaries</h3>
                 <br>
                 <h2 class="title">Sign in</h2>
                 <div class="input-field">
-                    <i class="fas fa-user"></i>
-                    <input type="text" placeholder="Shiloh Ching" name="username" required>
+                    <i class="fas fa-envelope"></i>
+                    <input type="text" placeholder="user@gmail.com" name="email" required>
                 </div>
                 <div class="input-field">
                     <i class="fas fa-lock"></i>
-                    <input type="password" placeholder="Password" name="password" id="passwordInput"required>
+                    <input type="password" placeholder="Password" name="password" id="passwordInput" required>
                     <span class="toggle-password" onclick="togglePasswordVisibility()">
                         <i class="fas fa-eye"></i>
                     </span>
                 </div>
                 <input type="submit" value="Login" class="btn">
-                <p class="social-text">Or Sign in with social platform</p>
-                <div class="social-media">
-                    <a href="#" class="social-icon">
-                        <i class="fab fa-facebook"></i>
-                    </a>
-                    <a href="" class="social-icon">
-                        <i class="fab fa-twitter"></i>
-                    </a>
-                    <a href="" class="social-icon">
-                        <i class="fab fa-google"></i>
-                    </a>
-                    <a href="" class="social-icon">
-                        <i class="fab fa-linkedin-in"></i>
-                    </a>
-                </div>
                 <p class="account-text">Don't have an account? <a href="#" id="sign-up-btn2">Sign up</a></p>
             </form>
 
-            <form action="" class="sign-up-form">
+
+            <form action="loginRegConnect.php" class="sign-up-form" method="post">
                 <h3 class="logo">DevotionDiaries</h3>
                 <br>
                 <h2 class="title">Sign up</h2>
@@ -65,29 +53,17 @@
                 </div>
                 <div class="input-field">
                     <i class="fas fa-lock"></i>
-                    <input type="password" placeholder="Password" name="password" id="passwordinput"required>
+                    <input type="password" placeholder="Password" name="password" id="passwordinput" required>
                     <span class="toggle-password" onclick="PasswordVisibility()">
                         <i class="fas fa-eye"></i>
                     </span>
                 </div>
                 <input type="submit" value="Sign up" class="btn">
-                <p class="social-text">Or Sign in with social platform</p>
-                <div class="social-media">
-                    <a href="#" class="social-icon">
-                        <i class="fab fa-facebook"></i>
-                    </a>
-                    <a href="" class="social-icon">
-                        <i class="fab fa-twitter"></i>
-                    </a>
-                    <a href="" class="social-icon">
-                        <i class="fab fa-google"></i>
-                    </a>
-                    <a href="" class="social-icon">
-                        <i class="fab fa-linkedin-in"></i>
-                    </a>
-                </div>
                 <p class="account-text">Already have an account? <a href="#" id="sign-in-btn2">Sign in</a></p>
             </form>
+
+
+
         </div>
         <div class="panels-container">
             <div class="panel left-panel">
@@ -129,41 +105,41 @@
         });
     </script>
 
-<script>
-    function togglePasswordVisibility() {
-        var passwordInput = document.getElementById("passwordInput");
-        var icon = document.querySelector(".toggle-password i");
+    <script>
+        function togglePasswordVisibility() {
+            var passwordInput = document.getElementById("passwordInput");
+            var icon = document.querySelector(".toggle-password i");
 
-        if (passwordInput.type === "password") {
-            passwordInput.type = "text";
-            icon.classList.remove("fa-eye");
-            icon.classList.add("fa-eye-slash");
-        } else {
-            passwordInput.type = "password";
-            icon.classList.remove("fa-eye-slash");
-            icon.classList.add("fa-eye");
+            if (passwordInput.type === "password") {
+                passwordInput.type = "text";
+                icon.classList.remove("fa-eye");
+                icon.classList.add("fa-eye-slash");
+            } else {
+                passwordInput.type = "password";
+                icon.classList.remove("fa-eye-slash");
+                icon.classList.add("fa-eye");
+            }
         }
-    }
-</script>
+    </script>
 
-<script>
-    function PasswordVisibility() {
-        var passwordInput = document.getElementById("passwordinput");
-        var icon = document.querySelector(".toggle-password i");
+    <script>
+        function PasswordVisibility() {
+            var passwordInput = document.getElementById("passwordinput");
+            var icon = document.querySelector(".toggle-password i");
 
-        if (passwordInput.type === "password") {
-            passwordInput.type = "text";
-            icon.classList.remove("fa-eye");
-            icon.classList.add("fa-eye-slash");
-        } else {
-            passwordInput.type = "password";
-            icon.classList.remove("fa-eye-slash");
-            icon.classList.add("fa-eye");
+            if (passwordInput.type === "password") {
+                passwordInput.type = "text";
+                icon.classList.remove("fa-eye");
+                icon.classList.add("fa-eye-slash");
+            } else {
+                passwordInput.type = "password";
+                icon.classList.remove("fa-eye-slash");
+                icon.classList.add("fa-eye");
+            }
         }
-    }
-</script>
+    </script>
 
-   
+
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/5.1.0/js/bootstrap.bundle.min.js"></script>
