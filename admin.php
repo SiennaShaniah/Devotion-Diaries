@@ -87,24 +87,44 @@ $mysqli->close();
 
 
 
+<!-- UPDATE DAILY WORD -->
+<?php
+include('database_connect.php');
+
+if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['update-button'])) {
+    // Retrieve form data
+    $id = $_POST['editDailyWordId'];
+    $date = $_POST['editDate'];
+    $title = $_POST['editTitle'];
+    $text = $_POST['editDailyWordText'];
+
+    // Prepare update statement
+    $sql = "UPDATE daily_word SET daily_word_date=?, daily_word_title=?, daily_word_text=? WHERE daily_word_id=?";
+    $stmt = $mysqli->prepare($sql);
+    if ($stmt) {
+        // Bind parameters
+        $stmt->bind_param("sssi", $date, $title, $text, $id);
+
+        // Execute statement
+        if ($stmt->execute()) {
+            // Record updated successfully, redirect to admin.php
+            header("Location: admin.php");
+            exit(); // Make sure to exit after the redirection
+        } else {
+            // Error updating record
+            echo "Error updating record: " . $stmt->error;
+        }
 
 
+        // Close statement
+        $stmt->close();
+    } else {
+        echo "Error: " . $mysqli->error;
+    }
+}
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+$mysqli->close();
+?>
 
 
 
@@ -165,12 +185,6 @@ $mysqli->close();
                     <a href="#" class="sidebar-link" data-target="christianSongs">
                         <span class="icon"><i class="ri-music-line"></i></span>
                         <div class="sidebar--item">Christian Songs</div>
-                    </a>
-                </li>
-                <li>
-                    <a href="#" class="sidebar-link" data-target="trash">
-                        <span class="icon"><i class="ri-delete-bin-line"></i></span>
-                        <div class="sidebar--item">Trashbin</div>
                     </a>
                 </li>
             </ul>
@@ -280,7 +294,7 @@ $mysqli->close();
                 </div>
                 <br>
 
-                <form id="dailyWordForm" method="POST" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>">
+                <form id="dailyWordForm" method="POST" action="">
                     <div class="form-group">
                         <label for="date">Date:</label>
                         <input type="date" id="date" name="date" required>
@@ -293,14 +307,14 @@ $mysqli->close();
                         <label for="dailyWordText">Daily Word Text:</label>
                         <textarea id="dailyWordText" name="dailyWordText" required></textarea>
                     </div>
+                    <input type="hidden" id="dailyWordId" name="dailyWordId">
                     <div class="button-group">
                         <button type="submit" class="submit-button">Submit</button>
-                        <button type="button" class="update-button" ">Update</button>
-                        <button type=" button" class="cancel-button">Cancel</button>
+                        <button type="button" class="cancel-button">Cancel</button>
                     </div>
                 </form>
-
                 <br>
+
 
                 <div class="table">
                     <div class="section--title01">
@@ -327,6 +341,12 @@ $mysqli->close();
                                     echo "<td>" . $row["daily_word_id"] . "</td>";
                                     echo "<td>" . $row["daily_word_date"] . "</td>";
                                     echo "<td>" . $row["daily_word_title"] . "</td>";
+                                    echo "<td data-date='" . $row["daily_word_date"] . "' data-title='" . $row["daily_word_title"] . "' data-text='" . $row["daily_word_text"] . "'>";
+                                    echo "<div class='button-group'>";
+                                    echo "<button type='button' class='edit-button' onclick='openEditModal(this)'>Edit</button>";
+                                    echo "<button type='button' class='delete-button' onclick='deleteRecord(this)'>Delete</button>";
+                                    echo "</div>";
+                                    echo "</td>";
                                     echo "</tr>";
                                 }
                             } else {
@@ -339,19 +359,82 @@ $mysqli->close();
 
 
                 </div>
-                <!-- Search form and buttons -->
-                <form id="searchForm">
-                    <div class="form-group">
-                        <label for="searchId">Search ID:</label>
-                        <input type="text" id="searchId" name="searchId" required>
-                    </div>
-                    <div class="button-group">
-                        <button type="button" class="edit-button">Edit</button>
-                        <button type="button" class="delete-button">Delete</button>
-                    </div>
-                </form>
             </div>
         </div>
+
+        <!-- Modal for editing -->
+        <div id="editModal" class="dailymodal">
+            <div class="modal-content">
+                <h2 class="modal-title">Edit Daily Word</h2>
+                <div class="modal-body">
+                    <form id="editForm" method="post" action="">
+                        <div class="form-group">
+                            <label for="editDate">Date:</label>
+                            <input type="date" id="editDate" name="editDate" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="editTitle">Title:</label>
+                            <input type="text" id="editTitle" name="editTitle" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="editDailyWordText">Daily Word Text:</label>
+                            <textarea id="editDailyWordText" name="editDailyWordText" required></textarea>
+                        </div>
+                        <input type="hidden" id="editDailyWordId" name="editDailyWordId">
+                        <div class="button-group">
+                            <button type="submit" class="update-button" name="update-button">Update</button>
+                            <button type=" button" class="cancel-button" onclick="closeEditModal()">Cancel</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <script>
+            function openEditModal(button) {
+                var modal = document.getElementById("editModal");
+                modal.style.display = "block";
+
+                var row = button.closest("tr");
+                var id = row.cells[0].innerText;
+                var date = row.cells[1].innerText;
+                var title = row.cells[2].innerText;
+
+                // Retrieving data attributes
+                var text = row.cells[3].getAttribute("data-text");
+
+                document.getElementById("editDate").value = date;
+                document.getElementById("editTitle").value = title;
+                document.getElementById("editDailyWordText").value = text;
+                document.getElementById("editDailyWordId").value = id;
+            }
+
+            function closeEditModal() {
+                var modal = document.getElementById("editModal");
+                modal.style.display = "none";
+            }
+        </script>
+
+        <script>
+            function deleteRecord(button) {
+                var row = button.closest("tr");
+                var id = row.querySelector("td").innerText.trim(); // Assuming ID is the first column
+                var confirmation = confirm("Are you sure you want to delete this record?");
+                if (confirmation) {
+                    // AJAX request
+                    var xhttp = new XMLHttpRequest();
+                    xhttp.onreadystatechange = function() {
+                        if (this.readyState == 4 && this.status == 200) {
+                            // If deletion is successful, remove the row from the table
+                            row.remove();
+                        }
+                    };
+                    xhttp.open("GET", "delete_record.php?id=" + id, true);
+                    xhttp.send();
+                }
+            }
+        </script>
+
 
 
         <div id="testimonials" class="tab" style="display: none;">
@@ -392,7 +475,7 @@ $mysqli->close();
                                     echo "<td>" . $row["username"] . "</td>";
                                     echo "<td>";
                                     echo "<button class='view-btn' onclick='openModal(" . $row["testimony_id"] . ")'>View More</button>";
-                                    echo "<button class='delete-btn'>Delete</button>";
+                                    echo "<button class='delete-btn' onclick='deleteTestimony(" . $row["testimony_id"] . ")'>Delete</button>";
                                     echo "</td>";
                                     echo "<td>Unapproved</td>";
                                     echo "</tr>";
@@ -450,6 +533,25 @@ $mysqli->close();
                 </div>
             </div>
         </div>
+
+        <script>
+            function deleteTestimony(testimonyId) {
+                var confirmation = confirm("Are you sure you want to delete this testimony?");
+                if (confirmation) {
+                    // AJAX request
+                    var xhttp = new XMLHttpRequest();
+                    xhttp.onreadystatechange = function() {
+                        if (this.readyState == 4 && this.status == 200) {
+                            // If deletion is successful, reload the page to update the table
+                            location.reload();
+                        }
+                    };
+                    xhttp.open("GET", "delete_record.php?id=" + testimonyId, true); // Corrected filename
+                    xhttp.send();
+                }
+            }
+        </script>
+
 
 
 
@@ -515,6 +617,12 @@ $mysqli->close();
                                     echo "<td>" . $row["songs_id"] . "</td>";
                                     echo "<td>" . $row["song_title"] . "</td>";
                                     echo "<td>" . $row["songdate_uploaded"] . "</td>";
+                                    echo "<td>";
+                                    echo "<div class='button-group'>";
+                                    echo "<button type='button' class='edit-button' onclick='editSong(" . $row["songs_id"] . ")'>Edit</button>";
+                                    echo "<button type='button' class='delete-button' onclick='deleteSong(" . $row["songs_id"] . ")'>Delete</button>";
+                                    echo "</div>";
+                                    echo "</td>";
                                     echo "</tr>";
                                 }
                             } else {
@@ -528,67 +636,27 @@ $mysqli->close();
                         </tbody>
                     </table>
                 </div>
-
-
-                <form id="searchForm">
-                    <div class="form-group">
-                        <label for="searchId">Search ID:</label>
-                        <input type="text" id="searchId" name="searchId" required>
-                    </div>
-                    <div class="button-group">
-                        <button type="button" class="edit-button">Edit</button>
-                        <button type="button" class="delete-button">Delete</button>
-                        <button type="button" class="update-button">Update</button>
-                    </div>
-                </form>
             </div>
         </div>
 
+        <script>
+            function deleteSong(id) {
+                var confirmation = confirm("Are you sure you want to delete this song?");
+                if (confirmation) {
+                    // AJAX request
+                    var xhttp = new XMLHttpRequest();
+                    xhttp.onreadystatechange = function() {
+                        if (this.readyState == 4 && this.status == 200) {
+                            // If deletion is successful, reload the page to update the table
+                            location.reload();
+                        }
+                    };
+                    xhttp.open("GET", "delete_record.php?id=" + id, true);
+                    xhttp.send();
+                }
+            }
+        </script>
 
-
-        <!-- TRASH HTML -->
-        <div id="trash" class="tab" style="display: none;">
-            <div class="main--container">
-                <div class="section--title04">
-                    <h3 class="title">Trash</h3>
-                </div>
-                <div class="table">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>ID</th>
-                                <th>Title</th>
-                                <th>Type</th>
-                                <th>Action</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>0</td>
-                                <td>None</td>
-                                <td>
-                                    <select name="type" id="type">
-                                        <option value="Word">Word</option>
-                                        <option value="Testimony">Testimony</option>
-                                        <option value="Song">Song</option>
-                                    </select>
-                                </td>
-                                <td>
-                                    <button class="button1">Delete</button>
-                                    <button class="button1">Restore</button>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-
-                <div class="button-group">
-                    <button type="button" id="deleteAll">Delete All</button>
-                    <button type="button" id="restoreAll">Restore All</button>
-                </div>
-
-            </div>
-        </div>
 
 
 
@@ -691,7 +759,7 @@ $mysqli->close();
                     document.getElementById("email").innerText = testimonyInfo.email;
                     document.getElementById("content").innerText = testimonyInfo.testimony;
                     document.getElementById("rate").innerText = testimonyInfo.rating;
-                    // Open the modal
+
                     var modal = document.getElementById("viewMore");
                     modal.style.display = "block";
                 }
@@ -708,6 +776,7 @@ $mysqli->close();
             };
         }
     </script>
+
 
 
 

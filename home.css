@@ -13,6 +13,7 @@
     padding: 0.5rem;
 }
 
+
 .login-button {
     background-color: #38761d;
     color: #fff;
@@ -28,6 +29,18 @@
     background-color: #93c47d;
     color: #274e13;
 }
+
+.login-button {
+    color: #000;
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+.login-button:hover {
+    background-color: #38761d;
+    color: #fff;
+}
+
 
 .navbar-toggler {
     border: none;
@@ -131,7 +144,7 @@
 
 /* ABOUT US SECTION */
 .aboutUs {
-    background: linear-gradient(150deg, #badb97 20%, #6ba450 100%);
+    background: #d9ead3;
     color: #000;
     font-weight: 400;
 }
@@ -153,25 +166,88 @@
 
 /* OVERVIEW */
 .carousel {
-    max-width: 80%;
-    max-height: 80%; 
+    max-width: 70%;
+    max-height: 70%;
 }
 
 .overview {
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 100vh; 
-    background: linear-gradient(
-      45deg,
-      transparent 33.33%,
-      #d6f8b1 33.33%,
-      #d6f8b1 66.66%,
-      transparent 66.66%
-    ),
-    #c3e69d;
-    background-size: 90px 90px;
-  }
+    height: 100vh;
+    background: #6b8a60;
+}
 
+.prompt {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background: #d9ead3;
+
+}
+
+.text {
+    color: #000;
+
+}
+
+.title{
+    font-size: medium;
+}
+.body{
+    font-size: 12px;
+    text-align: justify;
+}
+
+.testimonials {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background: #6b8a60;
+
+}
+
+.transparent-box {
+    background-color: rgba(255, 255, 255, 0.5); /* Transparent white background */
+    padding: 20px; /* Adjust padding as needed */
+    border-radius: 10px; /* Rounded corners for the box */
+    height: 545px;
+  }
+  
+.text2 {
+    color: #000;
+    text-align: end;
+}
+
+.text3 {
+    color: #000;
+    text-align: center;
+}
+
+.testimonials {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background: #6b8a60;
+
+}
+
+.faqs {
+    background: #d9ead3;
+}
+
+#accorbtn{
+    background: #93c47d;
+}
+
+#accorpar{
+    background: #d9ead3;
+}
   
   
+
+
+

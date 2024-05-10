@@ -242,8 +242,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $stmt->execute();
         $stmt->close();
     }
-
-    // Redirect to user.php after successful update/insert
     header("Location: user.php");
     exit();
 }
@@ -803,10 +801,6 @@ $mysqli->close();
                                 <p class="notetitle">Lorem.</p>
                             </div>
                         </div>
-
-
-
-
                     </div>
                 </div>
             </div>
@@ -818,19 +812,7 @@ $mysqli->close();
                 <h2>Add Notebook</h2>
                 <br>
                 <hr>
-                <form id="notebook-form" method="POST" action="addnotebook.php">
-                    <div class="form-group">
-                        <br>
-                        <label>Selected Cover:</label>
-                        <br>
-                        <br>
-                        <div class="selected-cover">
-                            <h3 id="selectedCover"></h3>
-                        </div>
-                        <br>
-                        <button type="button" id="select-cover-button">Change Cover</button>
-                        <input type="hidden" id="selectedCoverInput" name="selected-cover" value="">
-                    </div>
+                <form class="notebook-form" method="POST" action="insert_notebook.php">
                     <br>
                     <br>
                     <div class="form-group">
@@ -845,7 +827,7 @@ $mysqli->close();
                     <br>
                     <hr>
                     <div class="addbutton-group">
-                        <button type="submit" id="add-notebook" name="saveBtn">Add</button>
+                        <button type="submit" id="add-notebook" >Add</button>
                         <button type="button" id="cancel-notebook">Cancel</button>
                     </div>
                 </form>
@@ -870,8 +852,6 @@ $mysqli->close();
                 </div>
             </div>
         </div>
-
-
 
 
 

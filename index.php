@@ -41,15 +41,12 @@
               <a class="nav-link mx-lg-2" href="#testimonials">Testimonials</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link mx-lg-2" href="#Resources">Resources</a>
-            </li>
-            <li class="nav-item">
               <a class="nav-link mx-lg-2" href="#faqs">FAQs</a>
             </li>
           </ul>
         </div>
       </div>
-      <a href="#" class="login-button">Login</a>
+      <a href="loginReg.php" class="login-button">Login</a>
       <button class="navbar-toggler pe-0" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbar" aria-controls="offcanvasNavbar" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
       </button>
@@ -149,6 +146,239 @@
       </div>
     </div>
   </section>
+
+
+  <section class="prompt" id="prompt">
+    <div class="container">
+      <div class="row">
+        <div class="text">
+          <h1>Daily Prompt</h1>
+        </div>
+        <div class="col-md-6" id="img">
+          <img src="Images/bible07.jpg" class="img-fluid fix-image" alt="Image">
+        </div>
+        <div class="col-md-6">
+          <div class="transparent-box">
+            <?php
+            include 'database_connect.php';
+            $sql = "SELECT daily_word_title, daily_word_text FROM daily_word ORDER BY daily_word_id DESC LIMIT 1";
+            $result = $mysqli->query($sql);
+            if ($result->num_rows > 0) {
+              while ($row = $result->fetch_assoc()) {
+                $title = $row["daily_word_title"];
+                $body = $row["daily_word_text"];
+            ?>
+                <div class="text">
+                  <h2 class="title"><?php echo $title; ?></h2>
+                  <p class="body"><?php echo $body; ?></p>
+                </div>
+            <?php
+              }
+            } else {
+              echo "No daily word found.";
+            }
+            $mysqli->close();
+            ?>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <section class="testimonials" id="testimonials">
+    <div class="container">
+      <div class="row">
+        <div class="text2">
+          <h1>Testimony of the Day</h1>
+        </div>
+        <div class="col-md-6">
+          <div class="transparent-box">
+            <div class="text">
+              <h2 class="username"></h2>
+              <p class="testimony"></p>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-6" id="img">
+          <img src="Images/bible09.jpg" class="img-fluid fix-image" alt="Image">
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="faqs" id="faqs">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-12"> <!-- Use full width for the single column -->
+          <br>
+          <br>
+          <div class="text3">
+            <h1>Frequently Asked Questions</h1>
+          </div>
+          
+
+            <div class="accordion" id="accordionExample">
+              <div class="accordion-item">
+                <h2 class="accordion-header">
+                  <button class="accordion-button" id="accorbtn" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                  How do I create an account on Devotion Diaries?
+                  </button>
+                </h2>
+                <div id="collapseOne" class="accordion-collapse collapse " data-bs-parent="#accordionExample">
+                  <div class="accordion-body" id="accorpar">
+                   <p >Creating an account on Devotion Diaries is easy. Simply click on the "Sign Up" button, fill in the required information, and follow the prompts to set up your personal Devotion Diary.</p>
+                  </div>
+                </div>
+              </div>
+              </div>
+
+              <div class="accordion" id="accordionExample">
+              <div class="accordion-item">
+                <h2 class="accordion-header">
+                  <button class="accordion-button" id="accorbtn" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="true" aria-controls="collapseTwo">
+                  Is my information and diary content private?
+                  </button>
+                </h2>
+                <div id="collapseTwo" class="accordion-collapse collapse " data-bs-parent="#accordionExample">
+                  <div class="accordion-body" id="accorpar">
+                   <p> Yes, we prioritize the privacy and security of our users. Your information and devotion entries are kept confidential and are only visible to you, unless you choose to share them with the community.</p>
+                  </div>
+                </div>
+              </div>
+              </div>
+
+              <div class="accordion" id="accordionExample">
+              <div class="accordion-item">
+                <h2 class="accordion-header">
+                  <button class="accordion-button" id="accorbtn" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree" aria-expanded="true" aria-controls="collapseThree">
+                  Are there any fees associated with using Devotion Diaries?
+                  </button>
+                </h2>
+                <div id="collapseThree" class="accordion-collapse collapse " data-bs-parent="#accordionExample">
+                  <div class="accordion-body" id="accorpar">
+                   <p>  Devotion Diaries is currently a free platform for users. We may introduce premium features in the future, but basic usage and access to essential features will always remain free.</p>
+                  </div>
+                </div>
+              </div>
+              </div>
+
+              <div class="accordion" id="accordionExample">
+              <div class="accordion-item">
+                <h2 class="accordion-header">
+                  <button class="accordion-button" id="accorbtn" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFour" aria-expanded="true" aria-controls="collapseFour">
+                  Are the devotionals provided in DevotionDiaries based on any particular denomination or belief system?
+                  </button>
+                </h2>
+                <div id="collapseFour" class="accordion-collapse collapse " data-bs-parent="#accordionExample">
+                  <div class="accordion-body" id="accorpar">
+                   <p>DevotionDiaries aims to provide a diverse range of devotionals that resonate with Christians from various denominations and belief backgrounds, fostering inclusivity and spiritual growth.</p>
+                  </div>
+                </div>
+              </div>
+              </div>
+
+              <div class="accordion" id="accordionExample">
+              <div class="accordion-item">
+                <h2 class="accordion-header">
+                  <button class="accordion-button" id="accorbtn" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFive" aria-expanded="true" aria-controls="collapseFive">
+                  How can I get support if I encounter any issues with DevotionDiaries?
+                  </button>
+                </h2>
+                <div id="collapseFive" class="accordion-collapse collapse " data-bs-parent="#accordionExample">
+                  <div class="accordion-body" id="accorpar">
+                   <p>Users can reach out to the DevotionDiaries support team via email or through the app's built-in support feature for assistance with any technical issues or inquiries.</p>
+                  </div>
+                </div>
+              </div>
+              </div>
+
+              <div class="accordion" id="accordionExample">
+              <div class="accordion-item">
+                <h2 class="accordion-header">
+                  <button class="accordion-button" id="accorbtn" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSix" aria-expanded="true" aria-controls="collapseSix">
+                  How often are new devotionals and features added to DevotionDiaries?
+                  </button>
+                </h2>
+                <div id="collapseSix" class="accordion-collapse collapse " data-bs-parent="#accordionExample">
+                  <div class="accordion-body" id="accorpar">
+                   <p>DevotionDiaries regularly updates its content library with new devotionals and features to enrich the user experience and provide fresh insights and inspiration for spiritual growth.</p>
+                  </div>
+                </div>
+              </div>
+              </div>
+
+              <div class="accordion" id="accordionExample">
+              <div class="accordion-item">
+                <h2 class="accordion-header">
+                  <button class="accordion-button" id="accorbtn" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSeven" aria-expanded="true" aria-controls="collapseSeven">
+                  Can I provide feedback or suggest new features for DevotionDiaries?
+                  </button>
+                </h2>
+                <div id="collapseSeven" class="accordion-collapse collapse " data-bs-parent="#accordionExample">
+                  <div class="accordion-body" id="accorpar">
+                   <p>Yes, DevotionDiaries values user feedback and actively encourages users to share their suggestions and ideas for improving the app. Users can submit feedback through the app or website to contribute to its ongoing development and enhancement.</p>
+                  </div>
+                </div>
+              </div>
+              </div>
+
+
+           
+
+
+         
+        </div>
+      </div>
+    </div>
+    <br>
+  <br>
+  </section>
+ 
+
+  <!-- Footer -->
+  <footer class="text-center text-white fixed-bottom-footer" style="background-color: #6b8a60">
+    <div class="row d-flex justify-content-center">
+      <div class="col-lg-8 ">
+        <p style="color: white; margin-top: 30px">
+          Devotion Diaries, your dedicated guide to spiritual growth,
+          invites you on a transformative journey of reflection and tranquility.
+          Embrace the power of daily devotion with our intuitive platform,
+          where each entry becomes a stepping stone to a more enriched and mindful life.
+          Start your personalized spiritual adventure today with Devotion Diaries -
+          where every word is a step closer to inner peace and self-discovery.
+        </p>
+      </div>
+    </div>
+
+    <div class="text-center mb-3">
+      <a href="facebook.com" class="text-white me-4" style="font-size: 24px;">
+        <i class="bi bi-facebook"></i>
+      </a>
+      <a href="twitter.com" class="text-white me-4" style="font-size: 24px;">
+        <i class="bi bi-twitter"></i>
+      </a>
+      <a href="google.com" class="text-white me-4" style="font-size: 24px;">
+        <i class="bi bi-google"></i>
+      </a>
+      <a href="instagram.com" class="text-white me-4" style="font-size: 24px;">
+        <i class="bi bi-instagram"></i>
+      </a>
+      <a href="devotiondiaries@gmail.com" class="text-white me-4" style="font-size: 24px;">
+        <i class="bi bi-threads"></i>
+      </a>
+    </div>
+    <!-- Section: Social -->
+
+    <!-- Copyright -->
+    <div class="text-center p-3" style="background-color: #d9ead3"  >
+      <p style="color: #000" >© 2024 Copyright: <a class="text-blue" href="https://DevotionDiaries.com/">DevotionDiaries.com</a></p>
+    </div>
+    <!-- Copyright -->
+  </footer>
+  <!-- Footer -->
 
 
 
