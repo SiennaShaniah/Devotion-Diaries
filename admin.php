@@ -13,25 +13,30 @@ if ($result) {
 ?>
 
 
-<!-- SUBMITTING DAILY WORD -->
 <?php
 include('database_connect.php');
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    if (isset($_POST['date'])) {
+        $date = $_POST['date'];
+    } else {
+        $date = null;
+    }
+    if (isset($_POST['title']) && isset($_POST['dailyWordText'])) {
+        $title = $_POST['title'];
+        $dailyWordText = $_POST['dailyWordText'];
+    } else {
+        header("Location: admin.php?error=missing_fields");
+        exit();
+    }
     $stmt = $mysqli->prepare("INSERT INTO daily_word (daily_word_date, daily_word_title, daily_word_text) VALUES (?, ?, ?)");
     $stmt->bind_param("sss", $date, $title, $dailyWordText);
-    $date = $_POST['date'];
-    $title = $_POST['title'];
-    $dailyWordText = $_POST['dailyWordText'];
     $stmt->execute();
-
     $stmt->close();
     $mysqli->close();
-    header("Location: admin.php#dailyWord");
+    header("Location: admin.php");
     exit();
 }
-$mysqli->close();
 ?>
-
 
 <!-- DAILY WORD IN DASHBOARD -->
 <?php
@@ -48,20 +53,44 @@ if ($result->num_rows > 0) {
 $mysqli->close();
 ?>
 
-
+<!-- SONG INDASHBOARD -->
 <?php
 include 'Database_connect.php';
-$sql = "SELECT song_title FROM songs ORDER BY songdate_uploaded DESC LIMIT 1";
+$sql = "SELECT song_title FROM songs ORDER BY songs_id DESC LIMIT 1";
 $result = $mysqli->query($sql);
 
 if ($result->num_rows > 0) {
-    // Output data of the latest song
     $row = $result->fetch_assoc();
     $latestSongTitle = $row["song_title"];
 } else {
     $latestSongTitle = "None";
 }
 ?>
+
+
+<!-- // Retrieve the most recent testimony -->
+<?php
+include 'Database_connect.php';
+
+$select_recent_sql = "SELECT username FROM testimonies ORDER BY testimony_id DESC LIMIT 1";
+$result_recent = $mysqli->query($select_recent_sql);
+
+if ($result_recent->num_rows > 0) {
+    $row_recent = $result_recent->fetch_assoc();
+    $recent_username = $row_recent["username"];
+} else {
+    $recent_username = "None";
+}
+
+$mysqli->close();
+?>
+
+
+
+
+
+
+
 
 
 
@@ -189,8 +218,8 @@ if ($result->num_rows > 0) {
                             <span class="card--icon icon"><i class="ri-chat-4-line"></i></span>
                             <span>Recent Testimony</span>
                         </div>
-                        <h3 class="card--value">None</i></h3>
-                        <button class="card--button">Testimonials</button>
+                        <h3 class="card--value"><?php echo $recent_username; ?></i></h3>
+                        <button class="card--button" id="testbutton">Testimonials</button>
                     </div>
 
 
@@ -251,7 +280,7 @@ if ($result->num_rows > 0) {
                 </div>
                 <br>
 
-                <form id="dailyWordForm" method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>">
+                <form id="dailyWordForm" method="POST" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>">
                     <div class="form-group">
                         <label for="date">Date:</label>
                         <input type="date" id="date" name="date" required>
@@ -277,37 +306,37 @@ if ($result->num_rows > 0) {
                     <div class="section--title01">
                         <h3 class="title">Daily Word Information</h3>
                     </div>
-                    
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>ID</th>
-                                    <th>Date</th>
-                                    <th>Title</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <!-- DAILY WORD TABLE -->
-                                <?php
-                                include('database_connect.php');
-                                $sql = "SELECT * FROM daily_word ORDER BY daily_word_id ASC";
-                                $result = $mysqli->query($sql);
-                                if ($result->num_rows > 0) {
-                                    while ($row = $result->fetch_assoc()) {
-                                        echo "<tr>";
-                                        echo "<td>" . $row["daily_word_id"] . "</td>";
-                                        echo "<td>" . $row["daily_word_date"] . "</td>";
-                                        echo "<td>" . $row["daily_word_title"] . "</td>";
-                                        echo "</tr>";
-                                    }
-                                } else {
-                                    echo "<tr><td colspan='3'>No daily word information available</td></tr>";
+
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Date</th>
+                                <th>Title</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- DAILY WORD TABLE -->
+                            <?php
+                            include('database_connect.php');
+                            $sql = "SELECT * FROM daily_word ORDER BY daily_word_id ASC";
+                            $result = $mysqli->query($sql);
+                            if ($result->num_rows > 0) {
+                                while ($row = $result->fetch_assoc()) {
+                                    echo "<tr>";
+                                    echo "<td>" . $row["daily_word_id"] . "</td>";
+                                    echo "<td>" . $row["daily_word_date"] . "</td>";
+                                    echo "<td>" . $row["daily_word_title"] . "</td>";
+                                    echo "</tr>";
                                 }
-                                $mysqli->close();
-                                ?>
-                            </tbody>
-                        </table>
-                    
+                            } else {
+                                echo "<tr><td colspan='3'>No daily word information available</td></tr>";
+                            }
+                            $mysqli->close();
+                            ?>
+                        </tbody>
+                    </table>
+
 
                 </div>
                 <!-- Search form and buttons -->
@@ -333,7 +362,7 @@ if ($result->num_rows > 0) {
                 <br>
 
 
-                <div class="table01">
+                <div class="table">
                     <div class="section--title01">
                         <h3 class="title">User's Testimonials</h3>
                     </div>
@@ -348,50 +377,82 @@ if ($result->num_rows > 0) {
                             </tr>
                         </thead>
                         <tbody>
+                            <?php
+                            include 'Database_connect.php';
 
-                            <tr>
-                                <td>1</td>
-                                <td>2024-03-21</td>
-                                <td>User123</td>
-                                <td>
-                                    <button class="view-btn">View More</button>
-                                    <button class="delete-btn">Delete</button>
-                                </td>
-                                <td>Approved</td>
-                            </tr>
+                            $sql = "SELECT testimony_id, userId, date, username FROM testimonies";
+                            $result = $mysqli->query($sql);
+
+                            if ($result->num_rows > 0) {
+                                // output data of each row
+                                while ($row = $result->fetch_assoc()) {
+                                    echo "<tr>";
+                                    echo "<td>" . $row["testimony_id"] . "</td>";
+                                    echo "<td>" . $row["date"] . "</td>";
+                                    echo "<td>" . $row["username"] . "</td>";
+                                    echo "<td>";
+                                    echo "<button class='view-btn' onclick='openModal(" . $row["testimony_id"] . ")'>View More</button>";
+                                    echo "<button class='delete-btn'>Delete</button>";
+                                    echo "</td>";
+                                    echo "<td>Unapproved</td>";
+                                    echo "</tr>";
+                                }
+                            } else {
+                                echo "0 results";
+                            }
+                            $mysqli->close();
+                            ?>
                         </tbody>
                     </table>
                 </div>
                 <br>
+            </div>
+        </div>
 
+        <!-- MODAL VIEW MORE-->
+        <div id="viewMore" class="modalview">
+            <div class="modal-content">
+                <h2>User Testimony</h2>
+                <form method="post" action="">
+                    <!-- Hidden inputs to pass data to PHP script -->
+                    <input type="hidden" name="testimony_id" id="testimony_id">
+                    <input type="hidden" name="username" id="username">
+                    <input type="hidden" name="userId" id="userId">
+                    <input type="hidden" name="rating" id="rating">
 
-                <div class="table">
-                    <div class="section--title01">
-                        <h3 class="title">Uploaded Testimonials</h3>
+                    <div class="addbutton-group">
+                        <button type="submit" name="approve" id="approve">Approve</button>
+                        <button type="button" id="cancel01">Cancel</button>
                     </div>
-                    <div style="overflow-x: auto;">
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>ID</th>
-                                    <th>Date</th>
-                                    <th>Username</th>
-                                    <th>Ratings</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td>0</td>
-                                    <td>00-00-0000</td>
-                                    <td>None</td>
-                                    <td>0</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
+                </form>
+                <br>
+                <hr>
+                <label>UserId:</label>
+                <div class="userId">
+                    <p id="userIdDisplay"></p>
+                </div>
+                <label>Username:</label>
+                <div class="username">
+                    <p id="usernameDisplay"></p>
+                </div>
+                <label>Email:</label>
+                <div class="email">
+                    <p id="email"></p>
+                </div>
+                <label>Ratings:</label>
+                <div class="rate">
+                    <h4 id="rate"></h4>
+                </div>
+                <hr>
+                <label>Testimony Content:</label>
+                <div class="content">
+                    <p id="content"></p>
                 </div>
             </div>
         </div>
+
+
+
 
 
         <!-- CHRISTIAN SONGS HTML -->
@@ -403,7 +464,7 @@ if ($result->num_rows > 0) {
                 <br>
 
                 <div class="upload--form">
-                    <form action="adminconnect.php" method="POST" enctype="multipart/form-data">
+                    <form action="adminconnect.php" method="POST">
                         <div class="form--group">
                             <label for="songTitle">Song Title:</label>
                             <input type="text" id="songTitle" name="songTitle" required>
@@ -417,18 +478,19 @@ if ($result->num_rows > 0) {
                             <input type="date" id="dateUploaded" name="dateUploaded" required>
                         </div>
                         <div class="form--group">
-                            <label for="songPicture">Song Picture:</label>
-                            <input type="file" id="songPicture" name="songPicture" accept="image/*" required>
+                            <label for="songPicture">Song Picture Path:</label>
+                            <input type="text" id="songPicture" name="songPicture" required>
                         </div>
                         <div class="form--group">
-                            <label for="songFile">Song File:</label>
-                            <input type="file" id="songFile" name="songFile" accept="audio/mpeg" required>
+                            <label for="songFile">Song File Path:</label>
+                            <input type="text" id="songFile" name="songFile" required>
                         </div>
                         <div class="form--group">
                             <button type="submit" id="songbtn">Upload Song</button>
                         </div>
                     </form>
                 </div>
+
 
                 <div class="table">
                     <div class="section--title01">
@@ -603,6 +665,12 @@ if ($result->num_rows > 0) {
         });
     </script>
 
+    <script>
+        document.getElementById("testbutton").addEventListener("click", function() {
+            document.getElementById("testimonials").style.display = "block";
+        });
+    </script>
+
     <!-- CANCEL THE FORMS -->
     <script>
         document.querySelector(".cancel-button").addEventListener("click", function() {
@@ -610,7 +678,41 @@ if ($result->num_rows > 0) {
         });
     </script>
 
-    <!-- GO TO CHRISTIAN SONG TAB -->
+
+    <script>
+        function openModal(testimonyId) {
+            // Fetch testimony info via AJAX
+            var xmlhttp = new XMLHttpRequest();
+            xmlhttp.onreadystatechange = function() {
+                if (this.readyState == 4 && this.status == 200) {
+                    var testimonyInfo = JSON.parse(this.responseText);
+                    document.getElementById("userIdDisplay").innerText = testimonyInfo.userId;
+                    document.getElementById("usernameDisplay").innerText = testimonyInfo.username;
+                    document.getElementById("email").innerText = testimonyInfo.email;
+                    document.getElementById("content").innerText = testimonyInfo.testimony;
+                    document.getElementById("rate").innerText = testimonyInfo.rating;
+                    // Open the modal
+                    var modal = document.getElementById("viewMore");
+                    modal.style.display = "block";
+                }
+            };
+            xmlhttp.open("GET", "get_testimony_info.php?id=" + testimonyId, true);
+            xmlhttp.send();
+        }
+
+        window.onload = function() {
+            var cancelButton = document.getElementById("cancel01");
+            cancelButton.onclick = function() {
+                var modal = document.getElementById("viewMore");
+                modal.style.display = "none";
+            };
+        }
+    </script>
+
+
+
+
+
 
 
 

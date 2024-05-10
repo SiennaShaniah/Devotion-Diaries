@@ -1,6 +1,6 @@
 @import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
 
-*{
+* {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
@@ -9,7 +9,7 @@
 
 /* header */
 
-.header{
+.header {
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -17,30 +17,30 @@
     padding: 0 20px;
     box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.1);
     z-index: 999;
-    background:  linear-gradient(-45deg,#38761d,#98bf64);
+    background: linear-gradient(-45deg, #38761d, #98bf64);
     color: #274e13;
 }
 
-.logo{
+.logo {
     display: flex;
     align-items: center;
 }
 
-.logo i{
+.logo i {
     font-size: 1.5rem;
     margin-right: 15px;
 }
 
-.logo h2{
+.logo h2 {
     font-family: 'Poppins', sans-serif;
 }
 
-.logo span{
+.logo span {
     color: #38761d;
     font-family: 'Poppins', sans-serif;
 }
 
-.profile{
+.profile {
     position: relative;
     width: 40px;
     height: 40px;
@@ -48,7 +48,7 @@
     border-radius: 50%;
 }
 
-img{
+img {
     position: absolute;
     width: 100%;
     height: 100%;
@@ -61,14 +61,14 @@ img{
 
 /* main */
 
-.main{
+.main {
     position: relative;
     height: calc(100vh - 70px);
 }
 
 /* sidebar */
 
-.sidebar{
+.sidebar {
     position: absolute;
     top: 0;
     left: 0;
@@ -81,19 +81,21 @@ img{
     justify-content: space-between;
     z-index: 10;
     transition: .3s;
-   
+
 }
 
 
-.sidebar--items li , .sidebar--bottom--items li{
+.sidebar--items li,
+.sidebar--bottom--items li {
     list-style: none;
 }
 
-a{
+a {
     text-decoration: none;
 }
 
-.sidebar--items a, .sidebar--bottom--items a{
+.sidebar--items a,
+.sidebar--bottom--items a {
     display: flex;
     align-items: center;
     margin-bottom: 10px;
@@ -104,24 +106,24 @@ a{
 }
 
 .sidebar--items a:hover,
-.sidebar--bottom--items a:hover{
+.sidebar--bottom--items a:hover {
     background: #38761d;
     color: #fff;
 }
 
-a.active{
+a.active {
     background: #38761d;
     color: #fff;
 }
 
-.icon{
+.icon {
     display: flex;
     align-items: center;
     justify-content: center;
     position: relative;
 }
 
-.sidebar .icon{
+.sidebar .icon {
     margin-right: 20px;
     font-size: 1.3rem;
 }
@@ -130,7 +132,7 @@ a.active{
 
 /* main--container dashboard */
 
-.main--container{
+.main--container {
     position: absolute;
     top: 0;
     right: 0;
@@ -139,11 +141,11 @@ a.active{
     padding: 30px;
     overflow-y: scroll;
     overflow-x: hidden;
-    background: linear-gradient(-45deg, #38761d,#274e13);
+    background: linear-gradient(-45deg, #38761d, #274e13);
     z-index: 1;
 }
 
-.section--title{
+.section--title {
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -156,7 +158,7 @@ a.active{
     border-radius: 15px;
 }
 
-select{
+select {
     border: none;
     outline: none;
     padding: 5px 10px;
@@ -167,13 +169,13 @@ select{
 }
 
 /* cards */
-.cards{
+.cards {
     display: flex;
     gap: 20px;
     margin-bottom: 20px;
 }
 
-.card{
+.card {
     position: relative;
     background-color: #e9edf1;
     padding: 15px;
@@ -181,20 +183,23 @@ select{
     border-radius: 10px;
 }
 
-.card-1{
+.card-1 {
     background: #97BC62;
 }
-.card-2{
-    background: #6aa84f;
-}
-.card-3{
-    background: #97BC62;
-}
-.card-4{
+
+.card-2 {
     background: #6aa84f;
 }
 
-.card--title{
+.card-3 {
+    background: #97BC62;
+}
+
+.card-4 {
+    background: #6aa84f;
+}
+
+.card--title {
     display: flex;
     align-items: center;
     font-size: 1rem;
@@ -202,7 +207,7 @@ select{
     color: #3d3c3c;
 }
 
-.card--icon{
+.card--icon {
     padding: 4px;
     background-color: #38761d;
     color: #fff;
@@ -210,7 +215,7 @@ select{
     margin-right: 10px;
 }
 
-.card--value{
+.card--value {
     display: flex;
     text-align: center;
     margin: 10px 0 3px;
@@ -222,13 +227,13 @@ select{
     width: 120px;
     height: 30px;
     border: none;
-    border-radius: 20px; 
+    border-radius: 20px;
     background: #74B72E;
     color: #fff;
     font-weight: 500;
-    font-size: 0.8rem; 
+    font-size: 0.8rem;
     margin: 10px auto;
-    display: block; 
+    display: block;
     text-align: center;
     cursor: pointer;
     transition: background 0.3s;
@@ -241,7 +246,7 @@ select{
 
 
 /* table */
-.section--title01{
+.section--title01 {
     color: #274e13;
     font-size: medium;
     font-weight: 400;
@@ -252,7 +257,7 @@ select{
     background: #fff;
     border-radius: 10px;
     overflow-y: auto;
-    max-height: 400px;
+    max-height: 500px;
 }
 
 .table table {
@@ -290,7 +295,7 @@ select{
 
 
 /* Style for upload daily word form  or daily word styling*/
-.section--title03{
+.section--title03 {
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -310,7 +315,7 @@ select{
 .form-group label {
     display: block;
     margin-bottom: 5px;
-    color:#fff;
+    color: #fff;
     font-size: medium;
 }
 
@@ -473,7 +478,7 @@ select{
 .upload--form .form--group label {
     display: block;
     margin-bottom: 5px;
-    color: #38761d; 
+    color: #38761d;
     font-size: medium;
 }
 
@@ -533,7 +538,8 @@ select{
     border-collapse: collapse;
 }
 
-.table th, .table td {
+.table th,
+.table td {
     padding: 10px;
     text-align: left;
     border-bottom: 1px solid #ddd;
@@ -544,14 +550,14 @@ select{
 }
 
 #songbtn {
-    width: 120px; 
+    width: 120px;
     height: 40px;
     border: none;
     border-radius: 20px;
     background: #74B72E;
     color: #fff;
     font-weight: 300;
-    font-size: 1rem; 
+    font-size: 1rem;
     cursor: pointer;
     transition: background 0.3s;
 }
@@ -586,13 +592,13 @@ select{
 
 .button1 {
     width: 120px;
-    height: 40px; 
+    height: 40px;
     border: none;
-    border-radius: 20px; 
+    border-radius: 20px;
     background: #74B72E;
     color: #fff;
     font-weight: 300;
-    font-size: 1rem; 
+    font-size: 1rem;
     cursor: pointer;
     transition: background 0.3s;
 }
@@ -601,70 +607,148 @@ select{
     background: #274e13;
 }
 
+/* modal for view moore */
+/* MODAL VIEW */
+
+
+.modalview {
+    display: none;
+    align-items: center;
+    justify-content: center;
+    position: fixed;
+    z-index: 9999;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+
+.modal-content {
+    background-color: #fff;
+    color: #333;
+    padding: 20px;
+    border-radius: 10px;
+    width: 800px;
+    max-height: calc(100% - 40px);
+    overflow-y: auto;
+    box-sizing: border-box; /* Include padding and border in the element's total width and height */
+}
+
+/* Remove redundant .modal-content declarations */
+
+.modal-content label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: 500;
+}
+
+.modal-content {
+    margin-top: 5px;
+    margin-bottom: 15px;
+    font-weight: 300;
+}
+
+.modal-content .userId,
+.modal-content .username,
+.modal-content .email,
+.modal-content .content,
+.modal-content .rate {
+    margin-bottom: 15px;
+}
+
+.addbutton-group {
+    display: flex;
+    justify-content: flex-end; /* Corrected value */
+}
+
+.addbutton-group button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+#approve,
+#cancel01 {
+    background-color: #7eaf7f;
+    color: #fff;
+    margin-inline-end: 10px;
+}
+
+#approve:hover,
+#cancel01:hover {
+    opacity: 0.8;
+}
+
 
 
 
 
 /* responsive starts here */
 
-@media screen and (max-width:1325px){
-    .cards{
+@media screen and (max-width:1325px) {
+    .cards {
         overflow-x: scroll;
     }
 
-    .sidebar{
+    .sidebar {
         width: fit-content;
     }
 
-    .sidebar .icon{
+    .sidebar .icon {
         margin-right: 0;
     }
 
-    .sidebar--item{
+    .sidebar--item {
         display: none;
     }
 
-    .main--container{
+    .main--container {
         width: calc(100% - 80px);
     }
 }
 
-@media screen and (max-width:775px){
-    .sidebar{
+@media screen and (max-width:775px) {
+    .sidebar {
         z-index: 10;
         width: 300px;
         transform: translateX(-100%);
     }
 
-    .sidebar.activemenu{
+    .sidebar.activemenu {
         transform: translateX(0);
     }
 
-    .sidebar .icon{
+    .sidebar .icon {
         margin-right: 20px;
 
     }
-    .sidebar--item{
+
+    .sidebar--item {
         display: block;
     }
-    .main--container{
-        width:100%;
+
+    .main--container {
+        width: 100%;
     }
-    table{
+
+    table {
         min-width: 600px;
     }
 }
 
-@media screen and (max-width:640px){
-    .sidebar{
+@media screen and (max-width:640px) {
+    .sidebar {
         padding: 10px;
     }
-    .main--container{
+
+    .main--container {
         padding: 10px;
     }
-    .cards{
+
+    .cards {
         gap: 10px;
         margin-bottom: 10px;
     }
 }
-

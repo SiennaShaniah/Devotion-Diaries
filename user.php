@@ -22,17 +22,17 @@ if (isset($_SESSION['username'])) {
 
 <!-- SONG IN DASHBOARD -->
 <?php
-require_once 'database_connect.php';
-$query = "SELECT song_title FROM songs ORDER BY songdate_uploaded DESC LIMIT 1";
-$result = $mysqli->query($query);
-
-if ($result && $result->num_rows > 0) {
-    $song = $result->fetch_assoc();
-    $recent_song_title = $song['song_title'];
+include 'Database_connect.php';
+$sql = "SELECT song_title FROM songs ORDER BY songs_id DESC LIMIT 1";
+$result = $mysqli->query($sql);
+if ($result->num_rows > 0) {
+    $row = $result->fetch_assoc();
+    $recent_song_title = $row["song_title"];
 } else {
-    $recent_song_title = "No songs available";
+    $recent_song_title = "No songs found";
 }
 ?>
+
 
 
 <!-- DAILY WORD IN DASHBOARD -->
@@ -86,58 +86,178 @@ if (isset($_SESSION['userId'])) {
 ?>
 
 
-<!-- FOR PROFILE NOT FINAL -->
+<!-- insert testimony -->
 <?php
-require_once 'database_connect.php';
-// Check if the save button is clicked and form is submitted
-if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['saveBtn'])) {
-    // Fetch user ID from session
-    session_start(); // Start session if not already started
-    if (isset($_SESSION['userId'])) {
-        $userId = $_SESSION['userId'];
+include('database_connect.php');
 
-        // Fetch form data
-        $name = $_POST['nameInput'];
-        $email = $_POST['emailInput'];
-        $gender = $_POST['genderSelect'];
-        $age = $_POST['ageInput'];
-        $address = $_POST['addressInput'];
-        $religion = $_POST['religionInput'];
-        $life_motto = $_POST['moto'];
-        $self_description = $_POST['selfdesc'];
-
-        // Handle profile picture upload
-        $profilePicture = ''; // Placeholder for profile picture file path
-        if (isset($_FILES['profilePictureInput']) && $_FILES['profilePictureInput']['error'] === UPLOAD_ERR_OK) {
-            $uploadDir = 'uploads/'; // Directory to save uploaded files
-            $uploadFile = $uploadDir . basename($_FILES['profilePictureInput']['name']);
-            if (move_uploaded_file($_FILES['profilePictureInput']['tmp_name'], $uploadFile)) {
-                $profilePicture = $uploadFile;
-            } else {
-                echo "Error uploading profile picture.";
-            }
-        }
-
-        // Insert or update user profile information
-        $query = "INSERT INTO user_profile (userId, username, email, gender, age, address, religion, life_motto, self_description, profile_picture)
-                  VALUES ('$userId', '$name', '$email', '$gender', '$age', '$address', '$religion', '$life_motto', '$self_description', '$profilePicture')
-                  ON DUPLICATE KEY UPDATE
-                  username = '$name', email = '$email', gender = '$gender', age = '$age', address = '$address', religion = '$religion',
-                  life_motto = '$life_motto', self_description = '$self_description', profile_picture = '$profilePicture'";
-
-        if ($mysqli->query($query) === TRUE) {
-            echo "Profile information saved successfully.";
-        } else {
-            echo "Error: " . $query . "<br>" . $mysqli->error;
-        }
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    $username = $mysqli->real_escape_string($_POST['username']);
+    $userId = $mysqli->real_escape_string($_POST['userId']);
+    $email = $mysqli->real_escape_string($_POST['email']);
+    $date = $mysqli->real_escape_string($_POST['date']);
+    $testimony = $mysqli->real_escape_string($_POST['testimony']);
+    $rating = $mysqli->real_escape_string($_POST['ratings']);
+    $sql = "INSERT INTO testimonies (userId, username, email, date, testimony, rating) VALUES ('$userId', '$username', '$email', '$date', '$testimony', '$rating')";
+    if ($mysqli->query($sql) === true) {
+        header("Location: user.php");
+        exit();
     } else {
-        echo "User session not found.";
+        echo "Error: " . $sql . "<br>" . $mysqli->error;
     }
+    $mysqli->close();
 }
 ?>
 
 
-<!-- DAILY WORD -->
+
+<!-- NOTEBOOKS INSERTION -->
+<?php
+include('database_connect.php');
+
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    // Escape user inputs for security
+    $notebook_title = $mysqli->real_escape_string($_POST['notebook-title']);
+    // Get the selected cover image filename from the form
+    $selected_cover = $mysqli->real_escape_string($_POST['selected-cover']);
+    // Assuming you have a mechanism to track the logged-in user
+    $userId = isset($_SESSION['userId']) ? $_SESSION['userId'] : null;
+
+    if ($userId) {
+        // Attempt insert query execution
+        $sql = "INSERT INTO notebooks (notebook_title, userId, notebook_cover) VALUES ('$notebook_title', '$userId', '$selected_cover')";
+        if ($mysqli->query($sql) === true) {
+            echo "Notebook added successfully!";
+            // Redirect the user to user.php after successful creation
+            header("Location: user.php");
+            exit(); // Ensure that no further code is executed after redirection
+        } else {
+            echo "Error: " . $sql . "<br>" . $mysqli->error;
+        }
+    } else {
+        // Redirect the user to the login page or handle the scenario where the user is not logged in
+        header("Location: login.php");
+        exit(); // Ensure that no further code is executed after redirection
+    }
+
+    // Close connection
+    $mysqli->close();
+}
+?>
+
+
+
+<!-- NAME.ID EMAIL NON EDITABLE -->
+<?php
+include 'Database_connect.php';
+$userId = $_SESSION['userId'];
+$sql = "SELECT username, email FROM users WHERE userId = ?";
+$stmt = $mysqli->prepare($sql);
+$stmt->bind_param("i", $userId);
+$stmt->execute();
+$stmt->bind_result($username, $email);
+$stmt->fetch();
+$stmt->close();
+?>
+
+<!-- PROFILE INFO INSERTION AND UPDATE: -->
+
+<?php
+include 'Database_connect.php'; // Include the database connection file
+
+// Enable error reporting for debugging
+error_reporting(E_ALL);
+
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    // Check if profile already exists for the user
+    $userId = $_POST['userIdInput'];
+    $existing_profile_query = "SELECT * FROM user_profile WHERE userId = ?";
+    $stmt = $mysqli->prepare($existing_profile_query);
+    $stmt->bind_param("i", $userId);
+    $stmt->execute();
+    $existing_profile_result = $stmt->get_result();
+
+    if ($existing_profile_result->num_rows > 0) {
+        // Update existing profile
+        $update_query = "UPDATE user_profile SET 
+            gender = ?, 
+            age = ?, 
+            address = ?, 
+            religion = ?, 
+            life_motto = ?, 
+            self_description = ? 
+            WHERE userId = ?";
+
+        $stmt = $mysqli->prepare($update_query);
+        $stmt->bind_param("sissssi", $_POST['genderSelect'], $_POST['ageInput'], $_POST['addressInput'], $_POST['religionInput'], $_POST['moto'], $_POST['selfdesc'], $userId);
+        $stmt->execute();
+        $stmt->close();
+    } else {
+        // Insert new profile
+        $insert_query = "INSERT INTO user_profile (userId, username, email, gender, age, address, religion, life_motto, self_description, profile_picture) 
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+
+        $profile_picture = ''; // Default value if no picture uploaded
+
+        if ($_FILES['profilePictureInput']['size'] > 0) {
+            $target_dir = "uploads/";
+            $target_file = $target_dir . basename($_FILES['profilePictureInput']['name']);
+
+            // Check if file is an image
+            $check = getimagesize($_FILES['profilePictureInput']['tmp_name']);
+            if ($check !== false) {
+                $uploadOk = 1;
+            } else {
+                echo "File is not an image.";
+                $uploadOk = 0;
+            }
+
+            // Check file size
+            if ($_FILES['profilePictureInput']['size'] > 500000) {
+                echo "Sorry, your file is too large.";
+                $uploadOk = 0;
+            }
+
+            // Allow only certain file formats
+            $imageFileType = strtolower(pathinfo($target_file, PATHINFO_EXTENSION));
+            if ($imageFileType != "jpg" && $imageFileType != "png" && $imageFileType != "jpeg" && $imageFileType != "gif") {
+                echo "Sorry, only JPG, JPEG, PNG & GIF files are allowed.";
+                $uploadOk = 0;
+            }
+
+            // Check if $uploadOk is set to 0 by an error
+            if ($uploadOk == 0) {
+                echo "Sorry, your file was not uploaded.";
+                // If everything is ok, try to upload file
+            } else {
+                if (move_uploaded_file($_FILES['profilePictureInput']['tmp_name'], $target_file)) {
+                    $profile_picture = $target_file;
+                } else {
+                    echo "Sorry, there was an error uploading your file.";
+                }
+            }
+        }
+
+        $stmt = $mysqli->prepare($insert_query);
+        $stmt->bind_param("issssissis", $userId, $_POST['usernameInput'], $_POST['emailInput'], $_POST['genderSelect'], $_POST['ageInput'], $_POST['addressInput'], $_POST['religionInput'], $_POST['moto'], $_POST['selfdesc'], $profile_picture);
+        $stmt->execute();
+        $stmt->close();
+    }
+
+    // Redirect to user.php after successful update/insert
+    header("Location: user.php");
+    exit();
+}
+
+$mysqli->close();
+?>
+
+
+
+
+
+
+
+
 
 
 
@@ -396,7 +516,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['saveBtn'])) {
                 <div class="profile-page">
                     <div class="content">
                         <div class="content__cover">
-                            <div class="content__avatar"></div>
+                            <div class="content__avatar">
+                                <img src="Images/profile/noProfile.jpg" alt="Avatar">
+                            </div>
+
                             <div class="content__bull"><span></span><span></span><span></span><span></span><span></span>
                             </div>
                         </div>
@@ -411,22 +534,22 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['saveBtn'])) {
                                 <p><span>User ID: <br></span><?php echo $userId; ?></p>
                             </div>
                             <div class="carder">
-                                <p><span>Gender: <br></span>Female</p>
+                                <p><span>Gender: <br></span></p>
                             </div>
                             <div class="carder">
-                                <p><span>Age: <br></span>20</p>
+                                <p><span>Age: <br></span></p>
                             </div>
                             <div class="carder">
-                                <p><span>Address: <br></span>Manila Davao del sur</p>
+                                <p><span>Address: <br></span></p>
                             </div>
                             <div class="carder">
-                                <p><span>Religion: <br></span>Born Again</p>
+                                <p><span>Religion: <br></span></p>
                             </div>
                             <div class="carder">
-                                <p><span>Life Moto: <br></span>Jesremian 29:11</p>
+                                <p><span>Life Moto: <br></span></p>
                             </div>
                             <div class="carder">
-                                <p><span>Self Description: <br></span>Lorem ipsum dolor sit amet consectetur, adipisicing elit.</p>
+                                <p><span>Self Description: <br></span></p>
                             </div>
                         </div>
 
@@ -470,6 +593,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['saveBtn'])) {
                     <h3 class="modal-title">Edit Profile</h3>
                 </div>
                 <br>
+
+
                 <form method="POST" action="">
                     <!-- Profile Picture Section -->
                     <div class="form-section">
@@ -480,8 +605,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['saveBtn'])) {
                     <!-- Personal Information Section -->
                     <div class="form-section">
                         <h4 class="form-title">Personal Information</h4>
-                        <input type="text" id="nameInput" name="nameInput" placeholder="Name">
-                        <input type="text" id="emailInput" name="emailInput" placeholder="Email">
+                        <h5>Username</h5>
+                        <input type="text" id="usernameInput" name="usernameInput" placeholder="Username" value="<?php echo htmlspecialchars($username); ?>" readonly>
+                        <h5>Email</h5>
+                        <input type="text" id="emailInput" name="emailInput" placeholder="Email" value="<?php echo htmlspecialchars($email); ?>" readonly>
+                        <h5>User ID</h5>
+                        <input type="text" id="userIdInput" name="userIdInput" placeholder="User ID" value="<?php echo $userId; ?>" readonly>
+                        <hr>
+                        <br>
                         <select id="genderSelect" name="genderSelect" placeholder="Gender">
                             <option value="Male">Male</option>
                             <option value="Female">Female</option>
@@ -553,6 +684,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['saveBtn'])) {
         </div>
 
 
+
         <!-- SONGS -->
         <div id="christianSongs" class="tab">
             <div class="main--container102">
@@ -560,55 +692,36 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['saveBtn'])) {
                     <h3 class="title">Christian Songs</h3>
                 </div>
                 <div class="section--container">
-                    <!-- Song Card 1 -->
+                    <?php
+                    include 'Database_connect.php';
+                    $sql = "SELECT * FROM songs";
+                    $result = $mysqli->query($sql);
 
-                    <div class="song-card">
-                        <div class="song-image">
-                            <img src="Images/bible03.jpg" alt="Song 1">
-                        </div>
-                        <div class="song-details">
-                            <h4 class="song-title">Song Title 1</h4>
-                            <p class="artist-name">Artist Name</p>
-                            <div class="duration-bar"></div>
-                            <div class="control-buttons">
-                                <button class="control-button play-button"><span class="icon"><i class="ri-play-line"></i></span></button>
-                                <button class="control-button stop-button"><span class="icon"><i class="ri-stop-line"></i></span></button>
+                    if ($result->num_rows > 0) {
+                        while ($row = $result->fetch_assoc()) {
+                    ?>
+                            <!-- Song Card -->
+                            <div class="song-card">
+                                <div class="song-image">
+                                    <img src="<?php echo $row['song_picture']; ?>" alt="<?php echo $row['song_title']; ?>">
+                                </div>
+                                <div class="song-details">
+                                    <h4 class="song-title"><?php echo $row['song_title']; ?></h4>
+                                    <p class="artist-name"><?php echo $row['song_artist']; ?></p>
+                                    <hr>
+                                    <div class="control-buttons">
+                                        <button class="control-button play-button" onclick="playSong('<?php echo $row['song_file']; ?>')"><span class="icon"><i class="ri-play-line"></i></span></button>
+                                        <button class="control-button stop-button" onclick="stopSong()"><span class="icon"><i class="ri-stop-line"></i></span></button>
+                                    </div>
+                                </div>
                             </div>
-                        </div>
-                    </div>
-
-                    <div class="song-card">
-                        <div class="song-image">
-                            <img src="Images/bible03.jpg" alt="Song 1">
-                        </div>
-                        <div class="song-details">
-                            <h4 class="song-title">Song Title 1</h4>
-                            <p class="artist-name">Artist Name</p>
-                            <div class="duration-bar"></div>
-                            <div class="control-buttons">
-                                <button class="control-button play-button"><span class="icon"><i class="ri-play-line"></i></span></button>
-                                <button class="control-button stop-button"><span class="icon"><i class="ri-stop-line"></i></span></button>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="song-card">
-                        <div class="song-image">
-                            <img src="Images/bible03.jpg" alt="Song 1">
-                        </div>
-                        <div class="song-details">
-                            <h4 class="song-title">Song Title 1</h4>
-                            <p class="artist-name">Artist Name</p>
-                            <div class="duration-bar"></div>
-                            <div class="control-buttons">
-                                <button class="control-button play-button"><span class="icon"><i class="ri-play-line"></i></span></button>
-                                <button class="control-button stop-button"><span class="icon"><i class="ri-stop-line"></i></span></button>
-                            </div>
-                        </div>
-                    </div>
-
-
-
+                    <?php
+                        }
+                    } else {
+                        echo "0 results";
+                    }
+                    $mysqli->close();
+                    ?>
                 </div>
             </div>
         </div>
@@ -625,9 +738,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['saveBtn'])) {
                     <div>
                         <input type="text" name="username" id="username" class="input" placeholder="user" required>
                     </div>
+                    <label for="userId">User ID:</label>
+                    <div>
+                        <input type="text" name="userId" id="userId" class="input" placeholder="userID" required>
+                    </div>
                     <label for="email">Email:</label>
                     <div>
-                        <input type="text" name="username" id="username" class="input" placeholder="user@gmail.com" required>
+                        <input type="text" name="email" id="email" class="input" placeholder="user@gmail.com" required>
                     </div>
                     <label for="date">Date:</label>
                     <div>
@@ -687,94 +804,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['saveBtn'])) {
                             </div>
                         </div>
 
-                        <div class="notecard">
-                            <div class="noteimage">
-                                <img src="Images/covers/2.png" alt="Notebook Cover">
 
-                            </div>
-                            <div class="notetitle-box">
-                                <p class="notetitle">Lorem, ipsum</p>
-                            </div>
-                        </div>
-
-                        <div class="notecard">
-                            <div class="noteimage">
-                                <img src="Images/covers/3.png" alt="Notebook Cover">
-
-                            </div>
-                            <div class="notetitle-box">
-                                <p class="notetitle">Lorem, ipsum dolor.</p>
-                            </div>
-                        </div>
-
-                        <div class="notecard">
-                            <div class="noteimage">
-                                <img src="Images/covers/4.png" alt="Notebook Cover">
-
-                            </div>
-                            <div class="notetitle-box">
-                                <p class="notetitle">Lorem ipsum dolor sit.</p>
-                            </div>
-                        </div>
-
-                        <div class="notecard">
-                            <div class="noteimage">
-                                <img src="Images/covers/5.png" alt="Notebook Cover">
-
-                            </div>
-                            <div class="notetitle-box">
-                                <p class="notetitle">Lorem ipsum dolor sit amet.</p>
-                            </div>
-                        </div>
-
-                        <div class="notecard">
-                            <div class="noteimage">
-                                <img src="Images/covers/6.png" alt="Notebook Cover">
-
-                            </div>
-                            <div class="notetitle-box">
-                                <p class="notetitle">Lorem ipsum dolor sit amet consectetur.</p>
-                            </div>
-                        </div>
-
-                        <div class="notecard">
-                            <div class="noteimage">
-                                <img src="Images/covers/7.png" alt="Notebook Cover">
-
-                            </div>
-                            <div class="notetitle-box">
-                                <p class="notetitle">Lorem ipsum, dolor sit amet consectetur adipisicing.</p>
-                            </div>
-                        </div>
-
-                        <div class="notecard">
-                            <div class="noteimage">
-                                <img src="Images/covers/7.png" alt="Notebook Cover">
-
-                            </div>
-                            <div class="notetitle-box">
-                                <p class="notetitle">Lorem ipsum, dolor sit amet consectetur adipisicing.</p>
-                            </div>
-                        </div>
-
-                        <div class="notecard">
-                            <div class="noteimage">
-                                <img src="Images/covers/7.png" alt="Notebook Cover">
-
-                            </div>
-                            <div class="notetitle-box">
-                                <p class="notetitle">Lorem ipsum, dolor sit amet consectetur adipisicing.</p>
-                            </div>
-                        </div>
-                        <div class="notecard">
-                            <div class="noteimage">
-                                <img src="Images/covers/7.png" alt="Notebook Cover">
-
-                            </div>
-                            <div class="notetitle-box">
-                                <p class="notetitle">Lorem ipsum, dolor sit amet consectetur adipisicing.</p>
-                            </div>
-                        </div>
 
 
                     </div>
@@ -788,21 +818,26 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['saveBtn'])) {
                 <h2>Add Notebook</h2>
                 <br>
                 <hr>
-                <form id="notebook-form">
+                <form id="notebook-form" method="POST" action="addnotebook.php">
                     <div class="form-group">
                         <br>
                         <label>Selected Cover:</label>
                         <br>
                         <br>
                         <div class="selected-cover">
-                            <h3 id="selectedCover">Cover 1</h3>
+                            <h3 id="selectedCover"></h3>
                         </div>
                         <br>
                         <button type="button" id="select-cover-button">Change Cover</button>
+                        <input type="hidden" id="selectedCoverInput" name="selected-cover" value="">
                     </div>
                     <br>
                     <br>
                     <div class="form-group">
+                        <label for="notebook-title">User Id:</label>
+                        <br>
+                        <input type="number" id="userId" name="userId" required>
+                        <br>
                         <label for="notebook-title">Notebook Title:</label>
                         <input type="text" id="notebook-title" name="notebook-title" required>
                     </div>
@@ -810,7 +845,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['saveBtn'])) {
                     <br>
                     <hr>
                     <div class="addbutton-group">
-                        <button type="submit" id="add-notebook">Add</button>
+                        <button type="submit" id="add-notebook" name="saveBtn">Add</button>
                         <button type="button" id="cancel-notebook">Cancel</button>
                     </div>
                 </form>
@@ -822,16 +857,16 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['saveBtn'])) {
             <div class="modal-content">
                 <h2>Select Cover</h2>
                 <div class="cover-images">
-                    <img src="Images/covers/1.png" alt="Cover 1" data-cover="cover1.jpg" id="cover1">
-                    <img src="Images/covers/2.png" alt="Cover 2" data-cover="cover2.jpg" id="cover2">
-                    <img src="Images/covers/3.png" alt="Cover 3" data-cover="cover3.jpg" id="cover3">
-                    <img src="Images/covers/4.png" alt="Cover 4" data-cover="cover4.jpg" id="cover4">
-                    <img src="Images/covers/5.png" alt="Cover 5" data-cover="cover5.jpg" id="cover5">
-                    <img src="Images/covers/6.png" alt="Cover 6" data-cover="cover6.jpg" id="cover6">
-                    <img src="Images/covers/7.png" alt="Cover 7" data-cover="cover7.jpg" id="cover7">
-                    <img src="Images/covers/8.png" alt="Cover 8" data-cover="cover8.jpg" id="cover8">
-                    <img src="Images/covers/9.png" alt="Cover 9" data-cover="cover9.jpg" id="cover">
-                    <img src="Images/covers/10.png" alt="Cover 10" data-cover="cover10.jpg" id="cover10">
+                    <img src="Images/covers/1.png" alt="Cover 1" data-cover="Images/covers/1.png" id="cover1">
+                    <img src="Images/covers/2.png" alt="Cover 2" data-cover="Images/covers/2.png" id="cover2">
+                    <img src="Images/covers/3.png" alt="Cover 3" data-cover="Images/covers/3.png" id="cover3">
+                    <img src="Images/covers/4.png" alt="Cover 4" data-cover="Images/covers/4.png" id="cover4">
+                    <img src="Images/covers/5.png" alt="Cover 5" data-cover="Images/covers/5.png" id="cover5">
+                    <img src="Images/covers/6.png" alt="Cover 6" data-cover="Images/covers/6.png" id="cover6">
+                    <img src="Images/covers/7.png" alt="Cover 7" data-cover="Images/covers/7.png" id="cover7">
+                    <img src="Images/covers/8.png" alt="Cover 8" data-cover="Images/covers/8.png" id="cover8">
+                    <img src="Images/covers/9.png" alt="Cover 9" data-cover="Images/covers/9.png" id="cover">
+                    <img src="Images/covers/10.png" alt="Cover 10" data-cover="Images/covers/10.png" id="cover10">
                 </div>
             </div>
         </div>
@@ -873,7 +908,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['saveBtn'])) {
         </div>
     </section>
 
-    <!-- JavaScript -->
+
+
     <!-- JavaScript -->
     <script>
         document.addEventListener("DOMContentLoaded", function() {
@@ -1118,13 +1154,16 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['saveBtn'])) {
 
             coverImages.forEach(image => {
                 image.addEventListener('click', function() {
-                    const newCoverAlt = this.alt;
-                    selectedCover.textContent = newCoverAlt;
+                    const newCoverSrc = this.getAttribute('data-cover');
+                    selectedCover.innerHTML = `${newCoverSrc}`;
                     coverModal.style.display = 'none';
                 });
             });
         });
     </script>
+
+
+
 
 
     <!-- IT WILL GO TO dailyWord TAB -->
@@ -1159,6 +1198,37 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['saveBtn'])) {
     </script>
 
 
+    <!-- FOR THE NOTEBOOK COVER INSERTION -->
+    <script>
+        document.querySelectorAll('.cover-images img').forEach(function(img) {
+            img.addEventListener('click', function() {
+                var selectedCover = img.getAttribute('data-cover');
+                document.getElementById('selectedCover').innerText = selectedCover;
+                document.getElementById('selectedCoverInput').value = selectedCover;
+            });
+        });
+    </script>
+
+    <!-- FOR SONG PLAY AND PAUSE -->
+    <script>
+        var currentAudio = null;
+
+        function playSong(songPath) {
+            if (currentAudio) {
+                currentAudio.pause();
+            }
+            var audio = new Audio(songPath);
+            audio.play();
+            currentAudio = audio;
+        }
+
+        function stopSong() {
+            if (currentAudio) {
+                currentAudio.pause();
+                currentAudio.currentTime = 0;
+            }
+        }
+    </script>
 
 
 
