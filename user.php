@@ -9,8 +9,8 @@ if (isset($_SESSION['username'])) {
 
     if ($result && $result->num_rows > 0) {
         $user = $result->fetch_assoc();
-?>
-<?php
+    ?>
+    <?php
     } else {
         echo "Error: Unable to fetch user's information.";
     }
@@ -62,8 +62,8 @@ if (isset($_SESSION['username'])) {
         $user = $result->fetch_assoc();
         $user_username = $user['username'];
         $user_email = $user['email'];
-?>
-<?php
+    ?>
+    <?php
     } else {
         echo "Error: Unable to fetch user's information.";
     }
@@ -88,59 +88,36 @@ if (isset($_SESSION['userId'])) {
 
 <!-- insert testimony -->
 <?php
-include('database_connect.php');
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
 
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $username = $mysqli->real_escape_string($_POST['username']);
-    $userId = $mysqli->real_escape_string($_POST['userId']);
-    $email = $mysqli->real_escape_string($_POST['email']);
-    $date = $mysqli->real_escape_string($_POST['date']);
-    $testimony = $mysqli->real_escape_string($_POST['testimony']);
-    $rating = $mysqli->real_escape_string($_POST['ratings']);
-    $sql = "INSERT INTO testimonies (userId, username, email, date, testimony, rating) VALUES ('$userId', '$username', '$email', '$date', '$testimony', '$rating')";
-    if ($mysqli->query($sql) === true) {
-        header("Location: user.php");
-        exit();
-    } else {
-        echo "Error: " . $sql . "<br>" . $mysqli->error;
-    }
-    $mysqli->close();
-}
-?>
+include 'database_connect.php'; 
 
-
-
-<!-- NOTEBOOKS INSERTION -->
-<?php
-include('database_connect.php');
-
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    // Escape user inputs for security
-    $notebook_title = $mysqli->real_escape_string($_POST['notebook-title']);
-    // Get the selected cover image filename from the form
-    $selected_cover = $mysqli->real_escape_string($_POST['selected-cover']);
-    // Assuming you have a mechanism to track the logged-in user
-    $userId = isset($_SESSION['userId']) ? $_SESSION['userId'] : null;
-
-    if ($userId) {
-        // Attempt insert query execution
-        $sql = "INSERT INTO notebooks (notebook_title, userId, notebook_cover) VALUES ('$notebook_title', '$userId', '$selected_cover')";
-        if ($mysqli->query($sql) === true) {
-            echo "Notebook added successfully!";
-            // Redirect the user to user.php after successful creation
-            header("Location: user.php");
-            exit(); // Ensure that no further code is executed after redirection
+// Check if the user is logged in
+if (isset($_SESSION['userId'])) {
+    // Get user information from the session
+    $userId = $_SESSION['userId'];
+    $username = $_SESSION['username'];
+    $email = $_SESSION['email'];
+    if ($_SERVER["REQUEST_METHOD"] == "POST") {
+        if (isset($_POST['date'], $_POST['testimony'], $_POST['ratings'])) {
+            $date = $_POST['date'];
+            $testimony = $_POST['testimony'];
+            $rating = $_POST['ratings'];
+            $stmt = $mysqli->prepare("INSERT INTO testimonies (userId, username, email, date, testimony, rating) VALUES (?, ?, ?, ?, ?, ?)");
+            $stmt->bind_param("issssi", $userId, $username, $email, $date, $testimony, $rating);
+            if ($stmt->execute()) {
+                echo "Testimony submitted successfully.";
+            } else {
+                echo "Error inserting testimony: " . $stmt->error;
+            }
+            $stmt->close();
         } else {
-            echo "Error: " . $sql . "<br>" . $mysqli->error;
+            echo "All form fields are required.";
         }
-    } else {
-        // Redirect the user to the login page or handle the scenario where the user is not logged in
-        header("Location: login.php");
-        exit(); // Ensure that no further code is executed after redirection
     }
-
-    // Close connection
-    $mysqli->close();
+} else {
+    echo "User not logged in.";
 }
 ?>
 
@@ -159,95 +136,28 @@ $stmt->fetch();
 $stmt->close();
 ?>
 
-<!-- PROFILE INFO INSERTION AND UPDATE: -->
 
+<!-- NOTEBOOK INSERTION -->
 <?php
-include 'Database_connect.php'; // Include the database connection file
-
-// Enable error reporting for debugging
-error_reporting(E_ALL);
-
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    // Check if profile already exists for the user
-    $userId = $_POST['userIdInput'];
-    $existing_profile_query = "SELECT * FROM user_profile WHERE userId = ?";
-    $stmt = $mysqli->prepare($existing_profile_query);
-    $stmt->bind_param("i", $userId);
-    $stmt->execute();
-    $existing_profile_result = $stmt->get_result();
-
-    if ($existing_profile_result->num_rows > 0) {
-        // Update existing profile
-        $update_query = "UPDATE user_profile SET 
-            gender = ?, 
-            age = ?, 
-            address = ?, 
-            religion = ?, 
-            life_motto = ?, 
-            self_description = ? 
-            WHERE userId = ?";
-
-        $stmt = $mysqli->prepare($update_query);
-        $stmt->bind_param("sissssi", $_POST['genderSelect'], $_POST['ageInput'], $_POST['addressInput'], $_POST['religionInput'], $_POST['moto'], $_POST['selfdesc'], $userId);
-        $stmt->execute();
-        $stmt->close();
-    } else {
-        // Insert new profile
-        $insert_query = "INSERT INTO user_profile (userId, username, email, gender, age, address, religion, life_motto, self_description, profile_picture) 
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-
-        $profile_picture = ''; // Default value if no picture uploaded
-
-        if ($_FILES['profilePictureInput']['size'] > 0) {
-            $target_dir = "uploads/";
-            $target_file = $target_dir . basename($_FILES['profilePictureInput']['name']);
-
-            // Check if file is an image
-            $check = getimagesize($_FILES['profilePictureInput']['tmp_name']);
-            if ($check !== false) {
-                $uploadOk = 1;
-            } else {
-                echo "File is not an image.";
-                $uploadOk = 0;
-            }
-
-            // Check file size
-            if ($_FILES['profilePictureInput']['size'] > 500000) {
-                echo "Sorry, your file is too large.";
-                $uploadOk = 0;
-            }
-
-            // Allow only certain file formats
-            $imageFileType = strtolower(pathinfo($target_file, PATHINFO_EXTENSION));
-            if ($imageFileType != "jpg" && $imageFileType != "png" && $imageFileType != "jpeg" && $imageFileType != "gif") {
-                echo "Sorry, only JPG, JPEG, PNG & GIF files are allowed.";
-                $uploadOk = 0;
-            }
-
-            // Check if $uploadOk is set to 0 by an error
-            if ($uploadOk == 0) {
-                echo "Sorry, your file was not uploaded.";
-                // If everything is ok, try to upload file
-            } else {
-                if (move_uploaded_file($_FILES['profilePictureInput']['tmp_name'], $target_file)) {
-                    $profile_picture = $target_file;
-                } else {
-                    echo "Sorry, there was an error uploading your file.";
-                }
-            }
+include 'database_connect.php'; 
+if (isset($_SESSION['userId'])) {
+    if (isset($_POST['notebook-title']) && !empty($_POST['notebook-title'])) {
+        $notebook_title = $_POST['notebook-title'];
+        $userId = $_SESSION['userId'];
+        $stmt = $mysqli->prepare("INSERT INTO notebooks (notebook_title, userId) VALUES (?, ?)");
+        $stmt->bind_param("si", $notebook_title, $userId);
+        if ($stmt->execute()) {
+            // Redirect to user.php
+            header("Location: user.php");
+            exit(); 
+        } else {
+            echo "Error inserting notebook: " . $stmt->error;
         }
-
-        $stmt = $mysqli->prepare($insert_query);
-        $stmt->bind_param("issssissis", $userId, $_POST['usernameInput'], $_POST['emailInput'], $_POST['genderSelect'], $_POST['ageInput'], $_POST['addressInput'], $_POST['religionInput'], $_POST['moto'], $_POST['selfdesc'], $profile_picture);
-        $stmt->execute();
         $stmt->close();
     }
-    header("Location: user.php");
-    exit();
-}
-
-$mysqli->close();
+} 
 ?>
+
 
 
 
@@ -280,7 +190,9 @@ $mysqli->close();
             <h2><span>Devotion</span>Diaries</h2>
         </div>
         <div class="profile">
-            <span class="username"><?php echo $user['username']; ?></span>
+            <span class="username">
+                <?php echo $user['username']; ?>
+            </span>
             <img src="Images/signin.svg" alt="User's Image">
         </div>
 
@@ -371,12 +283,15 @@ $mysqli->close();
                                 </span>
                             </a>
                             <p class="desc">
-                                Access the inspirational message for today's reflection and guidance from the Word of God.
+                                Access the inspirational message for today's reflection and guidance from the Word of
+                                God.
                             </p>
                             <br>
                             <div class="card123">
                                 <div class="data">
-                                    <p><?php echo $daily_word_title; ?></p>
+                                    <p>
+                                        <?php echo $daily_word_title; ?>
+                                    </p>
                                 </div>
                             </div>
                             <br>
@@ -393,11 +308,14 @@ $mysqli->close();
                             <a href="#">
                                 <span class="title">Recent Added Song</span>
                             </a>
-                            <p class="desc">Discover the latest addition to the collection of uplifting Christian music, that surely lift your Spirit.</p>
+                            <p class="desc">Discover the latest addition to the collection of uplifting Christian music,
+                                that surely lift your Spirit.</p>
                             <br>
                             <div class="card123">
                                 <div class="data">
-                                    <p><?php echo $recent_song_title; ?></p>
+                                    <p>
+                                        <?php echo $recent_song_title; ?>
+                                    </p>
                                 </div>
                             </div>
                             <br>
@@ -464,7 +382,8 @@ $mysqli->close();
                                 </span>
                             </a>
                             <p class="desc">
-                                View the most recently created or updated devotional notebooks for personal growth and reflection.
+                                View the most recently created or updated devotional notebooks for personal growth and
+                                reflection.
                             </p>
                             <br>
                             <div class="card123">
@@ -524,12 +443,18 @@ $mysqli->close();
                         <div class="content__actions"><a href="#">
                             </a><a href="#"></a></div>
                         <div class="content__title">
-                            <h1><?php echo $user_username; ?></h1><span><?php echo $user_email; ?></span>
+                            <h1>
+                                <?php echo $user_username; ?>
+                            </h1><span>
+                                <?php echo $user_email; ?>
+                            </span>
                         </div>
 
                         <div class="content__description">
                             <div class="carder">
-                                <p><span>User ID: <br></span><?php echo $userId; ?></p>
+                                <p><span>User ID: <br></span>
+                                    <?php echo $userId; ?>
+                                </p>
                             </div>
                             <div class="carder">
                                 <p><span>Gender: <br></span></p>
@@ -560,7 +485,7 @@ $mysqli->close();
                         <div class="content__button"><a class="button" href="#">
                                 <div class="button__border"></div>
                                 <div class="button__bg"></div>
-                                <p class="button__text">Edit Profile</p>
+                                <p class="button__text">Add Information</p>
                             </a></div>
                     </div>
                     <div class="bg">
@@ -577,7 +502,9 @@ $mysqli->close();
                     </div>
                     <div class="theme-switcher-button" id="theme-switcher-button">
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512">
-                            <path fill="currentColor" d="M352 0H32C14.33 0 0 14.33 0 32v224h384V32c0-17.67-14.33-32-32-32zM0 320c0 35.35 28.66 64 64 64h64v64c0 35.35 28.66 64 64 64s64-28.65 64-64v-64h64c35.34 0 64-28.65 64-64v-32H0v32zm192 104c13.25 0 24 10.74 24 24 0 13.25-10.75 24-24 24s-24-10.75-24-24c0-13.26 10.75-24 24-24z"></path>
+                            <path fill="currentColor"
+                                d="M352 0H32C14.33 0 0 14.33 0 32v224h384V32c0-17.67-14.33-32-32-32zM0 320c0 35.35 28.66 64 64 64h64v64c0 35.35 28.66 64 64 64s64-28.65 64-64v-64h64c35.34 0 64-28.65 64-64v-32H0v32zm192 104c13.25 0 24 10.74 24 24 0 13.25-10.75 24-24 24s-24-10.75-24-24c0-13.26 10.75-24 24-24z">
+                            </path>
                         </svg>
                     </div>
                 </div>
@@ -593,22 +520,25 @@ $mysqli->close();
                 <br>
 
 
-                <form method="POST" action="">
+                <form method="POST" action="user_info_insertion.php">
                     <!-- Profile Picture Section -->
-                    <div class="form-section">
+                    <!-- <div class="form-section">
                         <h4 class="form-title">Profile Picture</h4>
                         <input type="file" id="profilePictureInput" name="profilePictureInput" accept="image/*">
-                    </div>
+                    </div> -->
 
                     <!-- Personal Information Section -->
                     <div class="form-section">
                         <h4 class="form-title">Personal Information</h4>
                         <h5>Username</h5>
-                        <input type="text" id="usernameInput" name="usernameInput" placeholder="Username" value="<?php echo htmlspecialchars($username); ?>" readonly>
+                        <input type="text" id="usernameInput" name="usernameInput" placeholder="Username"
+                            value="<?php echo htmlspecialchars($username); ?>" readonly>
                         <h5>Email</h5>
-                        <input type="text" id="emailInput" name="emailInput" placeholder="Email" value="<?php echo htmlspecialchars($email); ?>" readonly>
+                        <input type="text" id="emailInput" name="emailInput" placeholder="Email"
+                            value="<?php echo htmlspecialchars($email); ?>" readonly>
                         <h5>User ID</h5>
-                        <input type="text" id="userIdInput" name="userIdInput" placeholder="User ID" value="<?php echo $userId; ?>" readonly>
+                        <input type="text" id="userIdInput" name="userIdInput" placeholder="User ID"
+                            value="<?php echo $userId; ?>" readonly>
                         <hr>
                         <br>
                         <select id="genderSelect" name="genderSelect" placeholder="Gender">
@@ -621,11 +551,14 @@ $mysqli->close();
                     </div>
 
                     <!-- Additional Information Section -->
+                    <!-- Additional Information Section -->
                     <div class="form-section">
                         <h4 class="form-title">Additional Information</h4>
-                        <textarea id="moto" name="moto" placeholder="Life Moto"></textarea>
-                        <textarea id="selfdesc" name="selfdesc" placeholder="Self Description"></textarea>
+                        <textarea id="life_motto" name="life_motto" placeholder="Life Motto"></textarea>
+                        <textarea id="self_description" name="self_description"
+                            placeholder="Self Description"></textarea>
                     </div>
+
 
                     <!-- Buttons -->
                     <button type="submit" id="saveBtn" name="saveBtn">Save</button>
@@ -665,11 +598,17 @@ $mysqli->close();
                     if ($result->num_rows > 0) {
                         // Fetch the row
                         $row = $result->fetch_assoc();
-                    ?>
-                        <div class="date"><?php echo $row['daily_word_date']; ?></div>
-                        <div class="title1"><?php echo $row['daily_word_title']; ?></div>
-                        <p class="word"><?php echo $row['daily_word_text']; ?></p>
-                    <?php
+                        ?>
+                        <div class="date">
+                            <?php echo $row['daily_word_date']; ?>
+                        </div>
+                        <div class="title1">
+                            <?php echo $row['daily_word_title']; ?>
+                        </div>
+                        <p class="word">
+                            <?php echo $row['daily_word_text']; ?>
+                        </p>
+                        <?php
                     } else {
                         echo "<p>No daily word found.</p>";
                     }
@@ -697,23 +636,30 @@ $mysqli->close();
 
                     if ($result->num_rows > 0) {
                         while ($row = $result->fetch_assoc()) {
-                    ?>
+                            ?>
                             <!-- Song Card -->
                             <div class="song-card">
                                 <div class="song-image">
                                     <img src="<?php echo $row['song_picture']; ?>" alt="<?php echo $row['song_title']; ?>">
                                 </div>
                                 <div class="song-details">
-                                    <h4 class="song-title"><?php echo $row['song_title']; ?></h4>
-                                    <p class="artist-name"><?php echo $row['song_artist']; ?></p>
+                                    <h4 class="song-title">
+                                        <?php echo $row['song_title']; ?>
+                                    </h4>
+                                    <p class="artist-name">
+                                        <?php echo $row['song_artist']; ?>
+                                    </p>
                                     <hr>
                                     <div class="control-buttons">
-                                        <button class="control-button play-button" onclick="playSong('<?php echo $row['song_file']; ?>')"><span class="icon"><i class="ri-play-line"></i></span></button>
-                                        <button class="control-button stop-button" onclick="stopSong()"><span class="icon"><i class="ri-stop-line"></i></span></button>
+                                        <button class="control-button play-button"
+                                            onclick="playSong('<?php echo $row['song_file']; ?>')"><span class="icon"><i
+                                                    class="ri-play-line"></i></span></button>
+                                        <button class="control-button stop-button" onclick="stopSong()"><span class="icon"><i
+                                                    class="ri-stop-line"></i></span></button>
                                     </div>
                                 </div>
                             </div>
-                    <?php
+                            <?php
                         }
                     } else {
                         echo "0 results";
@@ -730,36 +676,35 @@ $mysqli->close();
                 <h3 class="title">Send a Testimony</h3>
             </div>
             <div class="section--container">
-                <form class="form" action="#" method="post">
+                <form class="form" action="" method="POST">
                     <div class="heading">Testimony Form</div>
-                    <label for="username">Username:</label>
-                    <div>
-                        <input type="text" name="username" id="username" class="input" placeholder="user" required>
-                    </div>
-                    <label for="userId">User ID:</label>
-                    <div>
-                        <input type="text" name="userId" id="userId" class="input" placeholder="userID" required>
-                    </div>
-                    <label for="email">Email:</label>
-                    <div>
-                        <input type="text" name="email" id="email" class="input" placeholder="user@gmail.com" required>
-                    </div>
                     <label for="date">Date:</label>
                     <div>
                         <input type="date" name="date" id="date" class="input" required>
                     </div>
                     <label for="testimony">Testimony:</label>
                     <div>
-                        <textarea name="testimony" id="testimony" class="input" rows="5" placeholder="none" required></textarea>
+                        <textarea name="testimony" id="testimony" class="input" rows="5" placeholder="none"
+                            required></textarea>
                     </div>
                     <div>
                         <label for="ratings">Application Rating:</label>
                         <select name="ratings" id="ratings" class="input" required>
-                            <option value="1">[1] Poor: The lowest rating, indicating a very unsatisfactory experience. Significant issues or problems were encountered, and the product or service did not meet expectations. </option>
-                            <option value="2">[2] Fair: A below-average rating, suggesting that there were notable flaws or shortcomings. The experience may have been mediocre, with room for improvement.</option>
-                            <option value="3">[3] Average: An okay rating, indicating a satisfactory but unremarkable experience. The product or service met basic expectations but didn't exceed them.</option>
-                            <option value="4">[4] Good: A positive rating, signifying a solid experience with few issues. The product or service performed well and met expectations with some room for improvement.</option>
-                            <option value="5">[5] Excellent: The highest rating, representing an outstanding experience. The product or service exceeded expectations, with exceptional performance and satisfaction.</option>
+                            <option value="1">[1] Poor: The lowest rating, indicating a very unsatisfactory experience.
+                                Significant issues or problems were encountered, and the product or service did not meet
+                                expectations. </option>
+                            <option value="2">[2] Fair: A below-average rating, suggesting that there were notable flaws
+                                or shortcomings. The experience may have been mediocre, with room for improvement.
+                            </option>
+                            <option value="3">[3] Average: An okay rating, indicating a satisfactory but unremarkable
+                                experience. The product or service met basic expectations but didn't exceed them.
+                            </option>
+                            <option value="4">[4] Good: A positive rating, signifying a solid experience with few
+                                issues. The product or service performed well and met expectations with some room for
+                                improvement.</option>
+                            <option value="5">[5] Excellent: The highest rating, representing an outstanding experience.
+                                The product or service exceeded expectations, with exceptional performance and
+                                satisfaction.</option>
                         </select>
                     </div>
                     <div>
@@ -767,6 +712,7 @@ $mysqli->close();
                         <button type="reset" class="btn">Reset</button>
                     </div>
                 </form>
+
             </div>
         </div>
 
@@ -777,7 +723,8 @@ $mysqli->close();
                 <div class="section--title104">
                     <h3 class="title04">Devo Notebooks</h3>
                     <button class="button" id="notebutton">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="20" viewBox="0 0 20 20" height="20" fill="none" class="svg-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" viewBox="0 0 20 20" height="20" fill="none"
+                            class="svg-icon">
                             <g stroke-width="1.5" stroke-linecap="round" stroke="black">
                                 <circle r="7.5" cy="10" cx="10"></circle>
                                 <path d="m9.99998 7.5v5"></path>
@@ -812,14 +759,10 @@ $mysqli->close();
                 <h2>Add Notebook</h2>
                 <br>
                 <hr>
-                <form class="notebook-form" method="POST" action="insert_notebook.php">
+                <form class="notebook-form" id="notebook-form" method="POST" action="user.php">
                     <br>
                     <br>
                     <div class="form-group">
-                        <label for="notebook-title">User Id:</label>
-                        <br>
-                        <input type="number" id="userId" name="userId" required>
-                        <br>
                         <label for="notebook-title">Notebook Title:</label>
                         <input type="text" id="notebook-title" name="notebook-title" required>
                     </div>
@@ -827,12 +770,27 @@ $mysqli->close();
                     <br>
                     <hr>
                     <div class="addbutton-group">
-                        <button type="submit" id="add-notebook" >Add</button>
+                        <button type="button" id="add-notebook">Add</button>
                         <button type="button" id="cancel-notebook">Cancel</button>
                     </div>
                 </form>
             </div>
         </div>
+
+        <script>
+            document.getElementById('add-notebook').addEventListener('click', function () {
+                var notebookTitle = document.getElementById('notebook-title').value;
+
+                if (notebookTitle.trim() !== '') {
+                    document.getElementById('notebook-form').submit();
+                } else {
+                    alert('Notebook title cannot be empty!');
+                }
+            });
+        </script>
+
+
+
 
         <!-- Modal for Cover Selection -->
         <div id="cover-modal" class="modalcover">
@@ -892,7 +850,7 @@ $mysqli->close();
 
     <!-- JavaScript -->
     <script>
-        document.addEventListener("DOMContentLoaded", function() {
+        document.addEventListener("DOMContentLoaded", function () {
             const tabs = document.querySelectorAll('.tab');
             const sidebarLinks = document.querySelectorAll('.sidebar-link');
 
@@ -921,7 +879,7 @@ $mysqli->close();
             showTab('dashboard');
 
             sidebarLinks.forEach(link => {
-                link.addEventListener('click', function(e) {
+                link.addEventListener('click', function (e) {
                     e.preventDefault();
                     const target = this.getAttribute('data-target');
                     showTab(target);
@@ -937,7 +895,7 @@ $mysqli->close();
 
             const themeSwiter = {
 
-                init: function() {
+                init: function () {
                     this.wrapper = document.getElementById('theme-switcher-wrapper')
                     this.button = document.getElementById('theme-switcher-button')
                     this.theme = this.wrapper.querySelectorAll('[data-theme]')
@@ -946,22 +904,22 @@ $mysqli->close();
                     this.start()
                 },
 
-                events: function() {
+                events: function () {
                     this.button.addEventListener('click', this.displayed.bind(this), false)
                     this.theme.forEach(theme => theme.addEventListener('click', this.themed.bind(this), false))
                 },
 
-                start: function() {
+                start: function () {
                     let theme = this.themes[Math.floor(Math.random() * this.themes.length)]
                     document.body.classList.add(theme)
                 },
 
-                displayed: function() {
+                displayed: function () {
                     (this.wrapper.classList.contains('is-open')) ?
-                    this.wrapper.classList.remove('is-open'): this.wrapper.classList.add('is-open')
+                        this.wrapper.classList.remove('is-open') : this.wrapper.classList.add('is-open')
                 },
 
-                themed: function(e) {
+                themed: function (e) {
                     this.themes.forEach(theme => {
                         if (document.body.classList.contains(theme))
                             document.body.classList.remove(theme)
@@ -992,22 +950,22 @@ $mysqli->close();
         function closeModal() {
             modal.style.display = "none";
         }
-        editProfileBtn.onclick = function(event) {
+        editProfileBtn.onclick = function (event) {
             event.preventDefault();
             openModal();
         }
-        saveBtn.onclick = function(event) {
+        saveBtn.onclick = function (event) {
             event.preventDefault();
             closeModal();
         }
-        cancelBtn.onclick = function(event) {
+        cancelBtn.onclick = function (event) {
             event.preventDefault();
             closeModal();
         }
-        span.onclick = function() {
+        span.onclick = function () {
             closeModal();
         }
-        window.onclick = function(event) {
+        window.onclick = function (event) {
             if (event.target == modal) {
                 closeModal();
             }
@@ -1019,11 +977,11 @@ $mysqli->close();
 
         function resetFormFields() {
             var inputFields = document.querySelectorAll('input[type="text"], textarea, select');
-            inputFields.forEach(function(element) {
+            inputFields.forEach(function (element) {
                 element.value = "";
             });
         }
-        resetButton.addEventListener("click", function() {
+        resetButton.addEventListener("click", function () {
             resetFormFields();
         });
     </script>
@@ -1044,22 +1002,22 @@ $mysqli->close();
         function closeNotebookModal() {
             notebookmodal.style.display = "none";
         }
-        addNoteBtn.onclick = function(event) {
+        addNoteBtn.onclick = function (event) {
             event.preventDefault(); // Prevent the default button behavior
             openNotebookModal();
         }
-        notebookSaveBtn.onclick = function(event) {
+        notebookSaveBtn.onclick = function (event) {
             event.preventDefault(); // Prevent the default button behavior
             closeNotebookModal();
         }
-        notebookCancelBtn.onclick = function(event) {
+        notebookCancelBtn.onclick = function (event) {
             event.preventDefault(); // Prevent the default button behavior
             closeNotebookModal();
         }
-        notebookSpan.onclick = function() {
+        notebookSpan.onclick = function () {
             closeNotebookModal();
         }
-        window.onclick = function(event) {
+        window.onclick = function (event) {
             if (event.target == notebookmodal) {
                 closeNotebookModal();
             }
@@ -1068,7 +1026,7 @@ $mysqli->close();
 
     <!-- FOR THE CARDS IN NOTEBOOK -->
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             const notecardContainer = document.querySelector('.notecard-row');
             const notecards = document.querySelectorAll('.notecard');
             const maxCardsPerRow = 5;
@@ -1105,7 +1063,7 @@ $mysqli->close();
             calculateCardWidth();
             rearrangeCards();
             const addButton = document.querySelector('#add-card-button');
-            addButton.addEventListener('click', function() {
+            addButton.addEventListener('click', function () {
                 const newCard = document.createElement('div');
                 newCard.classList.add('notecard');
                 newCard.innerHTML = `
@@ -1122,18 +1080,18 @@ $mysqli->close();
 
     <!-- NOTEBOOK CARD MODAL -->
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             const selectCoverButton = document.getElementById('select-cover-button');
             const coverModal = document.getElementById('cover-modal');
             const coverImages = coverModal.querySelectorAll('.cover-images img');
             const selectedCover = document.getElementById('selectedCover');
 
-            selectCoverButton.addEventListener('click', function() {
+            selectCoverButton.addEventListener('click', function () {
                 coverModal.style.display = 'block';
             });
 
             coverImages.forEach(image => {
-                image.addEventListener('click', function() {
+                image.addEventListener('click', function () {
                     const newCoverSrc = this.getAttribute('data-cover');
                     selectedCover.innerHTML = `${newCoverSrc}`;
                     coverModal.style.display = 'none';
@@ -1148,30 +1106,30 @@ $mysqli->close();
 
     <!-- IT WILL GO TO dailyWord TAB -->
     <script>
-        document.getElementById("firstcard").addEventListener("click", function() {
+        document.getElementById("firstcard").addEventListener("click", function () {
             document.getElementById("dailyWord").style.display = "block";
         });
     </script>
     <!-- IT WILL GO TO songs TAB -->
     <script>
-        document.getElementById("secondcard").addEventListener("click", function() {
+        document.getElementById("secondcard").addEventListener("click", function () {
             document.getElementById("christianSongs").style.display = "block";
         });
     </script>
 
     <script>
-        document.addEventListener("DOMContentLoaded", function() {
+        document.addEventListener("DOMContentLoaded", function () {
             var findButton = document.getElementById('findOutMoreBtn1');
-            findButton.addEventListener('click', function() {
+            findButton.addEventListener('click', function () {
                 window.open('https://www.bible.com/', '_blank');
             });
         });
     </script>
 
     <script>
-        document.addEventListener("DOMContentLoaded", function() {
+        document.addEventListener("DOMContentLoaded", function () {
             var findButton = document.getElementById('findOutMoreBtn2');
-            findButton.addEventListener('click', function() {
+            findButton.addEventListener('click', function () {
                 window.open('https://www.intouch.org/read/daily-devotions', '_blank');
             });
         });
@@ -1180,8 +1138,8 @@ $mysqli->close();
 
     <!-- FOR THE NOTEBOOK COVER INSERTION -->
     <script>
-        document.querySelectorAll('.cover-images img').forEach(function(img) {
-            img.addEventListener('click', function() {
+        document.querySelectorAll('.cover-images img').forEach(function (img) {
+            img.addEventListener('click', function () {
                 var selectedCover = img.getAttribute('data-cover');
                 document.getElementById('selectedCover').innerText = selectedCover;
                 document.getElementById('selectedCoverInput').value = selectedCover;
