@@ -1645,81 +1645,66 @@ select {
 .notecard {
   position: relative;
   width: calc(20% - 20px);
-  height: 23em;
-
+  height: 25em;
   cursor: pointer;
   transition: all 120ms;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: transparent;
   overflow: hidden;
-}
-
-
-
-.notecard-row .notecard:first-child {
-  margin-left: 0;
-}
-
-.notecard-row .notecard:last-child {
-  margin-right: 0;
-}
-
-.notecard::after {
-  content: "Add Entries";
-  padding-top: 1.25em;
-  padding-left: 1.25em;
-  position: absolute;
-  bottom: -60px;
-  background: #99b27e;
-  color: #fff;
-  height: 10em;
-  width: 90%;
-  transition: all 80ms;
-  font-weight: 600;
-  text-transform: uppercase;
-  opacity: 0;
-  align-items: end;
-}
-
-.notetitle-box {
-  position: absolute;
-  bottom: 10px; 
-  padding: 5px; 
-  border-radius: 5px;
-  background-color: #99b27e; /* Adjust background color and transparency */
-  color: #000;
-  font-family: 'Poppins', sans-serif;
-  font-size: small;
-  font-weight: 500;
-  text-align: left;
-}
-
-.notecard:hover::after {
-  bottom: 0;
-  opacity: 20;
-}
-
-.text {
-  max-width: 50px;
+  background: transparent;
 }
 
 .noteimage {
-  width: 100%;
-  height: 70%;
-  overflow: hidden;
   position: relative;
-  padding: 0;
+  width: 100%;
+  height: 70%; /* Adjusted to fill the entire space */
+  overflow: hidden;
 }
 
 .noteimage img {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  padding: 0;
 }
 
+.notetitle-box {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 5px;
+  color: #000;
+  font-family: 'Poppins', sans-serif;
+  font-size: medium;
+  font-weight: 400;
+  text-align: center;
+  z-index: 1;
+  background: rgba(255, 255, 255, 0.7); 
+}
+
+.button-container {
+  display: flex;
+  justify-content: center;
+  margin-top: 5px;
+}
+
+.edit-button,
+.add-entry-button {
+  padding: 3px 7px;
+  margin: 0 5px;
+  background-color: #99b27e;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-family: 'Poppins', sans-serif;
+  font-size: small;
+  font-weight: 300;
+  transition: background-color 0.3s ease;
+}
+
+.edit-button:hover,
+.add-entry-button:hover {
+  background-color: #6c7d58;
+}
 
 
 /* NOTEBOOK MODAL */
@@ -1795,6 +1780,84 @@ select {
   background: #274e13;
 }
 
+
+/* NOTEBOOK COVER STYLING */
+/* Modal Background
+.modalcover {
+  display: none;
+  position: fixed; 
+  z-index: 1000;
+  left: 0;
+  top: 0;
+  width: 100%; 
+  height: 100%; 
+  overflow: auto; 
+  background-color: rgba(0,0,0,0.5); 
+}
+
+
+.modal-content {
+  background-color: #fefefe;
+  margin: 10% auto;
+  padding: 20px;
+  border: 1px solid #888;
+  width: 80%; 
+  max-width: 600px;
+  border-radius: 10px;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+  text-align: center;
+}
+
+
+.cover-images {
+  display: flex;
+  justify-content: space-around;
+  flex-wrap: wrap;
+  margin: 20px 0;
+}
+
+
+.cover-images label {
+  display: inline-block;
+  cursor: pointer;
+  margin: 10px;
+}
+
+.cover-images img {
+  width: 100px;
+  height: 150px;
+  object-fit: cover;
+  border: 2px solid transparent;
+  border-radius: 5px;
+  transition: border 0.3s ease;
+}
+
+.cover-images input[type="radio"] {
+  display: none;
+}
+
+.cover-images input[type="radio"]:checked + img {
+  border-color: #99b27e;
+}
+
+
+button {
+  background-color: #99b27e;
+  color: white;
+  padding: 10px 20px;
+  margin: 10px 5px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-family: 'Poppins', sans-serif;
+  font-size: medium;
+  font-weight: 500;
+  transition: background-color 0.3s ease;
+}
+
+button:hover {
+  background-color: #6c7d58;
+} */
 
 
 /* TRASH STYLING */

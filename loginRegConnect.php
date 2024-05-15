@@ -1,43 +1,48 @@
 <?php
 session_start();
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
 
-$host = 'localhost';
-$db_user = 'root';
-$db_password = '';
-$db_name = 'devdiaries';
-
-// Create connection
-$mysqli = new mysqli($host, $db_user, $db_password, $db_name);
-
-// Check connection
-if ($mysqli->connect_error) {
-    die("Connection failed: " . $mysqli->connect_error);
-}
+include 'Database_connect.php';
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $username = trim($_POST['username']); // Changed from firstname and lastname
-    $email = trim($_POST['email']);
-    $password = trim($_POST['password']);
+    if (isset($_POST['username'], $_POST['email'], $_POST['password'])) {
+        $username = trim($_POST['username']);
+        $email = trim($_POST['email']);
+        $password = trim($_POST['password']);
 
-    if (empty($username) || empty($email) || empty($password)) {
-        echo "Please fill in all fields.";
-    } else {
-        $hashed_password = password_hash($password, PASSWORD_DEFAULT);
-
-        $sql = "INSERT INTO users (username, email, password) VALUES (?, ?, ?)";
-
-        if ($stmt = $mysqli->prepare($sql)) {
-            $stmt->bind_param("sss", $username, $email, $hashed_password);
-
-            if ($stmt->execute()) {
-                $_SESSION['registration_success'] = true;
-                header("Location: loginReg.php");
-                exit();
+        if (empty($username) || empty($email) || empty($password)) {
+            echo "Please fill in all fields.";
+        } else {
+            $check_query = "SELECT * FROM users WHERE email = ?";
+            if ($stmt = $mysqli->prepare($check_query)) {
+                $stmt->bind_param("s", $email);
+                $stmt->execute();
+                $result = $stmt->get_result();
+                if ($result->num_rows > 0) {
+                    echo "A user with this email already exists.";
+                } else {
+                    $hashed_password = password_hash($password, PASSWORD_DEFAULT);
+                    $sql = "INSERT INTO users (username, email, password) VALUES (?, ?, ?)";
+                    if ($stmt = $mysqli->prepare($sql)) {
+                        $stmt->bind_param("sss", $username, $email, $hashed_password);
+                        if ($stmt->execute()) {
+                            $_SESSION['registration_success'] = true;
+                            header("Location: loginReg.php");
+                            exit();
+                        } else {
+                            echo "Something went wrong. Please try again later.";
+                        }
+                        $stmt->close();
+                    }
+                }
             } else {
                 echo "Something went wrong. Please try again later.";
             }
-            $stmt->close();
         }
+    } else {
+        echo "Please fill in all fields.";
     }
     $mysqli->close();
 }
@@ -45,79 +50,42 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
 
 <?php
-session_start();
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
 
-// Database configuration settings
-$host = 'localhost';
-$db_user = 'root';
-$db_password = '';
-$db_name = 'devdiaries';
+include 'Database_connect.php';
 
-// Create connection
-$mysqli = new mysqli($host, $db_user, $db_password, $db_name);
-
-// Check connection
-if ($mysqli->connect_error) {
-    die("Connection failed: " . $mysqli->connect_error);
-}
-
-// Check if the form is submitted
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['email']) && isset($_POST['password'])) {
-    // Handle form submission
     $email = trim($_POST['email']);
-    $password = trim($_POST['password']);
-
-    // Admin credentials
-    $admin_email = 'admin123@gmail.com';
-    $admin_password = 'admin123';
-
-    // Admin login check
-    if ($email == $admin_email && $password == $admin_password) {
-        // Start a new session for admin
-        session_regenerate_id();
-        $_SESSION['admin_loggedin'] = true;
-
-        // Redirect admin to the admin page
-        header("location: admin.php");
-        exit();
-    }
-
-    // User login check
+    $password = $_POST['password'];
     $sql = "SELECT userId, username, email, password FROM users WHERE email = ?";
     if ($stmt = $mysqli->prepare($sql)) {
         $stmt->bind_param("s", $email);
-
-        // Execute the statement
         $stmt->execute();
         $stmt->store_result();
-
-        // Check if the email exists in the database
         if ($stmt->num_rows == 1) {
-            // Bind the result variables
             $stmt->bind_result($userId, $username, $email, $hashed_password);
             $stmt->fetch();
-
-            // Verify the password with the hashed password in the database
+            $hashed_password = trim($hashed_password);
             if (password_verify($password, $hashed_password)) {
-                // Start a new session for the user
                 session_regenerate_id();
                 $_SESSION['user_loggedin'] = true;
                 $_SESSION['userId'] = $userId;
                 $_SESSION['email'] = $email;
                 $_SESSION['username'] = $username;
-
-                // Redirect user to the user page
-                header("location: user.php");
+                header("Location: user.php");
                 exit();
+            } else {
+                echo "Incorrect password.";
             }
+        } else {
+            echo "No user found with this email.";
         }
-        
-        // Redirect user to login page with error message
-        header("location: login.php?error=1");
-        exit();
+        $stmt->close();
+    } else {
+        echo "Failed to prepare the SQL statement.";
     }
-}
-
-// Close the database connection
+}   
 $mysqli->close();
 ?>

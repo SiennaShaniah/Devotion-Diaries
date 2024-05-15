@@ -9,8 +9,8 @@ if (isset($_SESSION['username'])) {
 
     if ($result && $result->num_rows > 0) {
         $user = $result->fetch_assoc();
-    ?>
-    <?php
+?>
+<?php
     } else {
         echo "Error: Unable to fetch user's information.";
     }
@@ -62,8 +62,8 @@ if (isset($_SESSION['username'])) {
         $user = $result->fetch_assoc();
         $user_username = $user['username'];
         $user_email = $user['email'];
-    ?>
-    <?php
+?>
+<?php
     } else {
         echo "Error: Unable to fetch user's information.";
     }
@@ -91,11 +91,8 @@ if (isset($_SESSION['userId'])) {
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
-include 'database_connect.php'; 
-
-// Check if the user is logged in
+include 'database_connect.php';
 if (isset($_SESSION['userId'])) {
-    // Get user information from the session
     $userId = $_SESSION['userId'];
     $username = $_SESSION['username'];
     $email = $_SESSION['email'];
@@ -139,7 +136,7 @@ $stmt->close();
 
 <!-- NOTEBOOK INSERTION -->
 <?php
-include 'database_connect.php'; 
+include 'database_connect.php';
 if (isset($_SESSION['userId'])) {
     if (isset($_POST['notebook-title']) && !empty($_POST['notebook-title'])) {
         $notebook_title = $_POST['notebook-title'];
@@ -147,16 +144,17 @@ if (isset($_SESSION['userId'])) {
         $stmt = $mysqli->prepare("INSERT INTO notebooks (notebook_title, userId) VALUES (?, ?)");
         $stmt->bind_param("si", $notebook_title, $userId);
         if ($stmt->execute()) {
-            // Redirect to user.php
             header("Location: user.php");
-            exit(); 
+            exit();
         } else {
             echo "Error inserting notebook: " . $stmt->error;
         }
         $stmt->close();
     }
-} 
+}
 ?>
+
+
 
 
 
@@ -238,7 +236,7 @@ if (isset($_SESSION['userId'])) {
                 </li>
 
                 <li>
-                    <a href="#" class="sidebar-link" data-target="notebook">
+                    <a href="#notebook" class="sidebar-link" data-target="notebook">
                         <span class="icon"><i class="ri-book-line"></i></span>
                         <div class="sidebar--item">Devo Notebooks</div>
                     </a>
@@ -502,8 +500,7 @@ if (isset($_SESSION['userId'])) {
                     </div>
                     <div class="theme-switcher-button" id="theme-switcher-button">
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512">
-                            <path fill="currentColor"
-                                d="M352 0H32C14.33 0 0 14.33 0 32v224h384V32c0-17.67-14.33-32-32-32zM0 320c0 35.35 28.66 64 64 64h64v64c0 35.35 28.66 64 64 64s64-28.65 64-64v-64h64c35.34 0 64-28.65 64-64v-32H0v32zm192 104c13.25 0 24 10.74 24 24 0 13.25-10.75 24-24 24s-24-10.75-24-24c0-13.26 10.75-24 24-24z">
+                            <path fill="currentColor" d="M352 0H32C14.33 0 0 14.33 0 32v224h384V32c0-17.67-14.33-32-32-32zM0 320c0 35.35 28.66 64 64 64h64v64c0 35.35 28.66 64 64 64s64-28.65 64-64v-64h64c35.34 0 64-28.65 64-64v-32H0v32zm192 104c13.25 0 24 10.74 24 24 0 13.25-10.75 24-24 24s-24-10.75-24-24c0-13.26 10.75-24 24-24z">
                             </path>
                         </svg>
                     </div>
@@ -515,7 +512,7 @@ if (isset($_SESSION['userId'])) {
         <div id="profileModal" class="profmodal">
             <div class="modal-content">
                 <div class="title01">
-                    <h3 class="modal-title">Edit Profile</h3>
+                    <h3 class="modal-title">ADD INFORMATION</h3>
                 </div>
                 <br>
 
@@ -531,14 +528,11 @@ if (isset($_SESSION['userId'])) {
                     <div class="form-section">
                         <h4 class="form-title">Personal Information</h4>
                         <h5>Username</h5>
-                        <input type="text" id="usernameInput" name="usernameInput" placeholder="Username"
-                            value="<?php echo htmlspecialchars($username); ?>" readonly>
+                        <input type="text" id="usernameInput" name="usernameInput" placeholder="Username" value="<?php echo htmlspecialchars($username); ?>" readonly>
                         <h5>Email</h5>
-                        <input type="text" id="emailInput" name="emailInput" placeholder="Email"
-                            value="<?php echo htmlspecialchars($email); ?>" readonly>
+                        <input type="text" id="emailInput" name="emailInput" placeholder="Email" value="<?php echo htmlspecialchars($email); ?>" readonly>
                         <h5>User ID</h5>
-                        <input type="text" id="userIdInput" name="userIdInput" placeholder="User ID"
-                            value="<?php echo $userId; ?>" readonly>
+                        <input type="text" id="userIdInput" name="userIdInput" placeholder="User ID" value="<?php echo $userId; ?>" readonly>
                         <hr>
                         <br>
                         <select id="genderSelect" name="genderSelect" placeholder="Gender">
@@ -555,8 +549,7 @@ if (isset($_SESSION['userId'])) {
                     <div class="form-section">
                         <h4 class="form-title">Additional Information</h4>
                         <textarea id="life_motto" name="life_motto" placeholder="Life Motto"></textarea>
-                        <textarea id="self_description" name="self_description"
-                            placeholder="Self Description"></textarea>
+                        <textarea id="self_description" name="self_description" placeholder="Self Description"></textarea>
                     </div>
 
 
@@ -585,20 +578,12 @@ if (isset($_SESSION['userId'])) {
                         <img src="Images/dailyword01.png" alt="image">
                     </div>
                     <?php
-                    // Include the database connection file
                     include 'Database_connect.php';
-
-                    // Query to select the most recent daily word
                     $sql = "SELECT * FROM daily_word ORDER BY daily_word_date DESC LIMIT 1";
-
-                    // Execute the query
                     $result = $mysqli->query($sql);
-
-                    // Check if there is a result
                     if ($result->num_rows > 0) {
-                        // Fetch the row
                         $row = $result->fetch_assoc();
-                        ?>
+                    ?>
                         <div class="date">
                             <?php echo $row['daily_word_date']; ?>
                         </div>
@@ -608,7 +593,7 @@ if (isset($_SESSION['userId'])) {
                         <p class="word">
                             <?php echo $row['daily_word_text']; ?>
                         </p>
-                        <?php
+                    <?php
                     } else {
                         echo "<p>No daily word found.</p>";
                     }
@@ -636,7 +621,7 @@ if (isset($_SESSION['userId'])) {
 
                     if ($result->num_rows > 0) {
                         while ($row = $result->fetch_assoc()) {
-                            ?>
+                    ?>
                             <!-- Song Card -->
                             <div class="song-card">
                                 <div class="song-image">
@@ -651,15 +636,12 @@ if (isset($_SESSION['userId'])) {
                                     </p>
                                     <hr>
                                     <div class="control-buttons">
-                                        <button class="control-button play-button"
-                                            onclick="playSong('<?php echo $row['song_file']; ?>')"><span class="icon"><i
-                                                    class="ri-play-line"></i></span></button>
-                                        <button class="control-button stop-button" onclick="stopSong()"><span class="icon"><i
-                                                    class="ri-stop-line"></i></span></button>
+                                        <button class="control-button play-button" onclick="playSong('<?php echo $row['song_file']; ?>')"><span class="icon"><i class="ri-play-line"></i></span></button>
+                                        <button class="control-button stop-button" onclick="stopSong()"><span class="icon"><i class="ri-stop-line"></i></span></button>
                                     </div>
                                 </div>
                             </div>
-                            <?php
+                    <?php
                         }
                     } else {
                         echo "0 results";
@@ -684,8 +666,7 @@ if (isset($_SESSION['userId'])) {
                     </div>
                     <label for="testimony">Testimony:</label>
                     <div>
-                        <textarea name="testimony" id="testimony" class="input" rows="5" placeholder="none"
-                            required></textarea>
+                        <textarea name="testimony" id="testimony" class="input" rows="5" placeholder="none" required></textarea>
                     </div>
                     <div>
                         <label for="ratings">Application Rating:</label>
@@ -716,15 +697,13 @@ if (isset($_SESSION['userId'])) {
             </div>
         </div>
 
-
         <!-- NOTEBOOKS -->
         <div id="notebook" class="tab">
             <div class="main--container103">
                 <div class="section--title104">
                     <h3 class="title04">Devo Notebooks</h3>
                     <button class="button" id="notebutton">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="20" viewBox="0 0 20 20" height="20" fill="none"
-                            class="svg-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" viewBox="0 0 20 20" height="20" fill="none" class="svg-icon">
                             <g stroke-width="1.5" stroke-linecap="round" stroke="black">
                                 <circle r="7.5" cy="10" cx="10"></circle>
                                 <path d="m9.99998 7.5v5"></path>
@@ -737,21 +716,101 @@ if (isset($_SESSION['userId'])) {
 
                 <div class="notesection--container">
                     <div class="notecard-row">
+                        <?php
+                        // Include the database connection file
+                        include 'Database_connect.php';
 
+                        // Query to fetch notebook titles
+                        $query = "SELECT notebook_id, notebook_title FROM notebooks";
+                        $result = $mysqli->query($query);
 
-                        <div class="notecard">
-                            <div class="noteimage">
-                                <img src="Images/covers/1.png" alt="Notebook Cover">
-
-                            </div>
-                            <div class="notetitle-box">
-                                <p class="notetitle">Lorem.</p>
-                            </div>
-                        </div>
+                        if ($result->num_rows > 0) {
+                            // Output data of each row
+                            while ($row = $result->fetch_assoc()) {
+                                echo '<div class="notecard">
+                                <div class="noteimage">
+                                    <img src="Images/covers/1.png" alt="Notebook Cover">
+                                    <div class="notetitle-box">
+                                        <p class="notetitle">' . htmlspecialchars($row["notebook_title"]) . '</p>
+                                        <div class="button-container">
+                                            <button class="edit-button" id="edit-button">Edit Cover</button>
+                                            <a href="notebook.php?notebook_id=' . $row["notebook_id"] . '" class="add-entry-button" id="add-entry-button">Add Entry</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>';
+                            }
+                        } else {
+                            echo "No notebooks found.";
+                        }
+                        $mysqli->close();
+                        ?>
                     </div>
                 </div>
             </div>
         </div>
+
+
+
+        <!-- Modal for Cover Selection -->
+        <div id="cover-modal" class="modalcover">
+            <div class="modal-content">
+                <h2>Select Cover</h2>
+                <form id="cover-selection-form">
+                    <div class="cover-images">
+                        <label>
+                            <input type="radio" name="cover" value="Images/covers/1.png">
+                            <img src="Images/covers/1.png" alt="Cover 1">
+                        </label>
+                        <label>
+                            <input type="radio" name="cover" value="Images/covers/2.png">
+                            <img src="Images/covers/2.png" alt="Cover 1">
+                        </label>
+                        <label>
+                            <input type="radio" name="cover" value="Images/covers/3.png">
+                            <img src="Images/covers/3.png" alt="Cover 1">
+                        </label>
+                    </div>
+                    <button type="submit">Select Cover</button>
+                    <button type="button">Cancel</button>
+                </form>
+            </div>
+        </div>
+
+        <script>
+            document.addEventListener("DOMContentLoaded", function() {
+                var editButton = document.getElementById("edit-button");
+                var coverModal = document.getElementById("cover-modal");
+                var closeButton = coverModal.querySelector("button[type='button']");
+
+                function openModal() {
+                    coverModal.style.display = "block";
+                }
+
+                function closeModal() {
+                    coverModal.style.display = "none";
+                }
+
+                // Event listener for edit button click to open the modal
+                editButton.addEventListener("click", openModal);
+
+                // Event listener for close button click to close the modal
+                closeButton.addEventListener("click", closeModal);
+
+                // Event listener to close the modal if user clicks outside of it
+                window.addEventListener("click", function(event) {
+                    if (event.target == coverModal) {
+                        closeModal();
+                    }
+                });
+            });
+        </script>
+
+
+
+
+
+
 
         <!-- MODAL NOTEBOOK -->
         <div id="notemodal" class="modalnote">
@@ -778,7 +837,7 @@ if (isset($_SESSION['userId'])) {
         </div>
 
         <script>
-            document.getElementById('add-notebook').addEventListener('click', function () {
+            document.getElementById('add-notebook').addEventListener('click', function() {
                 var notebookTitle = document.getElementById('notebook-title').value;
 
                 if (notebookTitle.trim() !== '') {
@@ -792,24 +851,7 @@ if (isset($_SESSION['userId'])) {
 
 
 
-        <!-- Modal for Cover Selection -->
-        <div id="cover-modal" class="modalcover">
-            <div class="modal-content">
-                <h2>Select Cover</h2>
-                <div class="cover-images">
-                    <img src="Images/covers/1.png" alt="Cover 1" data-cover="Images/covers/1.png" id="cover1">
-                    <img src="Images/covers/2.png" alt="Cover 2" data-cover="Images/covers/2.png" id="cover2">
-                    <img src="Images/covers/3.png" alt="Cover 3" data-cover="Images/covers/3.png" id="cover3">
-                    <img src="Images/covers/4.png" alt="Cover 4" data-cover="Images/covers/4.png" id="cover4">
-                    <img src="Images/covers/5.png" alt="Cover 5" data-cover="Images/covers/5.png" id="cover5">
-                    <img src="Images/covers/6.png" alt="Cover 6" data-cover="Images/covers/6.png" id="cover6">
-                    <img src="Images/covers/7.png" alt="Cover 7" data-cover="Images/covers/7.png" id="cover7">
-                    <img src="Images/covers/8.png" alt="Cover 8" data-cover="Images/covers/8.png" id="cover8">
-                    <img src="Images/covers/9.png" alt="Cover 9" data-cover="Images/covers/9.png" id="cover">
-                    <img src="Images/covers/10.png" alt="Cover 10" data-cover="Images/covers/10.png" id="cover10">
-                </div>
-            </div>
-        </div>
+
 
 
 
@@ -850,7 +892,7 @@ if (isset($_SESSION['userId'])) {
 
     <!-- JavaScript -->
     <script>
-        document.addEventListener("DOMContentLoaded", function () {
+        document.addEventListener("DOMContentLoaded", function() {
             const tabs = document.querySelectorAll('.tab');
             const sidebarLinks = document.querySelectorAll('.sidebar-link');
 
@@ -879,7 +921,7 @@ if (isset($_SESSION['userId'])) {
             showTab('dashboard');
 
             sidebarLinks.forEach(link => {
-                link.addEventListener('click', function (e) {
+                link.addEventListener('click', function(e) {
                     e.preventDefault();
                     const target = this.getAttribute('data-target');
                     showTab(target);
@@ -895,7 +937,7 @@ if (isset($_SESSION['userId'])) {
 
             const themeSwiter = {
 
-                init: function () {
+                init: function() {
                     this.wrapper = document.getElementById('theme-switcher-wrapper')
                     this.button = document.getElementById('theme-switcher-button')
                     this.theme = this.wrapper.querySelectorAll('[data-theme]')
@@ -904,22 +946,22 @@ if (isset($_SESSION['userId'])) {
                     this.start()
                 },
 
-                events: function () {
+                events: function() {
                     this.button.addEventListener('click', this.displayed.bind(this), false)
                     this.theme.forEach(theme => theme.addEventListener('click', this.themed.bind(this), false))
                 },
 
-                start: function () {
+                start: function() {
                     let theme = this.themes[Math.floor(Math.random() * this.themes.length)]
                     document.body.classList.add(theme)
                 },
 
-                displayed: function () {
+                displayed: function() {
                     (this.wrapper.classList.contains('is-open')) ?
-                        this.wrapper.classList.remove('is-open') : this.wrapper.classList.add('is-open')
+                    this.wrapper.classList.remove('is-open'): this.wrapper.classList.add('is-open')
                 },
 
-                themed: function (e) {
+                themed: function(e) {
                     this.themes.forEach(theme => {
                         if (document.body.classList.contains(theme))
                             document.body.classList.remove(theme)
@@ -950,22 +992,22 @@ if (isset($_SESSION['userId'])) {
         function closeModal() {
             modal.style.display = "none";
         }
-        editProfileBtn.onclick = function (event) {
+        editProfileBtn.onclick = function(event) {
             event.preventDefault();
             openModal();
         }
-        saveBtn.onclick = function (event) {
+        saveBtn.onclick = function(event) {
             event.preventDefault();
             closeModal();
         }
-        cancelBtn.onclick = function (event) {
+        cancelBtn.onclick = function(event) {
             event.preventDefault();
             closeModal();
         }
-        span.onclick = function () {
+        span.onclick = function() {
             closeModal();
         }
-        window.onclick = function (event) {
+        window.onclick = function(event) {
             if (event.target == modal) {
                 closeModal();
             }
@@ -977,11 +1019,11 @@ if (isset($_SESSION['userId'])) {
 
         function resetFormFields() {
             var inputFields = document.querySelectorAll('input[type="text"], textarea, select');
-            inputFields.forEach(function (element) {
+            inputFields.forEach(function(element) {
                 element.value = "";
             });
         }
-        resetButton.addEventListener("click", function () {
+        resetButton.addEventListener("click", function() {
             resetFormFields();
         });
     </script>
@@ -1002,22 +1044,22 @@ if (isset($_SESSION['userId'])) {
         function closeNotebookModal() {
             notebookmodal.style.display = "none";
         }
-        addNoteBtn.onclick = function (event) {
+        addNoteBtn.onclick = function(event) {
             event.preventDefault(); // Prevent the default button behavior
             openNotebookModal();
         }
-        notebookSaveBtn.onclick = function (event) {
+        notebookSaveBtn.onclick = function(event) {
             event.preventDefault(); // Prevent the default button behavior
             closeNotebookModal();
         }
-        notebookCancelBtn.onclick = function (event) {
+        notebookCancelBtn.onclick = function(event) {
             event.preventDefault(); // Prevent the default button behavior
             closeNotebookModal();
         }
-        notebookSpan.onclick = function () {
+        notebookSpan.onclick = function() {
             closeNotebookModal();
         }
-        window.onclick = function (event) {
+        window.onclick = function(event) {
             if (event.target == notebookmodal) {
                 closeNotebookModal();
             }
@@ -1026,7 +1068,7 @@ if (isset($_SESSION['userId'])) {
 
     <!-- FOR THE CARDS IN NOTEBOOK -->
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
+        document.addEventListener('DOMContentLoaded', function() {
             const notecardContainer = document.querySelector('.notecard-row');
             const notecards = document.querySelectorAll('.notecard');
             const maxCardsPerRow = 5;
@@ -1063,7 +1105,7 @@ if (isset($_SESSION['userId'])) {
             calculateCardWidth();
             rearrangeCards();
             const addButton = document.querySelector('#add-card-button');
-            addButton.addEventListener('click', function () {
+            addButton.addEventListener('click', function() {
                 const newCard = document.createElement('div');
                 newCard.classList.add('notecard');
                 newCard.innerHTML = `
@@ -1080,18 +1122,18 @@ if (isset($_SESSION['userId'])) {
 
     <!-- NOTEBOOK CARD MODAL -->
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
+        document.addEventListener('DOMContentLoaded', function() {
             const selectCoverButton = document.getElementById('select-cover-button');
             const coverModal = document.getElementById('cover-modal');
             const coverImages = coverModal.querySelectorAll('.cover-images img');
             const selectedCover = document.getElementById('selectedCover');
 
-            selectCoverButton.addEventListener('click', function () {
+            selectCoverButton.addEventListener('click', function() {
                 coverModal.style.display = 'block';
             });
 
             coverImages.forEach(image => {
-                image.addEventListener('click', function () {
+                image.addEventListener('click', function() {
                     const newCoverSrc = this.getAttribute('data-cover');
                     selectedCover.innerHTML = `${newCoverSrc}`;
                     coverModal.style.display = 'none';
@@ -1106,30 +1148,30 @@ if (isset($_SESSION['userId'])) {
 
     <!-- IT WILL GO TO dailyWord TAB -->
     <script>
-        document.getElementById("firstcard").addEventListener("click", function () {
+        document.getElementById("firstcard").addEventListener("click", function() {
             document.getElementById("dailyWord").style.display = "block";
         });
     </script>
     <!-- IT WILL GO TO songs TAB -->
     <script>
-        document.getElementById("secondcard").addEventListener("click", function () {
+        document.getElementById("secondcard").addEventListener("click", function() {
             document.getElementById("christianSongs").style.display = "block";
         });
     </script>
 
     <script>
-        document.addEventListener("DOMContentLoaded", function () {
+        document.addEventListener("DOMContentLoaded", function() {
             var findButton = document.getElementById('findOutMoreBtn1');
-            findButton.addEventListener('click', function () {
+            findButton.addEventListener('click', function() {
                 window.open('https://www.bible.com/', '_blank');
             });
         });
     </script>
 
     <script>
-        document.addEventListener("DOMContentLoaded", function () {
+        document.addEventListener("DOMContentLoaded", function() {
             var findButton = document.getElementById('findOutMoreBtn2');
-            findButton.addEventListener('click', function () {
+            findButton.addEventListener('click', function() {
                 window.open('https://www.intouch.org/read/daily-devotions', '_blank');
             });
         });
@@ -1138,8 +1180,8 @@ if (isset($_SESSION['userId'])) {
 
     <!-- FOR THE NOTEBOOK COVER INSERTION -->
     <script>
-        document.querySelectorAll('.cover-images img').forEach(function (img) {
-            img.addEventListener('click', function () {
+        document.querySelectorAll('.cover-images img').forEach(function(img) {
+            img.addEventListener('click', function() {
                 var selectedCover = img.getAttribute('data-cover');
                 document.getElementById('selectedCover').innerText = selectedCover;
                 document.getElementById('selectedCoverInput').value = selectedCover;
