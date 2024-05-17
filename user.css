@@ -169,12 +169,12 @@ a.active {
   text-align: center;
   justify-content: space-between;
   margin-bottom: 10px;
-  color: #38761d;
   position: relative;
-  background: linear-gradient(150deg, #74B72E 20%, #274e13 100%);
+  background: #97BC62;
   width: 100%;
   padding: 1rem;
   border-radius: 15px;
+  color: white;
 }
 
 .section--container {
@@ -192,6 +192,8 @@ a.active {
   grid-template-columns: repeat(3, 1fr);
   grid-gap: 20px;
 }
+
+
 
 .row {
   display: flex;

@@ -103,6 +103,7 @@ if (isset($_SESSION['userId'])) {
             $rating = $_POST['ratings'];
             $stmt = $mysqli->prepare("INSERT INTO testimonies (userId, username, email, date, testimony, rating) VALUES (?, ?, ?, ?, ?, ?)");
             $stmt->bind_param("issssi", $userId, $username, $email, $date, $testimony, $rating);
+         
             if ($stmt->execute()) {
                 echo "Testimony submitted successfully.";
             } else {
@@ -155,8 +156,57 @@ if (isset($_SESSION['userId'])) {
 ?>
 
 
+<!-- DASHBOARD WELCOME USER -->
+<?php
+if (!isset($_SESSION['username'])) {
+    header("Location: loginReg.php");
+    exit();
+}
+?>
 
 
+<!-- RECENT NOTEBOOK TITLE DASHBOARD -->
+<?php
+include 'Database_connect.php';
+if (!isset($_SESSION['userId'])) {
+    header("Location: login.php");
+    exit();
+}
+$userId = $_SESSION['userId'];
+$query = "SELECT notebook_title FROM notebooks WHERE userId = ? ORDER BY notebook_id DESC LIMIT 1";
+$stmt = $mysqli->prepare($query);
+$stmt->bind_param("i", $userId);
+$stmt->execute();
+$stmt->bind_result($notebookTitle);
+$stmt->fetch();
+$stmt->close();
+if (empty($notebookTitle)) {
+    $notebookTitle = "No recent notebook found";
+}
+$mysqli->close();
+?>
+
+
+<!-- RECENT ENTRY TITLE DASHBOARD -->
+<?php
+include 'Database_connect.php';
+if (!isset($_SESSION['userId'])) {
+    header("Location: login.php");
+    exit();
+}
+$userId = $_SESSION['userId'];
+$query = "SELECT entry_title FROM entries WHERE userId = ? ORDER BY entrydate_uploaded DESC, entries_id DESC LIMIT 1";
+$stmt = $mysqli->prepare($query);
+$stmt->bind_param("i", $userId);
+$stmt->execute();
+$stmt->bind_result($entryTitle);
+$stmt->fetch();
+$stmt->close();
+if (empty($entryTitle)) {
+    $entryTitle = "No recent entry found";
+}
+$mysqli->close();
+?>
 
 
 
@@ -236,7 +286,7 @@ if (isset($_SESSION['userId'])) {
                 </li>
 
                 <li>
-                    <a href="#notebook" class="sidebar-link" data-target="notebook">
+                    <a href="#notebook" class="sidebar-link" id="notebookLink" data-target="notebook">
                         <span class="icon"><i class="ri-book-line"></i></span>
                         <div class="sidebar--item">Devo Notebooks</div>
                     </a>
@@ -265,8 +315,8 @@ if (isset($_SESSION['userId'])) {
         <div id="dashboard" class="tab">
             <div class="main--container">
                 <div class="section--title">
-                    <h3 class="title">Welcome User!</h3>
-                    <h3 class="title">Dashboard</h3>
+                    <h3 class="title" style="color: white;">Welcome <?php echo htmlspecialchars($_SESSION['username']); ?>!</h3>
+                    <h3 class="title101">Dashboard</h3>
                 </div>
                 <div class="section--container">
 
@@ -280,7 +330,7 @@ if (isset($_SESSION['userId'])) {
                                     Today's Daily Word
                                 </span>
                             </a>
-                            <p class="desc">
+                            <p class="desc" style="color: white;">
                                 Access the inspirational message for today's reflection and guidance from the Word of
                                 God.
                             </p>
@@ -306,7 +356,7 @@ if (isset($_SESSION['userId'])) {
                             <a href="#">
                                 <span class="title">Recent Added Song</span>
                             </a>
-                            <p class="desc">Discover the latest addition to the collection of uplifting Christian music,
+                            <p class="desc" style="color: white;">Discover the latest addition to the collection of uplifting Christian music,
                                 that surely lift your Spirit.</p>
                             <br>
                             <div class="card123">
@@ -331,7 +381,7 @@ if (isset($_SESSION['userId'])) {
                                     Read the Bible
                                 </span>
                             </a>
-                            <p class="desc">
+                            <p class="desc" style="color: white;">
                                 Quickly navigate to essential sections of the Bible for efficient study and reference.
                             </p>
                             <br>
@@ -355,7 +405,7 @@ if (isset($_SESSION['userId'])) {
                                     Read Daily Devotionals
                                 </span>
                             </a>
-                            <p class="desc">
+                            <p class="desc" style="color: white;">
                                 Access a convenient shortcut to your daily devotion material for spiritual enrichment.
                             </p>
                             <br>
@@ -379,18 +429,18 @@ if (isset($_SESSION['userId'])) {
                                     Recent Notebook Created
                                 </span>
                             </a>
-                            <p class="desc">
+                            <p class="desc" style="color: white;">
                                 View the most recently created or updated devotional notebooks for personal growth and
                                 reflection.
                             </p>
                             <br>
                             <div class="card123">
                                 <div class="data">
-                                    <p>Lorem, ipsum dolor.</p>
+                                    <p><?php echo htmlspecialchars($notebookTitle); ?></p>
                                 </div>
                             </div>
                             <br>
-                            <button type="button" class="find-button">Find Out More</button>
+                            <button type="button" class="find-button" id="fifthcard">Find Out More</button>
                         </div>
                     </div>
 
@@ -404,17 +454,17 @@ if (isset($_SESSION['userId'])) {
                                     Recent Created Entry
                                 </span>
                             </a>
-                            <p class="desc">
+                            <p class="desc" style="color: white;">
                                 Display the most recently created entry, providing quick access to the latest insights."
                             </p>
                             <br>
                             <div class="card123">
                                 <div class="data">
-                                    <p>Lorem, ipsum dolor.</p>
+                                    <p><?php echo htmlspecialchars($entryTitle); ?></p>
                                 </div>
                             </div>
                             <br>
-                            <button type="button" class="find-button">Find Out More</button>
+                            <button type="button" class="find-button" id="fifthcard">Find Out More</button>
                         </div>
                     </div>
                 </div>
@@ -697,6 +747,30 @@ if (isset($_SESSION['userId'])) {
             </div>
         </div>
 
+        
+
+        <!-- SHOWING THE NOTEBOOKS UPON LOGGED IN -->
+        <?php
+        include 'Database_connect.php';
+        if (isset($_SESSION['userId'])) {
+            $user_id = $_SESSION['userId'];
+            $query = "SELECT notebook_id, notebook_title, Notebook_cover FROM notebooks WHERE userId = ?";
+            $stmt = $mysqli->prepare($query);
+            if ($stmt) {
+                $stmt->bind_param("i", $user_id);
+                $stmt->execute();
+                $result = $stmt->get_result();
+            } else {
+                echo "Failed to prepare the SQL statement.";
+                exit;
+            }
+        } else {
+
+            echo "Please log in to view your notebooks.";
+            exit;
+        }
+        ?>
+
         <!-- NOTEBOOKS -->
         <div id="notebook" class="tab">
             <div class="main--container103">
@@ -717,38 +791,32 @@ if (isset($_SESSION['userId'])) {
                 <div class="notesection--container">
                     <div class="notecard-row">
                         <?php
-                        // Include the database connection file
-                        include 'Database_connect.php';
-
-                        // Query to fetch notebook titles
-                        $query = "SELECT notebook_id, notebook_title FROM notebooks";
-                        $result = $mysqli->query($query);
-
                         if ($result->num_rows > 0) {
-                            // Output data of each row
                             while ($row = $result->fetch_assoc()) {
                                 echo '<div class="notecard">
-                                <div class="noteimage">
-                                    <img src="Images/covers/1.png" alt="Notebook Cover">
-                                    <div class="notetitle-box">
-                                        <p class="notetitle">' . htmlspecialchars($row["notebook_title"]) . '</p>
-                                        <div class="button-container">
-                                            <button class="edit-button" id="edit-button">Edit Cover</button>
-                                            <a href="notebook.php?notebook_id=' . $row["notebook_id"] . '" class="add-entry-button" id="add-entry-button">Add Entry</a>
-                                        </div>
+                            <div class="noteimage">
+                                <img src="Images/covers/' . htmlspecialchars($row["Notebook_cover"]) . '" alt="Notebook Cover">
+                                <div class="notetitle-box">
+                                    <p class="notetitle">' . htmlspecialchars($row["notebook_title"]) . '</p>
+                                    <div class="button-container">
+                                        <button class="edit-button" id="edit-button">Edit Cover</button>
+                                        <a href="notebook.php?notebook_id=' . $row["notebook_id"] . '" class="add-entry-button" id="add-entry-button">Add Entry</a>
                                     </div>
                                 </div>
-                            </div>';
+                            </div>
+                        </div>';
                             }
                         } else {
                             echo "No notebooks found.";
                         }
-                        $mysqli->close();
+                        $stmt->close();
                         ?>
                     </div>
                 </div>
             </div>
         </div>
+
+
 
 
 
@@ -790,14 +858,8 @@ if (isset($_SESSION['userId'])) {
                 function closeModal() {
                     coverModal.style.display = "none";
                 }
-
-                // Event listener for edit button click to open the modal
                 editButton.addEventListener("click", openModal);
-
-                // Event listener for close button click to close the modal
                 closeButton.addEventListener("click", closeModal);
-
-                // Event listener to close the modal if user clicks outside of it
                 window.addEventListener("click", function(event) {
                     if (event.target == coverModal) {
                         closeModal();
@@ -1152,10 +1214,18 @@ if (isset($_SESSION['userId'])) {
             document.getElementById("dailyWord").style.display = "block";
         });
     </script>
+
     <!-- IT WILL GO TO songs TAB -->
     <script>
         document.getElementById("secondcard").addEventListener("click", function() {
             document.getElementById("christianSongs").style.display = "block";
+        });
+    </script>
+
+    <!-- IT WILL GO TO notebook TAB -->
+    <script>
+        document.getElementById("fifthcard").addEventListener("click", function() {
+            document.getElementById("notebook").style.display = "block";
         });
     </script>
 
@@ -1209,7 +1279,6 @@ if (isset($_SESSION['userId'])) {
             }
         }
     </script>
-
 
 
 </body>

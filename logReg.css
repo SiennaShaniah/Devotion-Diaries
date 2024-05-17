@@ -226,11 +226,11 @@ form.sign-up-form {
 
 .back-button {
     position: absolute;
-    top: 20px; /* Adjust as needed */
-    left: 20px; /* Adjust as needed */
+    top: 20px;
+    left: 20px;
     height: 45px;
-    width: auto; /* Adjust to fit the content */
-    padding: 10px; /* Adjust to fill the icon and text */
+    width: auto; 
+    padding: 10px; 
     display: flex;
     align-items: center;
     justify-content: center;
