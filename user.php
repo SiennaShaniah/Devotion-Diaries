@@ -209,10 +209,41 @@ $mysqli->close();
 ?>
 
 
+<!-- NOTEBOOK AND ENTRIES COUNT -->
+<?php
+include 'Database_connect.php';
+
+// Check if userId is set in the session
+if (!isset($_SESSION['userId'])) {
+    die("User is not logged in");
+}
+
+$userId = $_SESSION['userId'];
+
+// Query to count the number of notebooks created by the user
+$notebookQuery = "SELECT COUNT(*) as notebook_count FROM notebooks WHERE userId = ?";
+$stmt = $mysqli->prepare($notebookQuery);
+$stmt->bind_param("i", $userId);
+$stmt->execute();
+$stmt->bind_result($notebookCount);
+$stmt->fetch();
+$stmt->close();
+
+// Query to count the total entries created by the user
+// Assuming 'entries' table exists with a userId and entryId
+$entriesQuery = "SELECT COUNT(*) as entries_count FROM entries WHERE userId = ?";
+$stmt = $mysqli->prepare($entriesQuery);
+$stmt->bind_param("i", $userId);
+$stmt->execute();
+$stmt->bind_result($entriesCount);
+$stmt->fetch();
+$stmt->close();
+
+$mysqli->close();
+?>
 
 
-
-
+<!-- ADD INFORMATION UPDATE AND INSERT -->
 
 
 
@@ -525,15 +556,14 @@ $mysqli->close();
                         </div>
 
                         <ul class="content__list">
-                            <li><span>0</span>Notebooks Created</li>
-                            <li><span>0</span>Total Entries</li>
-                            <li><span>0</span>Total Testimonies</li>
+                            <li><span><?php echo $notebookCount; ?></span>Notebooks Created</li>
+                            <li><span><?php echo $entriesCount; ?></span>Total Entries</li>
                         </ul>
 
                         <div class="content__button"><a class="button" href="#">
                                 <div class="button__border"></div>
                                 <div class="button__bg"></div>
-                                <p class="button__text">Add Information</p>
+                                <p class="button__text">Edit Profile</p>
                             </a></div>
                     </div>
                     <div class="bg">
@@ -567,7 +597,7 @@ $mysqli->close();
                 <br>
 
 
-                <form method="POST" action="user_info_insertion.php">
+                <form method="POST" action="">
                     <!-- Profile Picture Section -->
                     <!-- <div class="form-section">
                         <h4 class="form-title">Profile Picture</h4>
@@ -605,6 +635,7 @@ $mysqli->close();
 
                     <!-- Buttons -->
                     <button type="submit" id="saveBtn" name="saveBtn">Save</button>
+                    <button type="submit" id="updateBtn" name="updateBtn">Update</button>
                     <button type="button" id="cancelbtn">Cancel</button>
                     <button type="button" id="resetbtn">Reset</button>
                 </form>
@@ -801,6 +832,7 @@ $mysqli->close();
                                     <div class="button-container">
                                         <button class="edit-button" id="edit-button">Edit Cover</button>
                                         <a href="notebook.php?notebook_id=' . $row["notebook_id"] . '" class="add-entry-button" id="add-entry-button">Add Entry</a>
+                                        <button class="deletebtn" id="deletebtn">Delete Note</button>
                                     </div>
                                 </div>
                             </div>

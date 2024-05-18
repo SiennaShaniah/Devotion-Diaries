@@ -1689,9 +1689,10 @@ select {
 }
 
 .edit-button,
-.add-entry-button {
-  padding: 3px 7px;
-  margin: 0 5px;
+.add-entry-button,
+.deletebtn {
+  padding: 2px 5px;
+  margin: 0 1px;
   background-color: #99b27e;
   color: #fff;
   border: none;
@@ -1699,7 +1700,7 @@ select {
   cursor: pointer;
   font-family: 'Poppins', sans-serif;
   font-size: small;
-  font-weight: 300;
+  font-weight: 200;
   transition: background-color 0.3s ease;
 }
 

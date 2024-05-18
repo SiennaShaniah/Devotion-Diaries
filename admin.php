@@ -13,45 +13,22 @@ if ($result) {
 ?>
 
 
-<?php
-include('database_connect.php');
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    if (isset($_POST['date'])) {
-        $date = $_POST['date'];
-    } else {
-        $date = null;
-    }
-    if (isset($_POST['title']) && isset($_POST['dailyWordText'])) {
-        $title = $_POST['title'];
-        $dailyWordText = $_POST['dailyWordText'];
-    } else {
-        header("Location: admin.php?error=missing_fields");
-        exit();
-    }
-    $stmt = $mysqli->prepare("INSERT INTO daily_word (daily_word_date, daily_word_title, daily_word_text) VALUES (?, ?, ?)");
-    $stmt->bind_param("sss", $date, $title, $dailyWordText);
-    $stmt->execute();
-    $stmt->close();
-    $mysqli->close();
-    header("Location: admin.php");
-    exit();
-}
-?>
 
 <!-- DAILY WORD IN DASHBOARD -->
 <?php
-include('database_connect.php');
-$sql = "SELECT daily_word_title FROM daily_word ORDER BY daily_word_id DESC LIMIT 1";
-$result = $mysqli->query($sql);
+require 'Database_connect.php';
+$dailyWordTitle = '';
+$query = "SELECT daily_word_title FROM daily_word ORDER BY daily_word_id DESC LIMIT 1";
+$result = $mysqli->query($query);
 
-if ($result->num_rows > 0) {
+if ($result && $result->num_rows > 0) {
     $row = $result->fetch_assoc();
     $dailyWordTitle = $row['daily_word_title'];
 } else {
-    $dailyWordTitle = "None";
+    $dailyWordTitle = 'No daily word available';
 }
-$mysqli->close();
 ?>
+
 
 <!-- SONG INDASHBOARD -->
 <?php
@@ -82,49 +59,68 @@ if ($result_recent->num_rows > 0) {
     $recent_username = "None";
 }
 
-$mysqli->close();
 ?>
 
 
 
-<!-- UPDATE DAILY WORD -->
+<!-- UPDATE AND INSERT DAILY WORD -->
 <?php
-include('database_connect.php');
+require_once 'Database_connect.php';
 
-if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['update-button'])) {
-    // Retrieve form data
-    $id = $_POST['editDailyWordId'];
-    $date = $_POST['editDate'];
-    $title = $_POST['editTitle'];
-    $text = $_POST['editDailyWordText'];
-
-    // Prepare update statement
-    $sql = "UPDATE daily_word SET daily_word_date=?, daily_word_title=?, daily_word_text=? WHERE daily_word_id=?";
-    $stmt = $mysqli->prepare($sql);
-    if ($stmt) {
-        // Bind parameters
-        $stmt->bind_param("sssi", $date, $title, $text, $id);
-
-        // Execute statement
-        if ($stmt->execute()) {
-            // Record updated successfully, redirect to admin.php
-            header("Location: admin.php");
-            exit(); // Make sure to exit after the redirection
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    if (isset($_POST['update-button'])) {
+        $dailyWordId = $_POST['editDailyWordId'];
+        $date = $_POST['date'];
+        $title = $_POST['title'];
+        $dailyWordText = $_POST['dailyWordText'];
+        if (empty($dailyWordId) || empty($date) || empty($title) || empty($dailyWordText)) {
+            echo "All fields are required.";
         } else {
-            // Error updating record
-            echo "Error updating record: " . $stmt->error;
+            $stmt = $mysqli->prepare("UPDATE daily_word SET daily_word_date = ?, daily_word_title = ?, daily_word_text = ? WHERE daily_word_id = ?");
+            if ($stmt) {
+                $stmt->bind_param("sssi", $date, $title, $dailyWordText, $dailyWordId);
+                if ($stmt->execute()) {
+                    echo "Daily word updated successfully.";
+                } else {
+                    echo "Error updating record: " . $stmt->error;
+                }
+                $stmt->close();
+            } else {
+                echo "Error preparing update statement: " . $mysqli->error;
+            }
         }
-
-
-        // Close statement
-        $stmt->close();
     } else {
-        echo "Error: " . $mysqli->error;
+        $date = isset($_POST['date']) ? $_POST['date'] : null;
+        $title = isset($_POST['title']) ? $_POST['title'] : null;
+        $dailyWordText = isset($_POST['dailyWordText']) ? $_POST['dailyWordText'] : null;
+        if (empty($date) || empty($title) || empty($dailyWordText)) {
+            header("Location: admin.php?error=missing_fields");
+            exit();
+        } else {
+            $stmt = $mysqli->prepare("INSERT INTO daily_word (daily_word_date, daily_word_title, daily_word_text) VALUES (?, ?, ?)");
+            if ($stmt) {
+                $stmt->bind_param("sss", $date, $title, $dailyWordText);
+                if ($stmt->execute()) {
+                    echo "Daily word inserted successfully.";
+                } else {
+                    echo "Error inserting record: " . $stmt->error;
+                }
+                $stmt->close();
+            } else {
+                echo "Error preparing insert statement: " . $mysqli->error;
+            }
+        }
     }
 }
-
 $mysqli->close();
 ?>
+
+
+
+
+
+
+
 
 
 
@@ -222,7 +218,7 @@ $mysqli->close();
                             <span class="card--icon icon"><i class="ri-calendar-event-line"></i></span>
                             <span>Today's Word</span>
                         </div>
-                        <h3 class="card--value"><?php echo $dailyWordTitle; ?></h3>
+                        <h3 class="card--value"><?php echo htmlspecialchars($dailyWordTitle); ?></h3>
                         <button class="card--button" id="dailyWordButton">Daily Word</button>
                     </div>
 
@@ -315,7 +311,6 @@ $mysqli->close();
                 </form>
                 <br>
 
-
                 <div class="table">
                     <div class="section--title01">
                         <h3 class="title">Daily Word Information</h3>
@@ -327,10 +322,10 @@ $mysqli->close();
                                 <th>ID</th>
                                 <th>Date</th>
                                 <th>Title</th>
+                                <th>Actions</th>
                             </tr>
                         </thead>
                         <tbody>
-                            <!-- DAILY WORD TABLE -->
                             <?php
                             include('database_connect.php');
                             $sql = "SELECT * FROM daily_word ORDER BY daily_word_id ASC";
@@ -350,14 +345,12 @@ $mysqli->close();
                                     echo "</tr>";
                                 }
                             } else {
-                                echo "<tr><td colspan='3'>No daily word information available</td></tr>";
+                                echo "<tr><td colspan='4'>No daily word information available</td></tr>";
                             }
                             $mysqli->close();
                             ?>
                         </tbody>
                     </table>
-
-
                 </div>
             </div>
         </div>
@@ -367,25 +360,29 @@ $mysqli->close();
             <div class="modal-content">
                 <h2 class="modal-title">Edit Daily Word</h2>
                 <div class="modal-body">
+
                     <form id="editForm" method="post" action="">
+                        <input type="hidden" id="editDailyWordId" name="editDailyWordId">
+
                         <div class="form-group">
                             <label for="editDate">Date:</label>
-                            <input type="date" id="editDate" name="editDate" required>
+                            <input type="date" id="editDate" name="date">
                         </div>
                         <div class="form-group">
                             <label for="editTitle">Title:</label>
-                            <input type="text" id="editTitle" name="editTitle" required>
+                            <input type="text" id="editTitle" name="title">
                         </div>
                         <div class="form-group">
                             <label for="editDailyWordText">Daily Word Text:</label>
-                            <textarea id="editDailyWordText" name="editDailyWordText" required></textarea>
+                            <textarea id="editDailyWordText" name="dailyWordText"></textarea>
                         </div>
-                        <input type="hidden" id="editDailyWordId" name="editDailyWordId">
+
                         <div class="button-group">
                             <button type="submit" class="update-button" name="update-button">Update</button>
-                            <button type=" button" class="cancel-button" onclick="closeEditModal()">Cancel</button>
+                            <button type="button" class="cancel-button" onclick="closeEditModal()">Cancel</button>
                         </div>
                     </form>
+
                 </div>
             </div>
         </div>
@@ -399,8 +396,6 @@ $mysqli->close();
                 var id = row.cells[0].innerText;
                 var date = row.cells[1].innerText;
                 var title = row.cells[2].innerText;
-
-                // Retrieving data attributes
                 var text = row.cells[3].getAttribute("data-text");
 
                 document.getElementById("editDate").value = date;
@@ -421,11 +416,9 @@ $mysqli->close();
                 var id = row.querySelector("td").innerText.trim(); // Assuming ID is the first column
                 var confirmation = confirm("Are you sure you want to delete this record?");
                 if (confirmation) {
-                    // AJAX request
                     var xhttp = new XMLHttpRequest();
                     xhttp.onreadystatechange = function() {
                         if (this.readyState == 4 && this.status == 200) {
-                            // If deletion is successful, remove the row from the table
                             row.remove();
                         }
                     };
@@ -494,7 +487,7 @@ $mysqli->close();
 
         <!-- MODAL VIEW MORE-->
         <div id="viewMore" class="modalview">
-            <div class="modal-content">
+            <div class="modal-content" style="background-color: #d8e9c7;">
                 <h2>User Testimony</h2>
                 <form method="post" action="">
                     <!-- Hidden inputs to pass data to PHP script -->
@@ -542,7 +535,7 @@ $mysqli->close();
                     var xhttp = new XMLHttpRequest();
                     xhttp.onreadystatechange = function() {
                         if (this.readyState == 4 && this.status == 200) {
-                            // If deletion is successful, reload the page to update the table
+
                             location.reload();
                         }
                     };
@@ -581,16 +574,17 @@ $mysqli->close();
                         </div>
                         <div class="form--group">
                             <label for="songPicture">Song Picture Path:</label>
-                            <input type="text" id="songPicture" name="songPicture" required>
+                            <input type="text" id="songPicture" name="songPicture" placeholder="Images/songCovers/IMAGE NAME.FILE EXTENSION" required>
                         </div>
                         <div class="form--group">
                             <label for="songFile">Song File Path:</label>
-                            <input type="text" id="songFile" name="songFile" required>
+                            <input type="text" id="songFile" name="songFile" placeholder="song/SONGNAME.FILE EXTENSION" required>
                         </div>
                         <div class="form--group">
                             <button type="submit" id="songbtn">Upload Song</button>
                         </div>
                     </form>
+
                 </div>
 
 
@@ -619,7 +613,7 @@ $mysqli->close();
                                     echo "<td>" . $row["songdate_uploaded"] . "</td>";
                                     echo "<td>";
                                     echo "<div class='button-group'>";
-                                    echo "<button type='button' class='edit-button' onclick='editSong(" . $row["songs_id"] . ")'>Edit</button>";
+                                    echo "<button type='button' class='edit-button' onclick='openEditSongModal(" . $row["songs_id"] . ", \"" . addslashes($row["song_title"]) . "\", \"" . addslashes($row["song_artist"]) . "\", \"" . $row["songdate_uploaded"] . "\", \"" . addslashes($row["song_picture"]) . "\", \"" . addslashes($row["song_file"]) . "\")'>Edit</button>";
                                     echo "<button type='button' class='delete-button' onclick='deleteSong(" . $row["songs_id"] . ")'>Delete</button>";
                                     echo "</div>";
                                     echo "</td>";
@@ -657,6 +651,65 @@ $mysqli->close();
             }
         </script>
 
+        <div id="editsongModal" class="modal">
+            <div class="modal-contents" style="background-color: #97BC62">
+                <h2>Edit Song Information</h2>
+                <form id="editForm" method="post" action="adminconnect.php">
+                    <input type="hidden" id="editSongId" name="editSongId">
+                    <div class="form-group">
+                        <label for="editSongTitle">Song Title:</label>
+                        <input type="text" id="editSongTitle" name="editSongTitle">
+                    </div>
+                    <div class="form-group">
+                        <label for="editSongArtist">Song Artist:</label>
+                        <input type="text" id="editSongArtist" name="editSongArtist">
+                    </div>
+                    <div class="form-group">
+                        <label for="editDateUploaded">Date Uploaded:</label>
+                        <input type="date" id="editDateUploaded" name="editDateUploaded">
+                    </div>
+                    <div class="form-group">
+                        <label for="editSongPicture">Song Picture Path:</label>
+                        <input type="text" id="editSongPicture" name="editSongPicture">
+                    </div>
+                    <div class="form-group">
+                        <label for="editSongFile">Song File Path:</label>
+                        <input type="text" id="editSongFile" name="editSongFile">
+                    </div>
+                    <div class="form-group" id="songbtns">
+                        <button type="submit" class="update-button" name="update-button">Update</button>
+                        <button type="button" class="cancel-button" onclick="closeEditSongModal()">Cancel</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <script>
+            function openEditSongModal(songId, songTitle, songArtist, dateUploaded, songPicture, songFile) {
+                document.getElementById('editSongId').value = songId;
+                document.getElementById('editSongTitle').value = songTitle;
+                document.getElementById('editSongArtist').value = songArtist;
+                document.getElementById('editDateUploaded').value = dateUploaded;
+                document.getElementById('editSongPicture').value = songPicture;
+                document.getElementById('editSongFile').value = songFile;
+
+                var modal = document.getElementById("editsongModal");
+                modal.style.display = "block";
+            }
+
+            function closeEditSongModal() {
+                var modal = document.getElementById("editsongModal");
+                modal.style.display = "none";
+            }
+
+            // When the user clicks anywhere outside of the modal, close it
+            window.onclick = function(event) {
+                var modal = document.getElementById("editsongModal");
+                if (event.target == modal) {
+                    modal.style.display = "none";
+                }
+            }
+        </script>
 
 
 
@@ -776,13 +829,6 @@ $mysqli->close();
             };
         }
     </script>
-
-
-
-
-
-
-
 
 
 </body>
