@@ -453,14 +453,35 @@ $mysqli->close();
                             </tr>
                         </thead>
                         <tbody>
+
                             <?php
                             include 'Database_connect.php';
 
-                            $sql = "SELECT testimony_id, userId, date, username FROM testimonies";
+                            // Handle form submission
+                            if (isset($_POST['upload'])) {
+                                $testimony_id = $_POST['testimony_id'] ?? null;
+                                $username = $_POST['username'] ?? null;
+                                $userId = $_POST['userId'] ?? null;
+                                $rating = $_POST['rating'] ?? null;
+
+                                if ($testimony_id && $username && $userId && $rating) {
+                                    // Update testimony status to "uploaded"
+                                    $update_sql = "UPDATE testimonies SET status='uploaded' WHERE testimony_id=$testimony_id";
+                                    if ($mysqli->query($update_sql) === TRUE) {
+                                        echo "Record updated successfully";
+                                    } else {
+                                        echo "Error updating record: " . $mysqli->error;
+                                    }
+                                } else {
+                                    echo "Missing fields";
+                                }
+                            }
+
+                            // Fetch testimonies
+                            $sql = "SELECT testimony_id, userId, date, username, status FROM testimonies";
                             $result = $mysqli->query($sql);
 
                             if ($result->num_rows > 0) {
-                                // output data of each row
                                 while ($row = $result->fetch_assoc()) {
                                     echo "<tr>";
                                     echo "<td>" . $row["testimony_id"] . "</td>";
@@ -470,7 +491,7 @@ $mysqli->close();
                                     echo "<button class='view-btn' onclick='openModal(" . $row["testimony_id"] . ")'>View More</button>";
                                     echo "<button class='delete-btn' onclick='deleteTestimony(" . $row["testimony_id"] . ")'>Delete</button>";
                                     echo "</td>";
-                                    echo "<td>Unapproved</td>";
+                                    echo "<td>" . ($row["status"] == 'uploaded' ? 'Uploaded' : '') . "</td>";
                                     echo "</tr>";
                                 }
                             } else {
@@ -478,6 +499,7 @@ $mysqli->close();
                             }
                             $mysqli->close();
                             ?>
+
                         </tbody>
                     </table>
                 </div>
@@ -485,19 +507,35 @@ $mysqli->close();
             </div>
         </div>
 
+        <script>
+            function openModal(testimony_id) {
+                // Fetch data via AJAX (or fill the form fields directly if data is already available)
+                fetch('fetch_testimony.php?testimony_id=' + testimony_id)
+                    .then(response => response.json())
+                    .then(data => {
+                        document.getElementById('testimony_id').value = data.testimony_id;
+                        document.getElementById('username').value = data.username;
+                        document.getElementById('userId').value = data.userId;
+                        document.getElementById('rating').value = data.rating;
+                    });
+            }
+
+          
+        </script>
+
+
         <!-- MODAL VIEW MORE-->
         <div id="viewMore" class="modalview">
             <div class="modal-content" style="background-color: #d8e9c7;">
                 <h2>User Testimony</h2>
                 <form method="post" action="">
-                    <!-- Hidden inputs to pass data to PHP script -->
                     <input type="hidden" name="testimony_id" id="testimony_id">
                     <input type="hidden" name="username" id="username">
                     <input type="hidden" name="userId" id="userId">
                     <input type="hidden" name="rating" id="rating">
 
                     <div class="addbutton-group">
-                        <button type="submit" name="approve" id="approve">Approve</button>
+                        <button type="submit" name="upload" id="upload">Upload</button>
                         <button type="button" id="cancel01">Cancel</button>
                     </div>
                 </form>
@@ -531,7 +569,6 @@ $mysqli->close();
             function deleteTestimony(testimonyId) {
                 var confirmation = confirm("Are you sure you want to delete this testimony?");
                 if (confirmation) {
-                    // AJAX request
                     var xhttp = new XMLHttpRequest();
                     xhttp.onreadystatechange = function() {
                         if (this.readyState == 4 && this.status == 200) {
@@ -802,7 +839,6 @@ $mysqli->close();
 
     <script>
         function openModal(testimonyId) {
-            // Fetch testimony info via AJAX
             var xmlhttp = new XMLHttpRequest();
             xmlhttp.onreadystatechange = function() {
                 if (this.readyState == 4 && this.status == 200) {

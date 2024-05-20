@@ -103,7 +103,7 @@ if (isset($_SESSION['userId'])) {
             $rating = $_POST['ratings'];
             $stmt = $mysqli->prepare("INSERT INTO testimonies (userId, username, email, date, testimony, rating) VALUES (?, ?, ?, ?, ?, ?)");
             $stmt->bind_param("issssi", $userId, $username, $email, $date, $testimony, $rating);
-         
+
             if ($stmt->execute()) {
                 echo "Testimony submitted successfully.";
             } else {
@@ -212,15 +212,11 @@ $mysqli->close();
 <!-- NOTEBOOK AND ENTRIES COUNT -->
 <?php
 include 'Database_connect.php';
-
-// Check if userId is set in the session
 if (!isset($_SESSION['userId'])) {
     die("User is not logged in");
 }
 
 $userId = $_SESSION['userId'];
-
-// Query to count the number of notebooks created by the user
 $notebookQuery = "SELECT COUNT(*) as notebook_count FROM notebooks WHERE userId = ?";
 $stmt = $mysqli->prepare($notebookQuery);
 $stmt->bind_param("i", $userId);
@@ -228,9 +224,6 @@ $stmt->execute();
 $stmt->bind_result($notebookCount);
 $stmt->fetch();
 $stmt->close();
-
-// Query to count the total entries created by the user
-// Assuming 'entries' table exists with a userId and entryId
 $entriesQuery = "SELECT COUNT(*) as entries_count FROM entries WHERE userId = ?";
 $stmt = $mysqli->prepare($entriesQuery);
 $stmt->bind_param("i", $userId);
@@ -243,7 +236,36 @@ $mysqli->close();
 ?>
 
 
-<!-- ADD INFORMATION UPDATE AND INSERT -->
+<!-- EDIT PROFILE POPULATION -->
+<?php
+require 'Database_connect.php';
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+if (!isset($_SESSION['userId'])) {
+    die("User ID not set in session. Please log in again.");
+}
+$gender = '';
+$age = '';
+$address = '';
+$religion = '';
+$life_motto = '';
+$self_description = '';
+$saveButtonDisabled = false;
+if ($stmt = $mysqli->prepare("SELECT gender, age, address, religion, life_motto, self_description FROM user_add_information WHERE userId = ?")) {
+    $stmt->bind_param("i", $_SESSION['userId']);
+    $stmt->execute();
+    $stmt->store_result();
+    $rowCount = $stmt->num_rows;
+    $stmt->bind_result($gender, $age, $address, $religion, $life_motto, $self_description);
+    $stmt->fetch();
+    $stmt->close();
+    if ($rowCount > 0) {
+        $saveButtonDisabled = true;
+    }
+} else {
+    echo "Error preparing statement: " . $mysqli->error;
+}
+?>
 
 
 
@@ -515,12 +537,16 @@ $mysqli->close();
                             <div class="content__avatar">
                                 <img src="Images/profile/noProfile.jpg" alt="Avatar">
                             </div>
-
                             <div class="content__bull"><span></span><span></span><span></span><span></span><span></span>
                             </div>
+
                         </div>
-                        <div class="content__actions"><a href="#">
-                            </a><a href="#"></a></div>
+
+                        <div class="content__actions">
+                            <button type="button" id="editprofbtn">Edit Profile Info</button>
+                            <button type="button" id="editprofpicbtn">Edit Profile Picture</button>
+                        </div>
+
                         <div class="content__title">
                             <h1>
                                 <?php echo $user_username; ?>
@@ -563,7 +589,7 @@ $mysqli->close();
                         <div class="content__button"><a class="button" href="#">
                                 <div class="button__border"></div>
                                 <div class="button__bg"></div>
-                                <p class="button__text">Edit Profile</p>
+                                <p class="button__text">Edit Info</p>
                             </a></div>
                     </div>
                     <div class="bg">
@@ -588,6 +614,51 @@ $mysqli->close();
             </div>
         </div>
 
+        <!-- MODAL PROF IMAGE -->
+        <div id="profimageModal" class="modalprofimage">
+            <div class="modal-contentprofimage">
+                <h2>Edit Profile Picture</h2>
+                <form id="imageForm" enctype="multipart/form-data">
+                    <input type="file" id="imageInput" name="imageInput" accept="image/*">
+
+                    <button type="button" class="btnimage" id="saveBtn">Save</button>
+                    <button type="button" class="btnimage" id="updateBtn">Update</button>
+                    <button type="button" class="btnimage" id="cancelBtn">Cancel</button>
+
+                </form>
+            </div>
+        </div>
+
+        <script>
+            // Get the modal for profile picture editing
+            var profimageModal = document.getElementById("profimageModal");
+
+            // Get the button that opens the modal for profile picture editing
+            var editProfilePicBtn = document.getElementById("editprofpicbtn");
+
+            // Get the cancel button
+            var cancelBtn = document.getElementById("cancelBtn");
+
+            // Function to close the modal
+            function closeModal() {
+                profimageModal.style.display = "none";
+            }
+
+            // When the user clicks the button for editing profile picture, open the modal
+            editProfilePicBtn.onclick = function() {
+                profimageModal.style.display = "block";
+            }
+
+            // Add event listener to the cancel button to close the modal
+            cancelBtn.onclick = function() {
+                closeModal();
+            };
+        </script>
+
+
+
+
+
         <!-- MODAL profile -->
         <div id="profileModal" class="profmodal">
             <div class="modal-content">
@@ -596,53 +667,45 @@ $mysqli->close();
                 </div>
                 <br>
 
-
-                <form method="POST" action="">
-                    <!-- Profile Picture Section -->
-                    <!-- <div class="form-section">
+                <!-- Profile Picture Section -->
+                <!-- <div class="form-section">
                         <h4 class="form-title">Profile Picture</h4>
                         <input type="file" id="profilePictureInput" name="profilePictureInput" accept="image/*">
+                         <button type="submit" id="updateBtn" name="updateBtn">Update</button>
                     </div> -->
-
-                    <!-- Personal Information Section -->
+                <form method="POST" action="process_form.php">
                     <div class="form-section">
                         <h4 class="form-title">Personal Information</h4>
-                        <h5>Username</h5>
-                        <input type="text" id="usernameInput" name="usernameInput" placeholder="Username" value="<?php echo htmlspecialchars($username); ?>" readonly>
-                        <h5>Email</h5>
-                        <input type="text" id="emailInput" name="emailInput" placeholder="Email" value="<?php echo htmlspecialchars($email); ?>" readonly>
-                        <h5>User ID</h5>
-                        <input type="text" id="userIdInput" name="userIdInput" placeholder="User ID" value="<?php echo $userId; ?>" readonly>
-                        <hr>
-                        <br>
                         <select id="genderSelect" name="genderSelect" placeholder="Gender">
-                            <option value="Male">Male</option>
-                            <option value="Female">Female</option>
+                            <option value="Male" <?php if ($gender == 'Male') echo 'selected'; ?>>Male</option>
+                            <option value="Female" <?php if ($gender == 'Female') echo 'selected'; ?>>Female</option>
                         </select>
-                        <input type="text" id="ageInput" name="ageInput" placeholder="Age">
-                        <input type="text" id="addressInput" name="addressInput" placeholder="Address">
-                        <input type="text" id="religionInput" name="religionInput" placeholder="Religion">
+                        <input type="text" id="ageInput" name="ageInput" placeholder="Age" value="<?php echo htmlspecialchars($age); ?>">
+                        <input type="text" id="addressInput" name="addressInput" placeholder="Address" value="<?php echo htmlspecialchars($address); ?>">
+                        <input type="text" id="religionInput" name="religionInput" placeholder="Religion" value="<?php echo htmlspecialchars($religion); ?>">
                     </div>
-
-                    <!-- Additional Information Section -->
-                    <!-- Additional Information Section -->
                     <div class="form-section">
                         <h4 class="form-title">Additional Information</h4>
-                        <textarea id="life_motto" name="life_motto" placeholder="Life Motto"></textarea>
-                        <textarea id="self_description" name="self_description" placeholder="Self Description"></textarea>
+                        <textarea id="life_motto" name="life_motto" placeholder="Life Motto"><?php echo htmlspecialchars($life_motto); ?></textarea>
+                        <textarea id="self_description" name="self_description" placeholder="Self Description"><?php echo htmlspecialchars($self_description); ?></textarea>
                     </div>
 
-
-                    <!-- Buttons -->
-                    <button type="submit" id="saveBtn" name="saveBtn">Save</button>
+                    <button type="submit" id="saveBtn" name="saveBtn" <?php if ($saveButtonDisabled) echo 'disabled'; ?>>Save</button>
                     <button type="submit" id="updateBtn" name="updateBtn">Update</button>
                     <button type="button" id="cancelbtn">Cancel</button>
                     <button type="button" id="resetbtn">Reset</button>
                 </form>
 
-
             </div>
         </div>
+
+        <style>
+            #saveBtn[disabled] {
+                background-color: #808080;
+                color: #fff;
+                cursor: not-allowed;
+            }
+        </style>
 
 
 
@@ -778,7 +841,7 @@ $mysqli->close();
             </div>
         </div>
 
-        
+
 
         <!-- SHOWING THE NOTEBOOKS UPON LOGGED IN -->
         <?php
@@ -990,7 +1053,7 @@ $mysqli->close();
             const tabs = document.querySelectorAll('.tab');
             const sidebarLinks = document.querySelectorAll('.sidebar-link');
 
-            // Function to show a specific tab
+
             function showTab(target) {
                 tabs.forEach(tab => {
                     if (tab.id === target) {
@@ -1010,8 +1073,6 @@ $mysqli->close();
                     activeLink.classList.add('active');
                 }
             }
-
-            // Show dashboard tab initially
             showTab('dashboard');
 
             sidebarLinks.forEach(link => {
@@ -1075,7 +1136,6 @@ $mysqli->close();
     <script>
         var modal = document.getElementById("profileModal");
         var editProfileBtn = document.querySelector(".content__button .button");
-        var saveBtn = document.getElementById("saveBtn");
         var cancelBtn = document.getElementById("cancelbtn");
         var span = document.getElementsByClassName("close")[0];
 
@@ -1086,21 +1146,21 @@ $mysqli->close();
         function closeModal() {
             modal.style.display = "none";
         }
+
         editProfileBtn.onclick = function(event) {
             event.preventDefault();
             openModal();
         }
-        saveBtn.onclick = function(event) {
-            event.preventDefault();
-            closeModal();
-        }
+
         cancelBtn.onclick = function(event) {
             event.preventDefault();
             closeModal();
         }
+
         span.onclick = function() {
             closeModal();
         }
+
         window.onclick = function(event) {
             if (event.target == modal) {
                 closeModal();
@@ -1139,15 +1199,15 @@ $mysqli->close();
             notebookmodal.style.display = "none";
         }
         addNoteBtn.onclick = function(event) {
-            event.preventDefault(); // Prevent the default button behavior
+            event.preventDefault();
             openNotebookModal();
         }
         notebookSaveBtn.onclick = function(event) {
-            event.preventDefault(); // Prevent the default button behavior
+            event.preventDefault();
             closeNotebookModal();
         }
         notebookCancelBtn.onclick = function(event) {
-            event.preventDefault(); // Prevent the default button behavior
+            event.preventDefault();
             closeNotebookModal();
         }
         notebookSpan.onclick = function() {

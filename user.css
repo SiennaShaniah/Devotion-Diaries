@@ -1183,6 +1183,83 @@ body {
   }
 }
 
+#editprofpicbtn{
+  width: 200px;
+  text-align: center;
+  height: 40px;
+  border: none;
+  border-radius: 10px;
+  background: #bbcfa5;
+  color: #fff;
+  font-weight: 300;
+  font-size: 1rem;
+  margin-right: 5px;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+#editprofpicbtn:hover {
+  opacity: 0.8;
+  background: #74B72E;
+}
+
+#editprofbtn{
+  width: 200px;
+  text-align: center;
+  height: 40px;
+  border: none;
+  border-radius: 10px;
+  background: #bbcfa5;
+  color: #fff;
+  font-weight: 300;
+  font-size: 1rem;
+  margin-right: 5px;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+#editprofbtn:hover {
+  opacity: 0.8;
+  background: #74B72E;
+}
+
+
+/* The Modal (background) insert update profile picture*/
+.modalprofimage {
+  display: none; 
+  position: fixed; 
+  z-index: 1; 
+  left: 0;
+  top: 0;
+  width: 100%; 
+  height: 100%; 
+  overflow: auto; 
+  background-color: rgba(0, 0, 0, 0.4); 
+}
+
+.modal-contentprofimage {
+  background-color: #fefefe;
+  margin: auto; 
+  padding: 20px;
+  border: 1px solid #888;
+  width: 60%;
+  max-width: 300px; 
+}
+
+.btnimage {
+  background-color: #4CAF50; 
+  color: white;
+  padding: 8px 8px;
+  border: none;
+  cursor: pointer;
+  width: 75px;
+  height: 40px;
+}
+
+.btnimage:hover {
+  background-color: #73bd77;
+}
+
 
 /* Modal styles */
 .profmodal {

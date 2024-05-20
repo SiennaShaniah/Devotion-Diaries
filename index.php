@@ -186,6 +186,18 @@
     </div>
   </section>
 
+  <?php
+  include 'Database_connect.php';
+
+  // Fetch a random testimony with the status 'uploaded'
+  $sql = "SELECT username, testimony, rating FROM testimonies WHERE status='uploaded' ORDER BY RAND() LIMIT 1";
+  $result = $mysqli->query($sql);
+
+  $testimony = null;
+  if ($result->num_rows > 0) {
+    $testimony = $result->fetch_assoc();
+  }
+  ?>
 
   <section class="testimonials" id="testimonials">
     <div class="container">
@@ -196,18 +208,25 @@
         <div class="col-md-6">
           <div class="transparent-box">
             <div class="text">
-              <h2 class="username"></h2>
-              <p class="testimony"></p>
+              <?php if ($testimony) : ?>
+                <h2 class="username"><?php echo htmlspecialchars($testimony['username']); ?></h2>
+                <p class="testimony"><?php echo htmlspecialchars($testimony['testimony']); ?></p>
+              <?php else : ?>
+                <h2 class="username">No Testimonies Available</h2>
+                <p class="testimony">There are currently no uploaded testimonies.</p>
+              <?php endif; ?>
             </div>
           </div>
         </div>
-
         <div class="col-md-6" id="img">
           <img src="Images/bible09.jpg" class="img-fluid fix-image" alt="Image">
         </div>
       </div>
     </div>
   </section>
+
+  <?php $mysqli->close(); ?>
+
 
   <section class="faqs" id="faqs">
     <div class="container">
@@ -218,125 +237,125 @@
           <div class="text3">
             <h1>Frequently Asked Questions</h1>
           </div>
-          
 
-            <div class="accordion" id="accordionExample">
-              <div class="accordion-item">
-                <h2 class="accordion-header">
-                  <button class="accordion-button" id="accorbtn" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+
+          <div class="accordion" id="accordionExample">
+            <div class="accordion-item">
+              <h2 class="accordion-header">
+                <button class="accordion-button" id="accorbtn" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
                   How do I create an account on Devotion Diaries?
-                  </button>
-                </h2>
-                <div id="collapseOne" class="accordion-collapse collapse " data-bs-parent="#accordionExample">
-                  <div class="accordion-body" id="accorpar">
-                   <p >Creating an account on Devotion Diaries is easy. Simply click on the "Sign Up" button, fill in the required information, and follow the prompts to set up your personal Devotion Diary.</p>
-                  </div>
+                </button>
+              </h2>
+              <div id="collapseOne" class="accordion-collapse collapse " data-bs-parent="#accordionExample">
+                <div class="accordion-body" id="accorpar">
+                  <p>Creating an account on Devotion Diaries is easy. Simply click on the "Sign Up" button, fill in the required information, and follow the prompts to set up your personal Devotion Diary.</p>
                 </div>
               </div>
-              </div>
+            </div>
+          </div>
 
-              <div class="accordion" id="accordionExample">
-              <div class="accordion-item">
-                <h2 class="accordion-header">
-                  <button class="accordion-button" id="accorbtn" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="true" aria-controls="collapseTwo">
+          <div class="accordion" id="accordionExample">
+            <div class="accordion-item">
+              <h2 class="accordion-header">
+                <button class="accordion-button" id="accorbtn" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="true" aria-controls="collapseTwo">
                   Is my information and diary content private?
-                  </button>
-                </h2>
-                <div id="collapseTwo" class="accordion-collapse collapse " data-bs-parent="#accordionExample">
-                  <div class="accordion-body" id="accorpar">
-                   <p> Yes, we prioritize the privacy and security of our users. Your information and devotion entries are kept confidential and are only visible to you, unless you choose to share them with the community.</p>
-                  </div>
+                </button>
+              </h2>
+              <div id="collapseTwo" class="accordion-collapse collapse " data-bs-parent="#accordionExample">
+                <div class="accordion-body" id="accorpar">
+                  <p> Yes, we prioritize the privacy and security of our users. Your information and devotion entries are kept confidential and are only visible to you, unless you choose to share them with the community.</p>
                 </div>
               </div>
-              </div>
+            </div>
+          </div>
 
-              <div class="accordion" id="accordionExample">
-              <div class="accordion-item">
-                <h2 class="accordion-header">
-                  <button class="accordion-button" id="accorbtn" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree" aria-expanded="true" aria-controls="collapseThree">
+          <div class="accordion" id="accordionExample">
+            <div class="accordion-item">
+              <h2 class="accordion-header">
+                <button class="accordion-button" id="accorbtn" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree" aria-expanded="true" aria-controls="collapseThree">
                   Are there any fees associated with using Devotion Diaries?
-                  </button>
-                </h2>
-                <div id="collapseThree" class="accordion-collapse collapse " data-bs-parent="#accordionExample">
-                  <div class="accordion-body" id="accorpar">
-                   <p>  Devotion Diaries is currently a free platform for users. We may introduce premium features in the future, but basic usage and access to essential features will always remain free.</p>
-                  </div>
+                </button>
+              </h2>
+              <div id="collapseThree" class="accordion-collapse collapse " data-bs-parent="#accordionExample">
+                <div class="accordion-body" id="accorpar">
+                  <p> Devotion Diaries is currently a free platform for users. We may introduce premium features in the future, but basic usage and access to essential features will always remain free.</p>
                 </div>
               </div>
-              </div>
+            </div>
+          </div>
 
-              <div class="accordion" id="accordionExample">
-              <div class="accordion-item">
-                <h2 class="accordion-header">
-                  <button class="accordion-button" id="accorbtn" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFour" aria-expanded="true" aria-controls="collapseFour">
+          <div class="accordion" id="accordionExample">
+            <div class="accordion-item">
+              <h2 class="accordion-header">
+                <button class="accordion-button" id="accorbtn" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFour" aria-expanded="true" aria-controls="collapseFour">
                   Are the devotionals provided in DevotionDiaries based on any particular denomination or belief system?
-                  </button>
-                </h2>
-                <div id="collapseFour" class="accordion-collapse collapse " data-bs-parent="#accordionExample">
-                  <div class="accordion-body" id="accorpar">
-                   <p>DevotionDiaries aims to provide a diverse range of devotionals that resonate with Christians from various denominations and belief backgrounds, fostering inclusivity and spiritual growth.</p>
-                  </div>
+                </button>
+              </h2>
+              <div id="collapseFour" class="accordion-collapse collapse " data-bs-parent="#accordionExample">
+                <div class="accordion-body" id="accorpar">
+                  <p>DevotionDiaries aims to provide a diverse range of devotionals that resonate with Christians from various denominations and belief backgrounds, fostering inclusivity and spiritual growth.</p>
                 </div>
               </div>
-              </div>
+            </div>
+          </div>
 
-              <div class="accordion" id="accordionExample">
-              <div class="accordion-item">
-                <h2 class="accordion-header">
-                  <button class="accordion-button" id="accorbtn" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFive" aria-expanded="true" aria-controls="collapseFive">
+          <div class="accordion" id="accordionExample">
+            <div class="accordion-item">
+              <h2 class="accordion-header">
+                <button class="accordion-button" id="accorbtn" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFive" aria-expanded="true" aria-controls="collapseFive">
                   How can I get support if I encounter any issues with DevotionDiaries?
-                  </button>
-                </h2>
-                <div id="collapseFive" class="accordion-collapse collapse " data-bs-parent="#accordionExample">
-                  <div class="accordion-body" id="accorpar">
-                   <p>Users can reach out to the DevotionDiaries support team via email or through the app's built-in support feature for assistance with any technical issues or inquiries.</p>
-                  </div>
+                </button>
+              </h2>
+              <div id="collapseFive" class="accordion-collapse collapse " data-bs-parent="#accordionExample">
+                <div class="accordion-body" id="accorpar">
+                  <p>Users can reach out to the DevotionDiaries support team via email or through the app's built-in support feature for assistance with any technical issues or inquiries.</p>
                 </div>
               </div>
-              </div>
+            </div>
+          </div>
 
-              <div class="accordion" id="accordionExample">
-              <div class="accordion-item">
-                <h2 class="accordion-header">
-                  <button class="accordion-button" id="accorbtn" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSix" aria-expanded="true" aria-controls="collapseSix">
+          <div class="accordion" id="accordionExample">
+            <div class="accordion-item">
+              <h2 class="accordion-header">
+                <button class="accordion-button" id="accorbtn" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSix" aria-expanded="true" aria-controls="collapseSix">
                   How often are new devotionals and features added to DevotionDiaries?
-                  </button>
-                </h2>
-                <div id="collapseSix" class="accordion-collapse collapse " data-bs-parent="#accordionExample">
-                  <div class="accordion-body" id="accorpar">
-                   <p>DevotionDiaries regularly updates its content library with new devotionals and features to enrich the user experience and provide fresh insights and inspiration for spiritual growth.</p>
-                  </div>
+                </button>
+              </h2>
+              <div id="collapseSix" class="accordion-collapse collapse " data-bs-parent="#accordionExample">
+                <div class="accordion-body" id="accorpar">
+                  <p>DevotionDiaries regularly updates its content library with new devotionals and features to enrich the user experience and provide fresh insights and inspiration for spiritual growth.</p>
                 </div>
               </div>
-              </div>
+            </div>
+          </div>
 
-              <div class="accordion" id="accordionExample">
-              <div class="accordion-item">
-                <h2 class="accordion-header">
-                  <button class="accordion-button" id="accorbtn" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSeven" aria-expanded="true" aria-controls="collapseSeven">
+          <div class="accordion" id="accordionExample">
+            <div class="accordion-item">
+              <h2 class="accordion-header">
+                <button class="accordion-button" id="accorbtn" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSeven" aria-expanded="true" aria-controls="collapseSeven">
                   Can I provide feedback or suggest new features for DevotionDiaries?
-                  </button>
-                </h2>
-                <div id="collapseSeven" class="accordion-collapse collapse " data-bs-parent="#accordionExample">
-                  <div class="accordion-body" id="accorpar">
-                   <p>Yes, DevotionDiaries values user feedback and actively encourages users to share their suggestions and ideas for improving the app. Users can submit feedback through the app or website to contribute to its ongoing development and enhancement.</p>
-                  </div>
+                </button>
+              </h2>
+              <div id="collapseSeven" class="accordion-collapse collapse " data-bs-parent="#accordionExample">
+                <div class="accordion-body" id="accorpar">
+                  <p>Yes, DevotionDiaries values user feedback and actively encourages users to share their suggestions and ideas for improving the app. Users can submit feedback through the app or website to contribute to its ongoing development and enhancement.</p>
                 </div>
               </div>
-              </div>
+            </div>
+          </div>
 
 
-           
 
 
-         
+
+
         </div>
       </div>
     </div>
     <br>
-  <br>
+    <br>
   </section>
- 
+
 
   <!-- Footer -->
   <footer class="text-center text-white fixed-bottom-footer" style="background-color: #6b8a60">
@@ -373,8 +392,8 @@
     <!-- Section: Social -->
 
     <!-- Copyright -->
-    <div class="text-center p-3" style="background-color: #d9ead3"  >
-      <p style="color: #000" >© 2024 Copyright: <a class="text-blue" href="https://DevotionDiaries.com/">DevotionDiaries.com</a></p>
+    <div class="text-center p-3" style="background-color: #d9ead3">
+      <p style="color: #000">© 2024 Copyright: <a class="text-blue" href="https://DevotionDiaries.com/">DevotionDiaries.com</a></p>
     </div>
     <!-- Copyright -->
   </footer>

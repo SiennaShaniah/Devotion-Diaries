@@ -77,15 +77,18 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['email']) && isset($_PO
                 header("Location: user.php");
                 exit();
             } else {
-                echo "Incorrect password.";
+                $notification_message = "Incorrect password.";
             }
         } else {
-            echo "No user found with this email.";
+            $notification_message = "No user found with this email.";
         }
         $stmt->close();
     } else {
-        echo "Failed to prepare the SQL statement.";
+        $notification_message = "Failed to prepare the SQL statement.";
     }
 }   
 $mysqli->close();
 ?>
+
+
+

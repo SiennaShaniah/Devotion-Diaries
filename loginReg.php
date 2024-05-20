@@ -11,6 +11,15 @@
 </head>
 
 <body>
+    <!-- Modal HTML -->
+    <div id="myModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <p id="modal-message"></p>
+        </div>
+    </div>
+
+
     <a href="index.php" class="back-button">
         <i class="fas fa-arrow-left"></i>Home
     </a>
@@ -37,6 +46,31 @@
                 <input type="submit" value="Login" class="btn">
                 <p class="account-text">Don't have an account? <a href="#" id="sign-up-btn2">Sign up</a></p>
             </form>
+
+            <script>
+                function showModal(message) {
+                    var modal = document.getElementById("myModal");
+                    var span = document.getElementsByClassName("close")[0];
+                    document.getElementById("modal-message").innerText = message;
+                    modal.style.display = "block";
+
+                    span.onclick = function() {
+                        modal.style.display = "none";
+                    }
+
+                    window.onclick = function(event) {
+                        if (event.target == modal) {
+                            modal.style.display = "none";
+                        }
+                    }
+                }
+
+                <?php if (isset($notification_message)) : ?>
+                    document.addEventListener("DOMContentLoaded", function() {
+                        showModal("<?php echo $notification_message; ?>");
+                    });
+                <?php endif; ?>
+            </script>
 
 
             <form action="loginRegConnect.php" class="sign-up-form" method="post">
