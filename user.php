@@ -268,6 +268,42 @@ if ($stmt = $mysqli->prepare("SELECT gender, age, address, religion, life_motto,
 ?>
 
 
+<!-- DISPLAY ADD INFORMATION IN CARDS -->
+<?php
+include 'Database_connect.php';
+$userId = $_SESSION['userId'];
+$query = "SELECT gender, age, address, religion, life_motto, self_description FROM user_add_information WHERE userId = ?";
+$stmt = $mysqli->prepare($query);
+$stmt->bind_param("i", $userId);
+$stmt->execute();
+$result = $stmt->get_result();
+$user_info = $result->fetch_assoc();
+if (!$user_info) {
+    echo "No user information found.";
+    exit;
+}
+?>
+
+<!-- UPDATE USERNAME -->
+<?php
+include('Database_connect.php');
+
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    if (isset($_POST['usernameInput']) && !empty($_POST['usernameInput'])) {
+        $newUsername = $mysqli->real_escape_string($_POST['usernameInput']);
+        $userId = $_SESSION['userId'];
+        $updateQuery = "UPDATE users SET username = '$newUsername' WHERE userId = '$userId'";
+        if ($mysqli->query($updateQuery)) {
+            $_SESSION['username'] = $newUsername;
+            echo "Username updated successfully!";
+        } else {
+            echo "Error updating username: " . $mysqli->error;
+        }
+    } else {
+        echo "Please provide a new username!";
+    }
+}
+?>
 
 
 
@@ -543,8 +579,8 @@ if ($stmt = $mysqli->prepare("SELECT gender, age, address, religion, life_motto,
                         </div>
 
                         <div class="content__actions">
-                            <button type="button" id="editprofbtn">Edit Profile Info</button>
-                            <button type="button" id="editprofpicbtn">Edit Profile Picture</button>
+                            <button type="button" id="editprofbtn" onclick="openProfUsernameModal()">Edit Username</button>
+                            <button type="button" id="editprofpicbtn" onclick="openProfImageModal()">Edit Profile Picture</button>
                         </div>
 
                         <div class="content__title">
@@ -561,24 +597,26 @@ if ($stmt = $mysqli->prepare("SELECT gender, age, address, religion, life_motto,
                                     <?php echo $userId; ?>
                                 </p>
                             </div>
+
                             <div class="carder">
-                                <p><span>Gender: <br></span></p>
+                                <p><span>Gender: <br><?php echo htmlspecialchars($user_info['gender']); ?></span></p>
                             </div>
                             <div class="carder">
-                                <p><span>Age: <br></span></p>
+                                <p><span>Age: <br><?php echo htmlspecialchars($user_info['age']); ?></span></p>
                             </div>
                             <div class="carder">
-                                <p><span>Address: <br></span></p>
+                                <p><span>Address: <br><?php echo htmlspecialchars($user_info['address']); ?></span></p>
                             </div>
                             <div class="carder">
-                                <p><span>Religion: <br></span></p>
+                                <p><span>Religion: <br><?php echo htmlspecialchars($user_info['religion']); ?></span></p>
                             </div>
                             <div class="carder">
-                                <p><span>Life Moto: <br></span></p>
+                                <p><span>Life Motto: <br><?php echo htmlspecialchars($user_info['life_motto']); ?></span></p>
                             </div>
                             <div class="carder">
-                                <p><span>Self Description: <br></span></p>
+                                <p><span>Self Description: <br><?php echo htmlspecialchars($user_info['self_description']); ?></span></p>
                             </div>
+
                         </div>
 
                         <ul class="content__list">
@@ -620,43 +658,73 @@ if ($stmt = $mysqli->prepare("SELECT gender, age, address, religion, life_motto,
                 <h2>Edit Profile Picture</h2>
                 <form id="imageForm" enctype="multipart/form-data">
                     <input type="file" id="imageInput" name="imageInput" accept="image/*">
-
-                    <button type="button" class="btnimage" id="saveBtn">Save</button>
-                    <button type="button" class="btnimage" id="updateBtn">Update</button>
-                    <button type="button" class="btnimage" id="cancelBtn">Cancel</button>
-
+                    <button type="button" class="btnimage" id="savePicBtn">Save</button>
+                    <button type="button" class="btnimage" id="updatePicBtn">Update</button>
+                    <button type="button" class="btnimage" id="cancelPicBtn" onclick="closeProfImageModal()">Cancel</button>
                 </form>
             </div>
         </div>
 
+
+        <!-- MODAL PROF USERNAME -->
+        <div id="profusernameModal" class="modalprofimage">
+            <div class="modal-contentprofimage">
+                <h2>Edit Username</h2>
+                <form id="usernameForm" method="POST" action="">
+                    <input type="text" id="usernameInput" name="usernameInput" placeholder="New Username" value="<?php echo isset($_SESSION['username']) ? $_SESSION['username'] : ''; ?>">
+                    <button type="submit" class="btnimage" id="updateUsernameBtn">Update</button>
+                    <button type="button" class="btnimage" id="cancelUsernameBtn" onclick="closeProfUsernameModal()">Cancel</button>
+                </form>
+            </div>
+        </div>
+
+
+
         <script>
-            // Get the modal for profile picture editing
-            var profimageModal = document.getElementById("profimageModal");
+            // Profile Picture Modal
+            const profImageModal = document.getElementById('profimageModal');
+            const editProfPicBtn = document.getElementById('editprofpicbtn');
+            const cancelPicBtn = document.getElementById('cancelPicBtn');
 
-            // Get the button that opens the modal for profile picture editing
-            var editProfilePicBtn = document.getElementById("editprofpicbtn");
-
-            // Get the cancel button
-            var cancelBtn = document.getElementById("cancelBtn");
-
-            // Function to close the modal
-            function closeModal() {
-                profimageModal.style.display = "none";
+            function openProfImageModal() {
+                profImageModal.style.display = 'block';
             }
 
-            // When the user clicks the button for editing profile picture, open the modal
-            editProfilePicBtn.onclick = function() {
-                profimageModal.style.display = "block";
+            function closeProfImageModal() {
+                profImageModal.style.display = 'none';
             }
 
-            // Add event listener to the cancel button to close the modal
-            cancelBtn.onclick = function() {
-                closeModal();
-            };
+            editProfPicBtn.addEventListener('click', openProfImageModal);
+            cancelPicBtn.addEventListener('click', closeProfImageModal);
+
+            window.addEventListener('click', function(event) {
+                if (event.target === profImageModal) {
+                    closeProfImageModal();
+                }
+            });
+
+            // Username Modal
+            const profUsernameModal = document.getElementById('profusernameModal');
+            const editUsernameBtn = document.getElementById('editprofbtn');
+            const cancelUsernameBtn = document.getElementById('cancelUsernameBtn');
+
+            function openProfUsernameModal() {
+                profUsernameModal.style.display = 'block';
+            }
+
+            function closeProfUsernameModal() {
+                profUsernameModal.style.display = 'none';
+            }
+
+            editUsernameBtn.addEventListener('click', openProfUsernameModal);
+            cancelUsernameBtn.addEventListener('click', closeProfUsernameModal);
+
+            window.addEventListener('click', function(event) {
+                if (event.target === profUsernameModal) {
+                    closeProfUsernameModal();
+                }
+            });
         </script>
-
-
-
 
 
         <!-- MODAL profile -->
@@ -666,13 +734,6 @@ if ($stmt = $mysqli->prepare("SELECT gender, age, address, religion, life_motto,
                     <h3 class="modal-title">ADD INFORMATION</h3>
                 </div>
                 <br>
-
-                <!-- Profile Picture Section -->
-                <!-- <div class="form-section">
-                        <h4 class="form-title">Profile Picture</h4>
-                        <input type="file" id="profilePictureInput" name="profilePictureInput" accept="image/*">
-                         <button type="submit" id="updateBtn" name="updateBtn">Update</button>
-                    </div> -->
                 <form method="POST" action="process_form.php">
                     <div class="form-section">
                         <h4 class="form-title">Personal Information</h4>
@@ -889,11 +950,11 @@ if ($stmt = $mysqli->prepare("SELECT gender, age, address, religion, life_motto,
                             while ($row = $result->fetch_assoc()) {
                                 echo '<div class="notecard">
                             <div class="noteimage">
-                                <img src="Images/covers/' . htmlspecialchars($row["Notebook_cover"]) . '" alt="Notebook Cover">
+                                <img src="Images/covers/7.png" alt="Notebook Cover">
                                 <div class="notetitle-box">
                                     <p class="notetitle">' . htmlspecialchars($row["notebook_title"]) . '</p>
                                     <div class="button-container">
-                                        <button class="edit-button" id="edit-button">Edit Cover</button>
+                                        <button class="editbttn" id="edit-button" onclick="openCoverModal()">Edit Cover</button>
                                         <a href="notebook.php?notebook_id=' . $row["notebook_id"] . '" class="add-entry-button" id="add-entry-button">Add Entry</a>
                                         <button class="deletebtn" id="deletebtn">Delete Note</button>
                                     </div>
@@ -911,63 +972,93 @@ if ($stmt = $mysqli->prepare("SELECT gender, age, address, religion, life_motto,
             </div>
         </div>
 
-
-
-
-
-        <!-- Modal for Cover Selection -->
-        <div id="cover-modal" class="modalcover">
-            <div class="modal-content">
-                <h2>Select Cover</h2>
-                <form id="cover-selection-form">
-                    <div class="cover-images">
-                        <label>
-                            <input type="radio" name="cover" value="Images/covers/1.png">
-                            <img src="Images/covers/1.png" alt="Cover 1">
-                        </label>
-                        <label>
-                            <input type="radio" name="cover" value="Images/covers/2.png">
-                            <img src="Images/covers/2.png" alt="Cover 1">
-                        </label>
-                        <label>
-                            <input type="radio" name="cover" value="Images/covers/3.png">
-                            <img src="Images/covers/3.png" alt="Cover 1">
-                        </label>
+        <div id="coverModal" class="modal">
+            <div class="modal-contentHI">
+                <h2>Add Notebook Cover</h2>
+                <form id="coverForm" method="POST" action="">
+                    <input type="text" id="coverInput" name="coverInput" readonly>
+                    <img src="Images/covers/1.png" alt="Cover">
+                    <div class="button-group">
+                        <button type="button" class="btn" id="selectCoverBtn">Select</button>
+                        <button type="button" class="btn" id="saveCoverBtn">Save</button>
+                        <button type="button" class="btn" id="updateCoverBtn">Update</button>
                     </div>
-                    <button type="submit">Select Cover</button>
-                    <button type="button">Cancel</button>
+                    <button type="button" class="btn cancel" id="cancelCoverBtn" onclick="closeCoverModal()">Cancel</button>
                 </form>
             </div>
         </div>
 
         <script>
-            document.addEventListener("DOMContentLoaded", function() {
-                var editButton = document.getElementById("edit-button");
-                var coverModal = document.getElementById("cover-modal");
-                var closeButton = coverModal.querySelector("button[type='button']");
+            const coverModal = document.getElementById('coverModal');
+            const editButton = document.getElementById('edit-button');
+            const cancelCoverBtn = document.getElementById('cancelCoverBtn');
 
-                function openModal() {
-                    coverModal.style.display = "block";
+            function openCoverModal() {
+                coverModal.style.display = 'block';
+            }
+
+            function closeCoverModal() {
+                coverModal.style.display = 'none';
+            }
+            editButton.addEventListener('click', openCoverModal);
+            cancelCoverBtn.addEventListener('click', closeCoverModal);
+            window.addEventListener('click', function(event) {
+                if (event.target === coverModal) {
+                    closeCoverModal();
+                }
+            });
+        </script>
+
+        <!-- Modal for Cover Selection -->
+        <div id="cover-modal" class="modalcover">
+            <div class="modal-content">
+                <h2>Select Cover</h2>
+                <div class="cover-images">
+                    <img src="Images/covers/1.png" alt="Cover 1" data-cover="cover1.jpg" id="cover1">
+                    <img src="Images/covers/2.png" alt="Cover 2" data-cover="cover2.jpg" id="cover2">
+                    <img src="Images/covers/3.png" alt="Cover 3" data-cover="cover3.jpg" id="cover3">
+                    <img src="Images/covers/4.png" alt="Cover 4" data-cover="cover4.jpg" id="cover4">
+                    <img src="Images/covers/5.png" alt="Cover 5" data-cover="cover5.jpg" id="cover5">
+                    <img src="Images/covers/6.png" alt="Cover 6" data-cover="cover6.jpg" id="cover6">
+                    <img src="Images/covers/7.png" alt="Cover 7" data-cover="cover7.jpg" id="cover7">
+                    <img src="Images/covers/8.png" alt="Cover 8" data-cover="cover8.jpg" id="cover8">
+                    <img src="Images/covers/9.png" alt="Cover 9" data-cover="cover9.jpg" id="cover9">
+                    <img src="Images/covers/10.png" alt="Cover 10" data-cover="cover10.jpg" id="cover10">
+                </div>
+            </div>
+        </div>
+
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                const coverSelectionModal = document.getElementById('cover-modal');
+                const coverImages = coverSelectionModal.querySelectorAll('.cover-images img');
+                const coverInput = document.getElementById('coverInput');
+                const selectCoverBtn = document.getElementById('selectCoverBtn');
+                const coverDisplayImage = document.querySelector('#coverModal img');
+
+                function openCoverSelectionModal() {
+                    coverSelectionModal.style.display = 'block';
                 }
 
-                function closeModal() {
-                    coverModal.style.display = "none";
+                function closeCoverSelectionModal() {
+                    coverSelectionModal.style.display = 'none';
                 }
-                editButton.addEventListener("click", openModal);
-                closeButton.addEventListener("click", closeModal);
-                window.addEventListener("click", function(event) {
-                    if (event.target == coverModal) {
-                        closeModal();
+                selectCoverBtn.addEventListener('click', openCoverSelectionModal);
+                coverImages.forEach(image => {
+                    image.addEventListener('click', function() {
+                        const relativePath = this.src.split('Images/covers/')[1];
+                        coverInput.value = 'Images/covers/' + relativePath;
+                        coverDisplayImage.src = this.src;
+                        closeCoverSelectionModal();
+                    });
+                });
+                window.addEventListener('click', function(event) {
+                    if (event.target === coverSelectionModal) {
+                        closeCoverSelectionModal();
                     }
                 });
             });
         </script>
-
-
-
-
-
-
 
         <!-- MODAL NOTEBOOK -->
         <div id="notemodal" class="modalnote">
@@ -1273,32 +1364,6 @@ if ($stmt = $mysqli->prepare("SELECT gender, age, address, religion, life_motto,
             });
         });
     </script>
-
-    <!-- NOTEBOOK CARD MODAL -->
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const selectCoverButton = document.getElementById('select-cover-button');
-            const coverModal = document.getElementById('cover-modal');
-            const coverImages = coverModal.querySelectorAll('.cover-images img');
-            const selectedCover = document.getElementById('selectedCover');
-
-            selectCoverButton.addEventListener('click', function() {
-                coverModal.style.display = 'block';
-            });
-
-            coverImages.forEach(image => {
-                image.addEventListener('click', function() {
-                    const newCoverSrc = this.getAttribute('data-cover');
-                    selectedCover.innerHTML = `${newCoverSrc}`;
-                    coverModal.style.display = 'none';
-                });
-            });
-        });
-    </script>
-
-
-
-
 
     <!-- IT WILL GO TO dailyWord TAB -->
     <script>

@@ -516,7 +516,8 @@ body {
   max-width: 100%;
   max-height: 100%;
   display: block;
-  border-radius: 50%; /* Ensure image is also circular */
+  border-radius: 50%;
+  /* Ensure image is also circular */
 }
 
 .profile-page .content__avatar::before {
@@ -1183,7 +1184,8 @@ body {
   }
 }
 
-#editprofpicbtn{
+#editprofpicbtn,
+#editprofbtn {
   width: 200px;
   text-align: center;
   height: 40px;
@@ -1198,56 +1200,36 @@ body {
   transition: background 0.3s;
 }
 
-#editprofpicbtn:hover {
-  opacity: 0.8;
-  background: #74B72E;
-}
-
-#editprofbtn{
-  width: 200px;
-  text-align: center;
-  height: 40px;
-  border: none;
-  border-radius: 10px;
-  background: #bbcfa5;
-  color: #fff;
-  font-weight: 300;
-  font-size: 1rem;
-  margin-right: 5px;
-  cursor: pointer;
-  transition: background 0.3s;
-}
-
+#editprofpicbtn:hover,
 #editprofbtn:hover {
   opacity: 0.8;
   background: #74B72E;
 }
 
-
-/* The Modal (background) insert update profile picture*/
+/* The Modal (background) */
 .modalprofimage {
-  display: none; 
-  position: fixed; 
-  z-index: 1; 
+  display: none;
+  position: fixed;
+  z-index: 1;
   left: 0;
   top: 0;
-  width: 100%; 
-  height: 100%; 
-  overflow: auto; 
-  background-color: rgba(0, 0, 0, 0.4); 
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: rgba(0, 0, 0, 0.4);
 }
 
 .modal-contentprofimage {
   background-color: #fefefe;
-  margin: auto; 
+  margin: auto;
   padding: 20px;
   border: 1px solid #888;
   width: 60%;
-  max-width: 300px; 
+  max-width: 300px;
 }
 
 .btnimage {
-  background-color: #4CAF50; 
+  background-color: #4CAF50;
   color: white;
   padding: 8px 8px;
   border: none;
@@ -1259,6 +1241,9 @@ body {
 .btnimage:hover {
   background-color: #73bd77;
 }
+
+
+
 
 
 /* Modal styles */
@@ -1475,7 +1460,7 @@ div button:hover {
   margin-bottom: 10px;
   color: #060606;
   position: relative;
-  background: linear-gradient(150deg,#63a61c  20%, #2e541c 100%);
+  background: linear-gradient(150deg, #63a61c 20%, #2e541c 100%);
   width: 100%;
   padding: 1rem;
   border-radius: 15px;
@@ -1485,7 +1470,7 @@ div button:hover {
   display: flex;
   align-items: center;
   margin-bottom: 20px;
-  background: linear-gradient(150deg,#badb97  20%, #6ba450 100%);
+  background: linear-gradient(150deg, #badb97 20%, #6ba450 100%);
   padding: 10px;
   border-radius: 8px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
@@ -1566,7 +1551,7 @@ div button:hover {
   z-index: 1;
   flex-direction: column;
   gap: 10px;
-  background: linear-gradient(150deg,#badb97   20%, #6ba450 100%);
+  background: linear-gradient(150deg, #badb97 20%, #6ba450 100%);
   font-family: 'Poppins', sans-serif;
   color: #fff;
 }
@@ -1673,7 +1658,7 @@ select {
   border-radius: 15px;
 }
 
-.title04{
+.title04 {
   font-size: xx-large;
   color: #2e541c;
 }
@@ -1734,7 +1719,7 @@ select {
 .noteimage {
   position: relative;
   width: 100%;
-  height: 70%; /* Adjusted to fill the entire space */
+  height: 70%;
   overflow: hidden;
 }
 
@@ -1756,7 +1741,7 @@ select {
   font-weight: 400;
   text-align: center;
   z-index: 1;
-  background: rgba(255, 255, 255, 0.7); 
+  background: rgba(255, 255, 255, 0.7);
 }
 
 .button-container {
@@ -1765,7 +1750,7 @@ select {
   margin-top: 5px;
 }
 
-.edit-button,
+.editbttn,
 .add-entry-button,
 .deletebtn {
   padding: 2px 5px;
@@ -1781,7 +1766,7 @@ select {
   transition: background-color 0.3s ease;
 }
 
-.edit-button:hover,
+.editbttn:hover,
 .add-entry-button:hover {
   background-color: #6c7d58;
 }
@@ -1860,9 +1845,90 @@ select {
   background: #274e13;
 }
 
+/* MODAL FOR EDIT COVER */
+/* Button to open modal */
+.edit-button {
+  width: 120px;
+  text-align: center;
+  height: 40px;
+  border: none;
+  border-radius: 5px;
+  background: #bbcfa5;
+  color: #fff;
+  font-weight: 300;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.edit-button:hover {
+  background: #74B72E;
+}
+
+/* The Modal (background) */
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 1;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: rgba(0, 0, 0, 0.4);
+  align-items: center;
+}
+
+/* Modal Content */
+.modal-contentHI {
+  background-color: #fefefe;
+  margin: 15% auto;
+  padding: 20px;
+  border: 1px solid #888;
+  width: 80%;
+  max-width: 400px;
+  text-align: center;
+}
+
+.modal-contentHI h2 {
+  margin-bottom: 20px;
+}
+
+.modal-contentHI .button-group {
+  display: flex;
+  justify-content: space-between;
+}
+
+.modal-contentHI .btn {
+  width: 90px;
+  height: 35px;
+  border: none;
+  border-radius: 10px;
+  background: #a4c97d;
+  color: #fff;
+  font-weight: 500;
+  font-size: 0.8rem;
+  margin-right: 5px;
+  cursor: pointer;
+  padding: 3px 7px;
+  transition: background 0.3s;
+}
+
+.modal-contentHI .btn.cancel {
+  background-color: #f44336;
+}
+
+.modal-contentHI .btn:hover {
+  background-color: #45a049;
+}
+
+.modal-contentHI .btn.cancel:hover {
+  background-color: #d32f2f;
+}
+
+
 
 /* NOTEBOOK COVER STYLING */
-/* Modal Background
 .modalcover {
   display: none;
   position: fixed; 
@@ -1872,19 +1938,18 @@ select {
   width: 100%; 
   height: 100%; 
   overflow: auto; 
-  background-color: rgba(0,0,0,0.5); 
+  background-color: rgba(0, 0, 0, 0.5); 
 }
 
-
 .modal-content {
-  background-color: #fefefe;
-  margin: 10% auto;
-  padding: 20px;
-  border: 1px solid #888;
-  width: 80%; 
-  max-width: 600px;
-  border-radius: 10px;
-  box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+  background-color: rgba(254, 254, 254, 0.8); /* Adjust the alpha value (0.8) for transparency */
+  margin: 5% auto;
+  padding: 30px;
+  border: 2px solid #888;
+  width: 70%; 
+  max-width: 800px;
+  border-radius: 20px;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.5);
   text-align: center;
 }
 
@@ -1896,88 +1961,78 @@ select {
   margin: 20px 0;
 }
 
-
-.cover-images label {
-  display: inline-block;
-  cursor: pointer;
-  margin: 10px;
-}
-
 .cover-images img {
-  width: 100px;
-  height: 150px;
+  width: 150px;
+  height: 200px;
   object-fit: cover;
-  border: 2px solid transparent;
-  border-radius: 5px;
+  border: 3px solid transparent;
+  border-radius: 10px;
   transition: border 0.3s ease;
 }
 
-.cover-images input[type="radio"] {
-  display: none;
-}
-
-.cover-images input[type="radio"]:checked + img {
+.cover-images img:hover {
   border-color: #99b27e;
 }
 
-
 button {
-  background-color: #99b27e;
-  color: white;
-  padding: 10px 20px;
-  margin: 10px 5px;
+  width: 90px;
+  height: 35px;
   border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  font-family: 'Poppins', sans-serif;
-  font-size: medium;
+  border-radius: 10px;
+  background: #a4c97d;
+  color: #fff;
   font-weight: 500;
-  transition: background-color 0.3s ease;
+  font-size: 0.8rem;
+  margin-right: 5px;
+  cursor: pointer;
+  padding: 3px 7px;
+  transition: background 0.3s;
 }
 
 button:hover {
   background-color: #6c7d58;
-} */
+}
 
 
 /* TRASH STYLING */
-.table{
+.table {
   padding: 15px;
-  background:#a9c983;
+  background: #a9c983;
   border-radius: 10px;
   height: 430px;
   overflow-y: scroll;
 }
 
-table{
+table {
   width: 100%;
   text-align: left;
   border-collapse: collapse;
 }
 
-tbody{
+tbody {
   padding: 0 10px;
   color: #274e13;
 }
 
-tr{
+tr {
   border-bottom: 1px solid #e9edf1;
 }
 
-td,th{
+td,
+th {
   padding-block: 10px;
 }
 
-tbody tr:hover{
+tbody tr:hover {
   background-color: #99b27e;
   color: #fff;
 }
 
-td:first-child{
+td:first-child {
   padding-left: 10px;
 }
 
-th{
+th {
   color: #3d3c3c;
 }
 
