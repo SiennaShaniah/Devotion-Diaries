@@ -307,6 +307,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
 
 
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -902,15 +903,19 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             </div>
         </div>
 
-
-
-        <!-- SHOWING THE NOTEBOOKS UPON LOGGED IN -->
         <?php
         include 'Database_connect.php';
+
         if (isset($_SESSION['userId'])) {
             $user_id = $_SESSION['userId'];
-            $query = "SELECT notebook_id, notebook_title, Notebook_cover FROM notebooks WHERE userId = ?";
+
+            $query = "SELECT n.notebook_id, n.notebook_title, c.Notebook_cover 
+              FROM notebooks n 
+              LEFT JOIN notebook_cover c ON n.notebook_id = c.notebook_id 
+              WHERE n.userId = ?";
+
             $stmt = $mysqli->prepare($query);
+
             if ($stmt) {
                 $stmt->bind_param("i", $user_id);
                 $stmt->execute();
@@ -920,13 +925,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 exit;
             }
         } else {
-
             echo "Please log in to view your notebooks.";
             exit;
         }
         ?>
 
-        <!-- NOTEBOOKS -->
         <div id="notebook" class="tab">
             <div class="main--container103">
                 <div class="section--title104">
@@ -948,13 +951,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                         <?php
                         if ($result->num_rows > 0) {
                             while ($row = $result->fetch_assoc()) {
+                                $cover_image = isset($row["Notebook_cover"]) ? $row["Notebook_cover"] : "default_cover.png"; // Change "default_cover.png" to your default cover image path
+
                                 echo '<div class="notecard">
                             <div class="noteimage">
-                                <img src="Images/covers/7.png" alt="Notebook Cover">
+                                <img src="' . $cover_image . '" alt="Notebook Cover">
                                 <div class="notetitle-box">
                                     <p class="notetitle">' . htmlspecialchars($row["notebook_title"]) . '</p>
                                     <div class="button-container">
-                                        <button class="editbttn" id="edit-button" onclick="openCoverModal()">Edit Cover</button>
+                                        <button class="editbttn" id="edit-button" onclick="openCoverModal(' . $row["notebook_id"] . ')">Edit Cover</button>
                                         <a href="notebook.php?notebook_id=' . $row["notebook_id"] . '" class="add-entry-button" id="add-entry-button">Add Entry</a>
                                         <button class="deletebtn" id="deletebtn">Delete Note</button>
                                     </div>
@@ -972,16 +977,19 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             </div>
         </div>
 
+
+
         <div id="coverModal" class="modal">
             <div class="modal-contentHI">
                 <h2>Add Notebook Cover</h2>
-                <form id="coverForm" method="POST" action="">
+                <form id="coverForm" method="POST" action="coverHandler.php">
                     <input type="text" id="coverInput" name="coverInput" readonly>
+                    <input type="text" id="notebook-id" name="notebookId" readonly>
                     <img src="Images/covers/1.png" alt="Cover">
                     <div class="button-group">
                         <button type="button" class="btn" id="selectCoverBtn">Select</button>
-                        <button type="button" class="btn" id="saveCoverBtn">Save</button>
-                        <button type="button" class="btn" id="updateCoverBtn">Update</button>
+                        <button type="submit" class="btn" id="saveCoverBtn">Save</button>
+                        <button type="submit" class="btn" id="updateCoverBtn">Update</button>
                     </div>
                     <button type="button" class="btn cancel" id="cancelCoverBtn" onclick="closeCoverModal()">Cancel</button>
                 </form>
@@ -993,13 +1001,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             const editButton = document.getElementById('edit-button');
             const cancelCoverBtn = document.getElementById('cancelCoverBtn');
 
-            function openCoverModal() {
-                coverModal.style.display = 'block';
+            function openCoverModal(notebookId) {
+                document.getElementById('coverModal').style.display = 'block';
+                document.getElementById('notebook-id').value = notebookId;
             }
 
             function closeCoverModal() {
-                coverModal.style.display = 'none';
+                document.getElementById('coverModal').style.display = 'none';
             }
+
             editButton.addEventListener('click', openCoverModal);
             cancelCoverBtn.addEventListener('click', closeCoverModal);
             window.addEventListener('click', function(event) {
