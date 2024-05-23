@@ -69,7 +69,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         </div>
         <div class="back">
             <a href="user.php" id="backToNotebooks" class="back-button">
-                <i class="fas fa-arrow-left"></i>Back To Notebooks
+                <i class="fas fa-arrow-left"></i>Back To Dashboard
             </a>
         </div>
         <div class="noteName">

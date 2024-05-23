@@ -951,7 +951,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                         <?php
                         if ($result->num_rows > 0) {
                             while ($row = $result->fetch_assoc()) {
-                                $cover_image = isset($row["Notebook_cover"]) ? $row["Notebook_cover"] : "default_cover.png"; // Change "default_cover.png" to your default cover image path
+                                $cover_image = isset($row["Notebook_cover"]) ? $row["Notebook_cover"] : "Images/covers/8.png"; 
 
                                 echo '<div class="notecard">
                             <div class="noteimage">
@@ -959,7 +959,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                 <div class="notetitle-box">
                                     <p class="notetitle">' . htmlspecialchars($row["notebook_title"]) . '</p>
                                     <div class="button-container">
-                                        <button class="editbttn" id="edit-button" onclick="openCoverModal(' . $row["notebook_id"] . ')">Edit Cover</button>
+                                    <button class="editbttn" onclick="openCoverModal(' . $row["notebook_id"] . ', \'' . $cover_image . '\')">Edit Cover</button>
                                         <a href="notebook.php?notebook_id=' . $row["notebook_id"] . '" class="add-entry-button" id="add-entry-button">Add Entry</a>
                                         <button class="deletebtn" id="deletebtn">Delete Note</button>
                                     </div>
@@ -988,8 +988,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     <img src="Images/covers/1.png" alt="Cover">
                     <div class="button-group">
                         <button type="button" class="btn" id="selectCoverBtn">Select</button>
-                        <button type="submit" class="btn" id="saveCoverBtn">Save</button>
-                        <button type="submit" class="btn" id="updateCoverBtn">Update</button>
+                        <button type="submit" class="btn" id="saveCoverBtn" >Save</button>
                     </div>
                     <button type="button" class="btn cancel" id="cancelCoverBtn" onclick="closeCoverModal()">Cancel</button>
                 </form>
