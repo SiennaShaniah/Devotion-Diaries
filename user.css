@@ -1931,22 +1931,23 @@ select {
 /* NOTEBOOK COVER STYLING */
 .modalcover {
   display: none;
-  position: fixed; 
+  position: fixed;
   z-index: 1000;
   left: 0;
   top: 0;
-  width: 100%; 
-  height: 100%; 
-  overflow: auto; 
-  background-color: rgba(0, 0, 0, 0.5); 
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: rgba(0, 0, 0, 0.5);
 }
 
 .modal-content {
-  background-color: rgba(254, 254, 254, 0.8); /* Adjust the alpha value (0.8) for transparency */
+  background-color: rgba(254, 254, 254, 0.8);
+  /* Adjust the alpha value (0.8) for transparency */
   margin: 5% auto;
   padding: 30px;
   border: 2px solid #888;
-  width: 70%; 
+  width: 70%;
   max-width: 800px;
   border-radius: 20px;
   box-shadow: 0 10px 20px rgba(0, 0, 0, 0.5);
@@ -1992,6 +1993,8 @@ button {
 button:hover {
   background-color: #6c7d58;
 }
+
+
 
 
 /* TRASH STYLING */
