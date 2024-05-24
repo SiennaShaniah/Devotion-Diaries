@@ -305,6 +305,51 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 }
 ?>
 
+<!-- DISPLAY PROF PIC -->
+<?php
+include 'Database_connect.php';
+
+if (!isset($_SESSION['userId'])) {
+    die("User is not logged in.");
+}
+$user_id = $_SESSION['userId'];
+$sql = "SELECT profpic_url FROM profpic WHERE userId = ?";
+$stmt = $mysqli->prepare($sql);
+$stmt->bind_param("i", $user_id);
+$stmt->execute();
+$stmt->bind_result($profpic_url);
+$stmt->fetch();
+$stmt->close();
+
+$sql = "SELECT username FROM users WHERE userId = ?";
+$stmt = $mysqli->prepare($sql);
+$stmt->bind_param("i", $user_id);
+$stmt->execute();
+$stmt->bind_result($username);
+$stmt->fetch();
+$stmt->close();
+
+$mysqli->close();
+?>
+
+<!-- AVATAR PROFILE -->
+<?php
+include 'Database_connect.php';
+$user_id = $_SESSION['userId'];
+$profile_image_url = 'Images/profile/noProfile.jpg'; 
+$sql = "SELECT profpic_url FROM profpic WHERE userId = ?";
+$stmt = $mysqli->prepare($sql);
+$stmt->bind_param("i", $userId);
+$stmt->execute();
+$stmt->bind_result($profpic_url);
+if ($stmt->fetch()) {
+    if ($profpic_url) {
+        $profile_image_url = $profpic_url;
+    }
+}
+$stmt->close();
+$mysqli->close();
+?>
 
 
 
@@ -331,7 +376,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             <span class="username">
                 <?php echo $user['username']; ?>
             </span>
-            <img src="Images/signin.svg" alt="User's Image">
+            <?php if ($profpic_url) : ?>
+                <img src="<?php echo htmlspecialchars($profpic_url); ?>" alt="User's Image">
+            <?php else : ?>
+                <img src="Images/profile/noProfile.jpg" alt="Default User Image">
+            <?php endif; ?>
         </div>
 
     </section>
@@ -572,7 +621,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     <div class="content">
                         <div class="content__cover">
                             <div class="content__avatar">
-                                <img src="Images/profile/noProfile.jpg" alt="Avatar">
+                            <img src="<?php echo htmlspecialchars($profile_image_url); ?>" alt="Avatar">
                             </div>
                             <div class="content__bull"><span></span><span></span><span></span><span></span><span></span>
                             </div>
@@ -657,10 +706,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         <div id="profimageModal" class="modalprofimage">
             <div class="modal-contentprofimage">
                 <h2>Edit Profile Picture</h2>
-                <form id="imageForm" enctype="multipart/form-data">
+                <form id="imageForm" enctype="multipart/form-data" method="POST" action="profpic.php">
                     <input type="file" id="imageInput" name="imageInput" accept="image/*">
-                    <button type="button" class="btnimage" id="savePicBtn">Save</button>
-                    <button type="button" class="btnimage" id="updatePicBtn">Update</button>
+                    <button type="submit" class="btnimage" id="savePicBtn">Save</button>
                     <button type="button" class="btnimage" id="cancelPicBtn" onclick="closeProfImageModal()">Cancel</button>
                 </form>
             </div>
@@ -682,7 +730,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
 
         <script>
-            // Profile Picture Modal
             const profImageModal = document.getElementById('profimageModal');
             const editProfPicBtn = document.getElementById('editprofpicbtn');
             const cancelPicBtn = document.getElementById('cancelPicBtn');
@@ -704,7 +751,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 }
             });
 
-            // Username Modal
             const profUsernameModal = document.getElementById('profusernameModal');
             const editUsernameBtn = document.getElementById('editprofbtn');
             const cancelUsernameBtn = document.getElementById('cancelUsernameBtn');
@@ -803,8 +849,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     } else {
                         echo "<p>No daily word found.</p>";
                     }
-
-                    // Close the connection
                     $mysqli->close();
                     ?>
                 </div>
@@ -903,6 +947,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             </div>
         </div>
 
+
+
+
         <?php
         include 'Database_connect.php';
 
@@ -951,44 +998,50 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                         <?php
                         if ($result->num_rows > 0) {
                             while ($row = $result->fetch_assoc()) {
-                                $cover_image = isset($row["Notebook_cover"]) ? $row["Notebook_cover"] : "Images/covers/8.png"; 
-
-                                echo '<div class="notecard">
-                            <div class="noteimage">
-                                <img src="' . $cover_image . '" alt="Notebook Cover">
-                                <div class="notetitle-box">
-                                    <p class="notetitle">' . htmlspecialchars($row["notebook_title"]) . '</p>
-                                    <div class="button-container">
-                                    <button class="editbttn" onclick="openCoverModal(' . $row["notebook_id"] . ', \'' . $cover_image . '\')">Edit Cover</button>
-                                        <a href="notebook.php?notebook_id=' . $row["notebook_id"] . '" class="add-entry-button" id="add-entry-button">Add Entry</a>
-                                        <button class="deletebtn" id="deletebtn">Delete Note</button>
+                                $cover_image = isset($row["Notebook_cover"]) ? $row["Notebook_cover"] : "Images/covers/8.png";
+                        ?>
+                                <div class="notecard">
+                                    <div class="noteimage">
+                                        <img src="<?php echo $cover_image; ?>" alt="Notebook Cover">
+                                        <div class="notetitle-box">
+                                            <p class="notetitle"><?php echo htmlspecialchars($row["notebook_title"]); ?></p>
+                                            <div class="button-container">
+                                                <button class="editbttn" onclick="openCoverModal(<?php echo $row["notebook_id"]; ?>, '<?php echo $cover_image; ?>')">Edit Cover</button>
+                                                <a href="notebook.php?notebook_id=<?php echo $row["notebook_id"]; ?>" class="add-entry-button" id="add-entry-button">Add Entry</a>
+                                                <form method="POST" action="trashbin.php">
+                                                    <input type="hidden" name="notebook_id" value="<?php echo $row["notebook_id"]; ?>">
+                                                    <!-- Confirmation dialog -->
+                                                    <button type="submit" class="deletebtnm123" name="delete_notebook" onclick="return confirm('Are you sure you want to delete this notebook?')">Delete Note</button>
+                                                </form>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                        </div>';
+                        <?php
                             }
                         } else {
                             echo "No notebooks found.";
                         }
-                        $stmt->close();
                         ?>
                     </div>
                 </div>
+
             </div>
         </div>
 
 
 
+
         <div id="coverModal" class="modal">
             <div class="modal-contentHI">
-                <h2>Add Notebook Cover</h2>
+                <h2>Select Notebook Cover</h2>
                 <form id="coverForm" method="POST" action="coverHandler.php">
                     <input type="text" id="coverInput" name="coverInput" readonly>
                     <input type="text" id="notebook-id" name="notebookId" readonly>
                     <img src="Images/covers/1.png" alt="Cover">
                     <div class="button-group">
                         <button type="button" class="btn" id="selectCoverBtn">Select</button>
-                        <button type="submit" class="btn" id="saveCoverBtn" >Save</button>
+                        <button type="submit" class="btn" id="saveCoverBtn">Save</button>
                     </div>
                     <button type="button" class="btn cancel" id="cancelCoverBtn" onclick="closeCoverModal()">Cancel</button>
                 </form>
@@ -1104,13 +1157,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 }
             });
         </script>
-
-
-
-
-
-
-
 
 
         <!-- TRASHBIN -->

@@ -1,92 +1,46 @@
 <?php
-session_start(); // Start the session
-include('Database_connect.php');
-
-// Function to handle profile picture insertion
-function insertProfilePicture($userId, $profilePicture) {
-    global $mysqli;
-
-    // Prepare the insert statement
-    $stmt = $mysqli->prepare("INSERT INTO user_add_information (userId, profile_picture) VALUES (?, ?)");
-    
-    // Bind parameters
-    $stmt->bind_param("is", $userId, $profilePicture);
-
-    // Execute the statement
-    if ($stmt->execute()) {
-        return true; // Insertion successful
-    } else {
-        // Debugging: Display error message
-        echo "Error: " . $stmt->error;
-        return false; // Insertion failed
-    }
-}
-
-// Function to handle profile picture update
-function updateProfilePicture($userId, $profilePicture) {
-    global $mysqli;
-
-    // Prepare the update statement
-    $stmt = $mysqli->prepare("UPDATE user_add_information SET profile_picture = ? WHERE userId = ?");
-    
-    // Bind parameters
-    $stmt->bind_param("si", $profilePicture, $userId);
-
-    // Execute the statement
-    if ($stmt->execute()) {
-        return true; // Update successful
-    } else {
-        // Debugging: Display error message
-        echo "Error: " . $stmt->error;
-        return false; // Update failed
-    }
-}
-
-// Check if form is submitted
+include 'Database_connect.php';
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    if (isset($_POST['savePicBtn']) || isset($_POST['updatePicBtn'])) {
-        $profilePicture = '';
-
-        // Check if a file was uploaded
-        if (isset($_FILES['imageInput']) && $_FILES['imageInput']['error'] === UPLOAD_ERR_OK) {
-            $fileTmpName = $_FILES['imageInput']['tmp_name'];
-            $fileName = $_FILES['imageInput']['name'];
-
-            // Move uploaded file to permanent location
-            $uploadDirectory = "uploads/"; // Change this to your desired directory
-            $profilePicture = $uploadDirectory . $fileName;
-            move_uploaded_file($fileTmpName, $profilePicture);
+    if (isset($_FILES['imageInput']) && $_FILES['imageInput']['error'] === UPLOAD_ERR_OK) {
+        session_start();
+        $userId = $_SESSION['userId'];
+        $target_dir = "profile_pictures/";
+        if (!file_exists($target_dir)) {
+            mkdir($target_dir, 0777, true); 
         }
-
-        // Retrieve userId from session
-        if(isset($_SESSION['userId'])) {
-            $userId = $_SESSION['userId'];
+        $target_file = $target_dir . uniqid() . basename($_FILES["imageInput"]["name"]);
+        $imageFileType = strtolower(pathinfo($target_file, PATHINFO_EXTENSION));
+        $check = getimagesize($_FILES["imageInput"]["tmp_name"]);
+        if ($check !== false) {
+            if ($_FILES["imageInput"]["size"] > 5000000) {
+                echo "Sorry, your file is too large.";
+            } else {
+                if ($imageFileType != "jpg" && $imageFileType != "png" && $imageFileType != "jpeg" && $imageFileType != "gif") {
+                    echo "Sorry, only JPG, JPEG, PNG & GIF files are allowed.";
+                } else {
+                    $query = "SELECT * FROM profpic WHERE userId = $userId";
+                    $result = $mysqli->query($query);
+                    if ($result->num_rows > 0) {
+                        $row = $result->fetch_assoc();
+                        $old_picture = $row['profpic_url'];
+                        unlink($old_picture);
+                        $update_query = "UPDATE profpic SET profpic_url = '$target_file' WHERE userId = $userId";
+                        $mysqli->query($update_query);
+                    } else {
+                        $insert_query = "INSERT INTO profpic (profpic_url, userId) VALUES ('$target_file', $userId)";
+                        $mysqli->query($insert_query);
+                    }
+                    if (move_uploaded_file($_FILES["imageInput"]["tmp_name"], $target_file)) {
+                        echo "The file " . basename($_FILES["imageInput"]["name"]) . " has been uploaded.";
+                    } else {
+                        echo "Sorry, there was an error uploading your file.";
+                    }
+                }
+            }
         } else {
-            echo "User ID not found in session.";
-            exit();
+            echo "File is not an image.";
         }
-
-        // Check if save button is clicked
-        if (isset($_POST['savePicBtn'])) {
-            if (insertProfilePicture($userId, $profilePicture)) {
-                // Insertion successful, redirect to user.php
-                header("Location: user.php");
-                exit();
-            } else {
-                echo "Failed to insert profile picture.";
-            }
-        }
-
-        // Check if update button is clicked
-        if (isset($_POST['updatePicBtn'])) {
-            if (updateProfilePicture($userId, $profilePicture)) {
-                // Update successful, redirect to user.php
-                header("Location: user.php");
-                exit();
-            } else {
-                echo "Failed to update profile picture.";
-            }
-        }
+    } else {
+        echo "No file selected.";
     }
 }
-?>

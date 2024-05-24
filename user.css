@@ -43,9 +43,7 @@
 .profile {
   position: relative;
   display: flex;
-  /* Added */
   align-items: center;
-  /* Added */
 }
 
 .profile .username {
@@ -510,14 +508,15 @@ body {
   background-size: cover;
   border-radius: 50%;
   box-shadow: 0 15px 35px rgba(50, 50, 93, 0.1), 0 5px 15px rgba(0, 0, 0, 0.07);
+  overflow: hidden; 
 }
 
 .profile-page .content__avatar img {
-  max-width: 100%;
-  max-height: 100%;
+  width: 100%;
+  height: 100%;
+  object-fit: cover; 
   display: block;
   border-radius: 50%;
-  /* Ensure image is also circular */
 }
 
 .profile-page .content__avatar::before {
@@ -529,6 +528,7 @@ body {
   right: 0;
   border-radius: 50%;
 }
+
 
 
 
@@ -1752,8 +1752,8 @@ select {
 
 .editbttn,
 .add-entry-button,
-.deletebtn {
-  padding: 2px 5px;
+.deletebtnm123 {
+  padding: 5px; 
   margin: 0 1px;
   background-color: #99b27e;
   color: #fff;
@@ -1764,9 +1764,29 @@ select {
   font-size: small;
   font-weight: 200;
   transition: background-color 0.3s ease;
+  width: 100px;
+  height: 60px; 
 }
 
+.deletebtnm123 {
+  padding: 5px; 
+  margin: 0 1px;
+  background-color: #99b27e;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-family: 'Poppins', sans-serif;
+  font-size: small;
+  font-weight: 200;
+  transition: background-color 0.3s ease;
+  width: 50px; 
+  height: 60px;
+}
+
+
 .editbttn:hover,
+.deletebtnm123:hover,
 .add-entry-button:hover {
   background-color: #6c7d58;
 }
@@ -1865,7 +1885,6 @@ select {
   background: #74B72E;
 }
 
-/* The Modal (background) */
 .modal {
   display: none;
   position: fixed;
@@ -1975,7 +1994,7 @@ select {
   border-color: #99b27e;
 }
 
-button {
+.button {
   width: 90px;
   height: 35px;
   border: none;

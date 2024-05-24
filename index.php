@@ -38,9 +38,6 @@
               <a class="nav-link mx-lg-2" href="#prompt">Prompt</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link mx-lg-2" href="#testimonials">Testimonials</a>
-            </li>
-            <li class="nav-item">
               <a class="nav-link mx-lg-2" href="#faqs">FAQs</a>
             </li>
           </ul>
@@ -68,7 +65,6 @@
   </section>
 
 
-  <!-- ABOUT US SECTION -->
   <!-- START about us -->
   <section class="aboutUs" id="aboutus">
     <div class="container">
@@ -122,6 +118,11 @@
             <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
             <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="1" aria-label="Slide 2"></button>
             <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="2" aria-label="Slide 3"></button>
+            <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="3" aria-label="Slide 4"></button>
+            <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="4" aria-label="Slide 5"></button>
+            <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="5" aria-label="Slide 6"></button>
+            <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="6" aria-label="Slide 7"></button>
+            <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="7" aria-label="Slide 8"></button>
           </div>
           <div class="carousel-inner">
             <div class="carousel-item active">
@@ -132,6 +133,21 @@
             </div>
             <div class="carousel-item">
               <img src="Images/overview/03.png" class="d-block w-100" alt="...">
+            </div>
+            <div class="carousel-item">
+              <img src="Images/overview/04.png" class="d-block w-100" alt="...">
+            </div>
+            <div class="carousel-item">
+              <img src="Images/overview/05.png" class="d-block w-100" alt="...">
+            </div>
+            <div class="carousel-item">
+              <img src="Images/overview/06.png" class="d-block w-100" alt="...">
+            </div>
+            <div class="carousel-item">
+              <img src="Images/overview/07.png" class="d-block w-100" alt="...">
+            </div>
+            <div class="carousel-item">
+              <img src="Images/overview/08.png" class="d-block w-100" alt="...">
             </div>
           </div>
           <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="prev">
@@ -185,48 +201,6 @@
       </div>
     </div>
   </section>
-
-  <?php
-  include 'Database_connect.php';
-
-  // Fetch a random testimony with the status 'uploaded'
-  $sql = "SELECT username, testimony, rating FROM testimonies WHERE status='uploaded' ORDER BY RAND() LIMIT 1";
-  $result = $mysqli->query($sql);
-
-  $testimony = null;
-  if ($result->num_rows > 0) {
-    $testimony = $result->fetch_assoc();
-  }
-  ?>
-
-  <section class="testimonials" id="testimonials">
-    <div class="container">
-      <div class="row">
-        <div class="text2">
-          <h1>Testimony of the Day</h1>
-        </div>
-        <div class="col-md-6">
-          <div class="transparent-box">
-            <div class="text">
-              <?php if ($testimony) : ?>
-                <h2 class="username"><?php echo htmlspecialchars($testimony['username']); ?></h2>
-                <p class="testimony"><?php echo htmlspecialchars($testimony['testimony']); ?></p>
-              <?php else : ?>
-                <h2 class="username">No Testimonies Available</h2>
-                <p class="testimony">There are currently no uploaded testimonies.</p>
-              <?php endif; ?>
-            </div>
-          </div>
-        </div>
-        <div class="col-md-6" id="img">
-          <img src="Images/bible09.jpg" class="img-fluid fix-image" alt="Image">
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <?php $mysqli->close(); ?>
-
 
   <section class="faqs" id="faqs">
     <div class="container">

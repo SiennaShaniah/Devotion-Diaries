@@ -2,8 +2,6 @@
 session_start();
 
 include 'database_connect.php';
-
-// Initialize $disable_save_button variable
 $disable_save_button = false;
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {

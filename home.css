@@ -210,9 +210,9 @@
 }
 
 .transparent-box {
-    background-color: rgba(255, 255, 255, 0.5); /* Transparent white background */
-    padding: 20px; /* Adjust padding as needed */
-    border-radius: 10px; /* Rounded corners for the box */
+    background-color: rgba(255, 255, 255, 0.5); 
+    padding: 20px; 
+    border-radius: 10px; 
     height: 545px;
   }
   
@@ -246,6 +246,13 @@
 #accorpar{
     background: #d9ead3;
 }
+
+/* Adjust the height of the carousel container */
+.carousel-item img {
+    height: 400px; /* Set the desired height */
+    object-fit: cover; /* Maintain aspect ratio and cover the entire area */
+  }
+  
   
   
 
