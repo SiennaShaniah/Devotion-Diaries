@@ -336,7 +336,7 @@ $mysqli->close();
 <?php
 include 'Database_connect.php';
 $user_id = $_SESSION['userId'];
-$profile_image_url = 'Images/profile/noProfile.jpg'; 
+$profile_image_url = 'Images/profile/noProfile.jpg';
 $sql = "SELECT profpic_url FROM profpic WHERE userId = ?";
 $stmt = $mysqli->prepare($sql);
 $stmt->bind_param("i", $userId);
@@ -598,7 +598,7 @@ $mysqli->close();
                                 </div>
                             </div>
                             <br>
-                            <button type="button" class="find-button" id="fifthcard">Find Out More</button>
+                            <button type="button" class="find-button" id="sixthcard">Find Out More</button>
                         </div>
                     </div>
                 </div>
@@ -616,7 +616,7 @@ $mysqli->close();
                     <div class="content">
                         <div class="content__cover">
                             <div class="content__avatar">
-                            <img src="<?php echo htmlspecialchars($profile_image_url); ?>" alt="Avatar">
+                                <img src="<?php echo htmlspecialchars($profile_image_url); ?>" alt="Avatar">
                             </div>
                             <div class="content__bull"><span></span><span></span><span></span><span></span><span></span>
                             </div>
@@ -1002,8 +1002,11 @@ $mysqli->close();
                                             <p class="notetitle"><?php echo htmlspecialchars($row["notebook_title"]); ?></p>
                                             <div class="button-container">
                                                 <button class="editbttn" onclick="openCoverModal(<?php echo $row["notebook_id"]; ?>, '<?php echo $cover_image; ?>')">Edit Cover</button>
-                                                <a href="notebook.php?notebook_id=<?php echo $row["notebook_id"]; ?>" class="add-entry-button" id="add-entry-button">Add Entry</a> 
-                                                    <button type="button" class="deletebtnm123" name="delete_notebook" onclick="return confirm('Are you sure you want to delete this notebook?')">Delete Note</button>
+                                                <a href="notebook.php?notebook_id=<?php echo $row["notebook_id"]; ?>" class="add-entry-button" id="add-entry-button">Add Entry</a>
+                                                <form method="POST" action="delete_notebook.php" style="display:inline;">
+                                                    <input type="hidden" name="notebook_id" value="<?php echo $row["notebook_id"]; ?>">
+                                                    <button type="submit" class="deletebtnm123" name="delete_notebook" onclick="return confirm('Are you sure you want to delete this notebook?')">Delete Note</button>
+                                                </form>
                                             </div>
                                         </div>
                                     </div>
@@ -1190,7 +1193,7 @@ $mysqli->close();
         </script>
 
 
-       
+
     </section>
 
 
@@ -1439,6 +1442,12 @@ $mysqli->close();
     <!-- IT WILL GO TO notebook TAB -->
     <script>
         document.getElementById("fifthcard").addEventListener("click", function() {
+            document.getElementById("notebook").style.display = "block";
+        });
+    </script>
+
+<script>
+        document.getElementById("sixthcard").addEventListener("click", function() {
             document.getElementById("notebook").style.display = "block";
         });
     </script>

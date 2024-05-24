@@ -238,7 +238,7 @@ $mysqli->close();
                             <span class="card--icon icon"><i class="ri-music-line"></i></span>
                             <span>Recent Christian song uploads</span>
                         </div>
-                        <h3 class="card--value"><?php echo $latestSongTitle; ?></i></h3>
+                        <h3 class="card--value"><?php echo $latestSongTitle; ?></h3>
                         <button class="card--button" id="songsbuttonkick">Songs</button>
                     </div>
                 </div>
@@ -516,8 +516,6 @@ $mysqli->close();
                         document.getElementById('rating').value = data.rating;
                     });
             }
-
-          
         </script>
 
 
@@ -592,7 +590,7 @@ $mysqli->close();
                 <br>
 
                 <div class="upload--form">
-                    <form action="adminconnect.php" method="POST">
+                    <form action="song.php" method="POST" enctype="multipart/form-data">
                         <div class="form--group">
                             <label for="songTitle">Song Title:</label>
                             <input type="text" id="songTitle" name="songTitle" required>
@@ -606,18 +604,17 @@ $mysqli->close();
                             <input type="date" id="dateUploaded" name="dateUploaded" required>
                         </div>
                         <div class="form--group">
-                            <label for="songPicture">Song Picture Path:</label>
-                            <input type="text" id="songPicture" name="songPicture" placeholder="Images/songCovers/IMAGE NAME.FILE EXTENSION" required>
+                            <label for="songPicture">Song Picture:</label>
+                            <input type="file" id="songPicture" name="songPicture" required>
                         </div>
                         <div class="form--group">
-                            <label for="songFile">Song File Path:</label>
-                            <input type="text" id="songFile" name="songFile" placeholder="song/SONGNAME.FILE EXTENSION" required>
+                            <label for="songFile">Song File:</label>
+                            <input type="file" id="songFile" name="songFile" required>
                         </div>
                         <div class="form--group">
                             <button type="submit" id="songbtn">Upload Song</button>
                         </div>
                     </form>
-
                 </div>
 
 
@@ -663,6 +660,7 @@ $mysqli->close();
                         </tbody>
                     </table>
                 </div>
+
             </div>
         </div>
 
@@ -670,11 +668,9 @@ $mysqli->close();
             function deleteSong(id) {
                 var confirmation = confirm("Are you sure you want to delete this song?");
                 if (confirmation) {
-                    // AJAX request
                     var xhttp = new XMLHttpRequest();
                     xhttp.onreadystatechange = function() {
                         if (this.readyState == 4 && this.status == 200) {
-                            // If deletion is successful, reload the page to update the table
                             location.reload();
                         }
                     };
@@ -687,27 +683,27 @@ $mysqli->close();
         <div id="editsongModal" class="modal">
             <div class="modal-contents" style="background-color: #97BC62">
                 <h2>Edit Song Information</h2>
-                <form id="editForm" method="post" action="adminconnect.php">
+                <form id="editForm" method="post" action="song.php" enctype="multipart/form-data">
                     <input type="hidden" id="editSongId" name="editSongId">
                     <div class="form-group">
                         <label for="editSongTitle">Song Title:</label>
-                        <input type="text" id="editSongTitle" name="editSongTitle">
+                        <input type="text" id="editSongTitle" name="editSongTitle" required>
                     </div>
                     <div class="form-group">
                         <label for="editSongArtist">Song Artist:</label>
-                        <input type="text" id="editSongArtist" name="editSongArtist">
+                        <input type="text" id="editSongArtist" name="editSongArtist" required>
                     </div>
                     <div class="form-group">
                         <label for="editDateUploaded">Date Uploaded:</label>
-                        <input type="date" id="editDateUploaded" name="editDateUploaded">
+                        <input type="date" id="editDateUploaded" name="editDateUploaded" required>
                     </div>
                     <div class="form-group">
                         <label for="editSongPicture">Song Picture Path:</label>
-                        <input type="text" id="editSongPicture" name="editSongPicture">
+                        <input type="file" id="editSongPicture" name="editSongPicture" required>
                     </div>
                     <div class="form-group">
                         <label for="editSongFile">Song File Path:</label>
-                        <input type="text" id="editSongFile" name="editSongFile">
+                        <input type="file" id="editSongFile" name="editSongFile" required>
                     </div>
                     <div class="form-group" id="songbtns">
                         <button type="submit" class="update-button" name="update-button">Update</button>
@@ -723,19 +719,15 @@ $mysqli->close();
                 document.getElementById('editSongTitle').value = songTitle;
                 document.getElementById('editSongArtist').value = songArtist;
                 document.getElementById('editDateUploaded').value = dateUploaded;
-                document.getElementById('editSongPicture').value = songPicture;
-                document.getElementById('editSongFile').value = songFile;
 
                 var modal = document.getElementById("editsongModal");
                 modal.style.display = "block";
             }
-
             function closeEditSongModal() {
                 var modal = document.getElementById("editsongModal");
                 modal.style.display = "none";
             }
 
-            // When the user clicks anywhere outside of the modal, close it
             window.onclick = function(event) {
                 var modal = document.getElementById("editsongModal");
                 if (event.target == modal) {
@@ -743,6 +735,7 @@ $mysqli->close();
                 }
             }
         </script>
+
 
 
 
