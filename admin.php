@@ -456,8 +456,6 @@ $mysqli->close();
 
                             <?php
                             include 'Database_connect.php';
-
-                            // Handle form submission
                             if (isset($_POST['upload'])) {
                                 $testimony_id = $_POST['testimony_id'] ?? null;
                                 $username = $_POST['username'] ?? null;
@@ -509,7 +507,6 @@ $mysqli->close();
 
         <script>
             function openModal(testimony_id) {
-                // Fetch data via AJAX (or fill the form fields directly if data is already available)
                 fetch('fetch_testimony.php?testimony_id=' + testimony_id)
                     .then(response => response.json())
                     .then(data => {
@@ -535,7 +532,6 @@ $mysqli->close();
                     <input type="hidden" name="rating" id="rating">
 
                     <div class="addbutton-group">
-                        <button type="submit" name="upload" id="upload">Upload</button>
                         <button type="button" id="cancel01">Cancel</button>
                     </div>
                 </form>

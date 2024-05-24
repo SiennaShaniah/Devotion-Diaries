@@ -353,6 +353,8 @@ $mysqli->close();
 
 
 
+
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -428,13 +430,6 @@ $mysqli->close();
                     <a href="#notebook" class="sidebar-link" id="notebookLink" data-target="notebook">
                         <span class="icon"><i class="ri-book-line"></i></span>
                         <div class="sidebar--item">Devo Notebooks</div>
-                    </a>
-                </li>
-
-                <li>
-                    <a href="#" class="sidebar-link" data-target="trashbin">
-                        <span class="icon"><i class="ri-delete-bin-line"></i></span>
-                        <div class="sidebar--item">Trashbin</div>
                     </a>
                 </li>
             </ul>
@@ -1007,12 +1002,8 @@ $mysqli->close();
                                             <p class="notetitle"><?php echo htmlspecialchars($row["notebook_title"]); ?></p>
                                             <div class="button-container">
                                                 <button class="editbttn" onclick="openCoverModal(<?php echo $row["notebook_id"]; ?>, '<?php echo $cover_image; ?>')">Edit Cover</button>
-                                                <a href="notebook.php?notebook_id=<?php echo $row["notebook_id"]; ?>" class="add-entry-button" id="add-entry-button">Add Entry</a>
-                                                <form method="POST" action="trashbin.php">
-                                                    <input type="hidden" name="notebook_id" value="<?php echo $row["notebook_id"]; ?>">
-                                                    <!-- Confirmation dialog -->
-                                                    <button type="submit" class="deletebtnm123" name="delete_notebook" onclick="return confirm('Are you sure you want to delete this notebook?')">Delete Note</button>
-                                                </form>
+                                                <a href="notebook.php?notebook_id=<?php echo $row["notebook_id"]; ?>" class="add-entry-button" id="add-entry-button">Add Entry</a> 
+                                                    <button type="button" class="deletebtnm123" name="delete_notebook" onclick="return confirm('Are you sure you want to delete this notebook?')">Delete Note</button>
                                             </div>
                                         </div>
                                     </div>
@@ -1086,6 +1077,46 @@ $mysqli->close();
                     <img src="Images/covers/8.png" alt="Cover 8" data-cover="cover8.jpg" id="cover8">
                     <img src="Images/covers/9.png" alt="Cover 9" data-cover="cover9.jpg" id="cover9">
                     <img src="Images/covers/10.png" alt="Cover 10" data-cover="cover10.jpg" id="cover10">
+                    <img src="Images/covers/11.png" alt="Cover 11" data-cover="cover11.jpg" id="cover11">
+                    <img src="Images/covers/12.png" alt="Cover 12" data-cover="cover12.jpg" id="cover12">
+                    <img src="Images/covers/13.png" alt="Cover 13" data-cover="cover13.jpg" id="cover13">
+                    <img src="Images/covers/14.png" alt="Cover 14" data-cover="cover14.jpg" id="cover14">
+                    <img src="Images/covers/15.png" alt="Cover 15" data-cover="cover15.jpg" id="cover15">
+                    <img src="Images/covers/16.png" alt="Cover 16" data-cover="cover16.jpg" id="cover16">
+                    <img src="Images/covers/17.png" alt="Cover 17" data-cover="cover17.jpg" id="cover17">
+                    <img src="Images/covers/18.png" alt="Cover 18" data-cover="cover18.jpg" id="cover18">
+                    <img src="Images/covers/19.png" alt="Cover 19" data-cover="cover19.jpg" id="cover19">
+                    <img src="Images/covers/20.png" alt="Cover 20" data-cover="cover20.jpg" id="cover20">
+                    <img src="Images/covers/21.png" alt="Cover 21" data-cover="cover21.jpg" id="cover21">
+                    <img src="Images/covers/22.png" alt="Cover 22" data-cover="cover22.jpg" id="cover22">
+                    <img src="Images/covers/23.png" alt="Cover 23" data-cover="cover23.jpg" id="cover23">
+                    <img src="Images/covers/24.png" alt="Cover 24" data-cover="cover24.jpg" id="cover24">
+                    <img src="Images/covers/25.png" alt="Cover 25" data-cover="cover25.jpg" id="cover25">
+                    <img src="Images/covers/26.png" alt="Cover 26" data-cover="cover26.jpg" id="cover26">
+                    <img src="Images/covers/27.png" alt="Cover 27" data-cover="cover27.jpg" id="cover27">
+                    <img src="Images/covers/28.png" alt="Cover 28" data-cover="cover28.jpg" id="cover28">
+                    <img src="Images/covers/29.png" alt="Cover 29" data-cover="cover29.jpg" id="cover29">
+                    <img src="Images/covers/30.png" alt="Cover 30" data-cover="cover30.jpg" id="cover30">
+                    <img src="Images/covers/31.png" alt="Cover 31" data-cover="cover31.jpg" id="cover31">
+                    <img src="Images/covers/32.png" alt="Cover 32" data-cover="cover32.jpg" id="cover32">
+                    <img src="Images/covers/33.png" alt="Cover 33" data-cover="cover33.jpg" id="cover33">
+                    <img src="Images/covers/34.png" alt="Cover 34" data-cover="cover34.jpg" id="cover34">
+                    <img src="Images/covers/35.png" alt="Cover 35" data-cover="cover35.jpg" id="cover35">
+                    <img src="Images/covers/36.png" alt="Cover 36" data-cover="cover36.jpg" id="cover36">
+                    <img src="Images/covers/37.png" alt="Cover 37" data-cover="cover37.jpg" id="cover37">
+                    <img src="Images/covers/38.png" alt="Cover 38" data-cover="cover38.jpg" id="cover38">
+                    <img src="Images/covers/39.png" alt="Cover 39" data-cover="cover39.jpg" id="cover39">
+                    <img src="Images/covers/40.png" alt="Cover 40" data-cover="cover40.jpg" id="cover40">
+                    <img src="Images/covers/41.png" alt="Cover 41" data-cover="cover41.jpg" id="cover41">
+                    <img src="Images/covers/42.png" alt="Cover 42" data-cover="cover42.jpg" id="cover42">
+                    <img src="Images/covers/43.png" alt="Cover 43" data-cover="cover43.jpg" id="cover43">
+                    <img src="Images/covers/44.png" alt="Cover 44" data-cover="cover44.jpg" id="cover44">
+                    <img src="Images/covers/45.png" alt="Cover 45" data-cover="cover45.jpg" id="cover45">
+                    <img src="Images/covers/46.png" alt="Cover 46" data-cover="cover46.jpg" id="cover46">
+                    <img src="Images/covers/47.png" alt="Cover 47" data-cover="cover47.jpg" id="cover47">
+                    <img src="Images/covers/48.png" alt="Cover 48" data-cover="cover48.jpg" id="cover48">
+                    <img src="Images/covers/49.png" alt="Cover 49" data-cover="cover49.jpg" id="cover49">
+                    <img src="Images/covers/50.png" alt="Cover 50" data-cover="cover50.jpg" id="cover50">
                 </div>
             </div>
         </div>
@@ -1159,36 +1190,7 @@ $mysqli->close();
         </script>
 
 
-        <!-- TRASHBIN -->
-        <div id="trashbin" class="tab">
-            <div class="main--container">
-                <div class="section--title">
-                    <h3 class="title">Trashbin</h3>
-                </div>
-
-                <div class="table">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>ID</th>
-                                <th>Notebook Title</th>
-                                <th>Action</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>0</td>
-                                <td>None</td>
-                                <td>
-                                    <button class="button1">Delete</button>
-                                    <button class="button1">Restore</button>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
+       
     </section>
 
 
