@@ -268,22 +268,6 @@ if ($stmt = $mysqli->prepare("SELECT gender, age, address, religion, life_motto,
 ?>
 
 
-<!-- DISPLAY ADD INFORMATION IN CARDS -->
-<?php
-include 'Database_connect.php';
-$userId = $_SESSION['userId'];
-$query = "SELECT gender, age, address, religion, life_motto, self_description FROM user_add_information WHERE userId = ?";
-$stmt = $mysqli->prepare($query);
-$stmt->bind_param("i", $userId);
-$stmt->execute();
-$result = $stmt->get_result();
-$user_info = $result->fetch_assoc();
-if (!$user_info) {
-    echo "No user information found.";
-    exit;
-}
-?>
-
 
 
 <!-- DISPLAY PROF PIC -->
@@ -624,24 +608,51 @@ $mysqli->close();
                                 </p>
                             </div>
 
-                            <div class="carder">
-                                <p><span>Gender: <br><?php echo htmlspecialchars($user_info['gender']); ?></span></p>
-                            </div>
-                            <div class="carder">
-                                <p><span>Age: <br><?php echo htmlspecialchars($user_info['age']); ?></span></p>
-                            </div>
-                            <div class="carder">
-                                <p><span>Address: <br><?php echo htmlspecialchars($user_info['address']); ?></span></p>
-                            </div>
-                            <div class="carder">
-                                <p><span>Religion: <br><?php echo htmlspecialchars($user_info['religion']); ?></span></p>
-                            </div>
-                            <div class="carder">
-                                <p><span>Life Motto: <br><?php echo htmlspecialchars($user_info['life_motto']); ?></span></p>
-                            </div>
-                            <div class="carder">
-                                <p><span>Self Description: <br><?php echo htmlspecialchars($user_info['self_description']); ?></span></p>
-                            </div>
+                            <?php
+                            include 'Database_connect.php';
+                            if (!isset($_SESSION['userId'])) {
+                                echo "User not logged in.";
+                                exit;
+                            }
+
+                            $userId = $_SESSION['userId'];
+                            $query = "SELECT gender, age, address, religion, life_motto, self_description FROM user_add_information WHERE userId = ?";
+                            $stmt = $mysqli->prepare($query);
+
+                            $stmt->bind_param("i", $userId);
+                            $stmt->execute();
+                            $result = $stmt->get_result();
+                            $user_info = $result->fetch_assoc();
+
+                            if (!$user_info) {
+                                echo "No additional user information found. Please add your information.";
+                            } else {
+                            ?>
+
+                                <div class="carder">
+                                    <p><span>Gender: <br><?php echo htmlspecialchars($user_info['gender']); ?></span></p>
+                                </div>
+                                <div class="carder">
+                                    <p><span>Age: <br><?php echo htmlspecialchars($user_info['age']); ?></span></p>
+                                </div>
+                                <div class="carder">
+                                    <p><span>Address: <br><?php echo htmlspecialchars($user_info['address']); ?></span></p>
+                                </div>
+                                <div class="carder">
+                                    <p><span>Religion: <br><?php echo htmlspecialchars($user_info['religion']); ?></span></p>
+                                </div>
+                                <div class="carder">
+                                    <p><span>Life Motto: <br><?php echo htmlspecialchars($user_info['life_motto']); ?></span></p>
+                                </div>
+                                <div class="carder">
+                                    <p><span>Self Description: <br><?php echo htmlspecialchars($user_info['self_description']); ?></span></p>
+                                </div>
+
+                            <?php
+                            }
+                            ?>
+
+
 
                         </div>
 
@@ -692,7 +703,7 @@ $mysqli->close();
 
 
         <!-- MODAL PROF USERNAME -->
-        <div id="profusernameModal" class="modalprofimage" >
+        <div id="profusernameModal" class="modalprofimage">
             <div class="modal-contentprofimage">
                 <h2>Edit Username</h2>
                 <form id="usernameForm" method="POST" action="usernamechange.php">
@@ -1427,7 +1438,7 @@ $mysqli->close();
         });
     </script>
 
-<script>
+    <script>
         document.getElementById("sixthcard").addEventListener("click", function() {
             document.getElementById("notebook").style.display = "block";
         });
