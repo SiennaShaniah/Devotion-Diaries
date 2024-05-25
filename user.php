@@ -284,26 +284,7 @@ if (!$user_info) {
 }
 ?>
 
-<!-- UPDATE USERNAME -->
-<?php
-include('Database_connect.php');
 
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    if (isset($_POST['usernameInput']) && !empty($_POST['usernameInput'])) {
-        $newUsername = $mysqli->real_escape_string($_POST['usernameInput']);
-        $userId = $_SESSION['userId'];
-        $updateQuery = "UPDATE users SET username = '$newUsername' WHERE userId = '$userId'";
-        if ($mysqli->query($updateQuery)) {
-            $_SESSION['username'] = $newUsername;
-            echo "Username updated successfully!";
-        } else {
-            echo "Error updating username: " . $mysqli->error;
-        }
-    } else {
-        echo "Please provide a new username!";
-    }
-}
-?>
 
 <!-- DISPLAY PROF PIC -->
 <?php
@@ -711,10 +692,10 @@ $mysqli->close();
 
 
         <!-- MODAL PROF USERNAME -->
-        <div id="profusernameModal" class="modalprofimage">
+        <div id="profusernameModal" class="modalprofimage" >
             <div class="modal-contentprofimage">
                 <h2>Edit Username</h2>
-                <form id="usernameForm" method="POST" action="">
+                <form id="usernameForm" method="POST" action="usernamechange.php">
                     <input type="text" id="usernameInput" name="usernameInput" placeholder="New Username" value="<?php echo isset($_SESSION['username']) ? $_SESSION['username'] : ''; ?>">
                     <button type="submit" class="btnimage" id="updateUsernameBtn">Update</button>
                     <button type="button" class="btnimage" id="cancelUsernameBtn" onclick="closeProfUsernameModal()">Cancel</button>
